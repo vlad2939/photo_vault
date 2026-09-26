@@ -60,8 +60,6 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 - Selectând un folder, grid-ul central afișează pozele din acel folder **și din toate subfolderele lui**. Click pe titlul **Bibliotecă** afișează din nou toate pozele.
 - Click pe o poză afișează în panoul din dreapta detaliile ei: cale completă, dimensiune, extensie și — dacă există în fișier — dimensiunile în pixeli, data fotografierii, camera, obiectivul, ISO, timpul de expunere, diafragma și distanța focală.
 - **Dublu-click** pe o poză (sau **Enter**) o deschide pe tot ecranul: ← / → pentru navigare, rotița mouse-ului sau + / − pentru zoom, tragere cu mouse-ul pentru deplasare când imaginea e mărită, 0 = potrivire în ecran, 1 = dimensiune reală, Esc = închidere.
-- Dublu-click pe o poză deschide vizualizarea fullscreen (lightbox) — navigare cu săgețile stânga/dreapta, zoom cu scroll, pan cu drag.
-- Panoul din dreapta/jos arată detalii despre poza sau albumul selectat curent.
 
 ### Albume
 
