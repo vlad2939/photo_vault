@@ -86,11 +86,11 @@
         <!-- ===================== Conținut: arbore | grid | detalii ===================== -->
         <Grid Grid.Row="1" Margin="12,12,12,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="264" />
+                <ColumnDefinition Width="252" />
                 <ColumnDefinition Width="12" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="12" />
-                <ColumnDefinition Width="310" />
+                <ColumnDefinition Width="290" />
             </Grid.ColumnDefinitions>
 
             <!-- Panou stâng: Bibliotecă (arbore foldere) / Albume / Tag-uri -->
@@ -162,14 +162,14 @@
                     <!-- Căutare + sortare (funcționale în Faza 4) -->
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" MinWidth="160" />
                             <ColumnDefinition Width="12" />
-                            <ColumnDefinition Width="250" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="SearchBox"
                                  ctl:InputHelper.Placeholder="{DynamicResource Str.Search.Placeholder}"
                                  ctl:InputHelper.Icon="{DynamicResource Icon.Search}" />
-                        <ComboBox Grid.Column="2" SelectedIndex="0">
+                        <ComboBox Grid.Column="2" SelectedIndex="0" MinWidth="210">
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameAsc}" />
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameDesc}" />
                         </ComboBox>

@@ -113,9 +113,11 @@ public partial class CustomDialogWindow : Window
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
         Overlay.BeginAnimation(OpacityProperty, new DoubleAnimation(1, AnimationDuration));
         Card.BeginAnimation(OpacityProperty, new DoubleAnimation(1, AnimationDuration));
+        var scaleY = new DoubleAnimation(1, AnimationDuration) { EasingFunction = ease };
+        // Focus după animație: altfel conturul de focus e poziționat pe cardul încă scalat.
+        scaleY.Completed += (_, _) => PrimaryButton.Focus();
         CardScale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1, AnimationDuration) { EasingFunction = ease });
-        CardScale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(1, AnimationDuration) { EasingFunction = ease });
-        PrimaryButton.Focus();
+        CardScale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleY);
     }
 
     /// <summary>Fade-out scurt, apoi închidere.</summary>
