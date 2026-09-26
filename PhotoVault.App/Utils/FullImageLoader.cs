@@ -26,15 +26,14 @@ public static class FullImageLoader
         try
         {
             var orientation = metadata.Read(photo.FullPath).Orientation;
+
             // Fișierul e citit integral în memorie → nu rămâne blocat pe disc cât timp e afișat
             var bytes = SupportedFormats.IsRaw(photo.Extension)
                 ? RawPreviewExtractor.ExtractLargestJpeg(photo.FullPath)
                 : File.ReadAllBytes(photo.FullPath);
             if (bytes is null) return null;
 
-            using var stream = new MemoryStream(bytes);
-            BitmapSource bitmap = Decode(stream);
-
+            BitmapSource bitmap = Decode(bytes);
             var angle = (OrientationToAngle(orientation) + photo.RotationDegrees) % 360;
             if (angle != 0)
             {
@@ -43,30 +42,35 @@ public static class FullImageLoader
             }
             return bitmap;
         }
-        catch (Exception e) when (e is IOException or NotSupportedException or UnauthorizedAccessException
-                                      or ArgumentException or InvalidOperationException or OutOfMemoryException)
+        catch (Exception e)
         {
+            // Orice imagine ilizibilă → mesaj în lightbox; detaliile tehnice ajung în logs/
+            ErrorLog.Write(e, $"Lightbox: încărcare {photo.FullPath}");
             return null;
         }
     }
 
-    private static BitmapSource Decode(MemoryStream stream)
+    private static BitmapSource Decode(byte[] bytes)
     {
-        // Dimensiunile reale, fără decodare completă — pentru limitarea la MaxDecodeSize
-        var frame = BitmapFrame.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
-        var tooLarge = Math.Max(frame.PixelWidth, frame.PixelHeight) > MaxDecodeSize;
-        stream.Seek(0, SeekOrigin.Begin);
+        bool landscape;
+        using (var stream = new MemoryStream(bytes, writable: false))
+        {
+            var frame = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames[0];
+            if (Math.Max(frame.PixelWidth, frame.PixelHeight) <= MaxDecodeSize)
+            {
+                frame.Freeze();
+                return frame;
+            }
+            landscape = frame.PixelWidth >= frame.PixelHeight;
+        }
 
+        // Imagine foarte mare: re-decodare direct la dimensiune redusă (memorie rezonabilă)
+        using var large = new MemoryStream(bytes, writable: false);
         var image = new BitmapImage();
         image.BeginInit();
-        image.StreamSource = stream;
+        image.StreamSource = large;
         image.CacheOption = BitmapCacheOption.OnLoad;
-        image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-        if (tooLarge)
-        {
-            if (frame.PixelWidth >= frame.PixelHeight) image.DecodePixelWidth = MaxDecodeSize;
-            else image.DecodePixelHeight = MaxDecodeSize;
-        }
+        if (landscape) image.DecodePixelWidth = MaxDecodeSize; else image.DecodePixelHeight = MaxDecodeSize;
         image.EndInit();
         image.Freeze();
         return image;
