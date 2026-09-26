@@ -61,5 +61,43 @@
     <sys:String x:Key="Str.Status.IndexDone">Indexing complete: {0} new photos</sys:String>
     <sys:String x:Key="Str.Status.RescanDone">Rescan complete: {0} new photos, {1} removed</sys:String>
     <sys:String x:Key="Str.Status.Removed">The folder “{0}” was removed from the library</sys:String>
+    <sys:String x:Key="Str.Library.ShowAll">Show all photos in the library</sys:String>
+    <sys:String x:Key="Str.Grid.FolderEmpty">The selected folder contains no photos.</sys:String>
+    <sys:String x:Key="Str.Details.Path">Full path</sys:String>
+    <sys:String x:Key="Str.Details.Size">File size</sys:String>
+    <sys:String x:Key="Str.Details.Extension">Extension</sys:String>
+    <sys:String x:Key="Str.Details.Dimensions">Dimensions</sys:String>
+    <sys:String x:Key="Str.Details.DateTaken">Date taken</sys:String>
+    <sys:String x:Key="Str.Details.Camera">Camera</sys:String>
+    <sys:String x:Key="Str.Details.Lens">Lens</sys:String>
+    <sys:String x:Key="Str.Details.Iso">ISO</sys:String>
+    <sys:String x:Key="Str.Details.Exposure">Exposure</sys:String>
+    <sys:String x:Key="Str.Details.Aperture">Aperture</sys:String>
+    <sys:String x:Key="Str.Details.FocalLength">Focal length</sys:String>
+    <sys:String x:Key="Str.Details.NoTags">No tags assigned.</sys:String>
+    <sys:String x:Key="Str.Lightbox.Back">Back to gallery</sys:String>
+    <sys:String x:Key="Str.Lightbox.Previous">Previous photo (←)</sys:String>
+    <sys:String x:Key="Str.Lightbox.Next">Next photo (→)</sys:String>
+    <sys:String x:Key="Str.Lightbox.ZoomIn">Zoom in (+)</sys:String>
+    <sys:String x:Key="Str.Lightbox.ZoomOut">Zoom out (−)</sys:String>
+    <sys:String x:Key="Str.Lightbox.Fit">Fit to screen (0)</sys:String>
+    <sys:String x:Key="Str.Lightbox.ActualSize">Actual size 1:1 (1)</sys:String>
+    <sys:String x:Key="Str.Lightbox.Close">Close (Esc)</sys:String>
+    <sys:String x:Key="Str.Lightbox.LoadFailed">The image can't be displayed.</sys:String>
+    <sys:String x:Key="Str.Dialog.Close">Close</sys:String>
+    <sys:String x:Key="Str.Info.Version">Version {0}</sys:String>
+    <sys:String x:Key="Str.Info.Author">Author: vlad39</sys:String>
+    <sys:String x:Key="Str.Info.HowTo">How to use it</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).</sys:String>
+    <sys:String x:Key="Str.Info.Shortcuts">Keyboard shortcuts</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid</sys:String>
+    <sys:String x:Key="Str.Settings.Title">Options</sys:String>
+    <sys:String x:Key="Str.Settings.SourceFolders">Source folders</sys:String>
+    <sys:String x:Key="Str.Settings.SourceFoldersHint">Folders on disk indexed by PhotoVault. Rescanning detects new photos and removes deleted ones from the index; removing a folder never touches files on disk.</sys:String>
+    <sys:String x:Key="Str.Settings.Appearance">Appearance</sys:String>
+    <sys:String x:Key="Str.Settings.ThemeDark">Dark theme</sys:String>
+    <sys:String x:Key="Str.Settings.ThemeLight">Light theme</sys:String>
+    <sys:String x:Key="Str.Settings.MoreSoon">Slideshow settings, accent color and interface language will appear here in upcoming phases.</sys:String>
+    <sys:String x:Key="Str.Placeholder.BatchRename">The batch rename module (with a preview of the new names) will be available in Phase 5.</sys:String>
 
 </ResourceDictionary>

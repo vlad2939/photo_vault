@@ -37,22 +37,10 @@ public partial class CustomDialogWindow : Window
     /// </summary>
     public void AttachTo(Window? owner)
     {
-        if (owner?.Content is FrameworkElement content && PresentationSource.FromVisual(content) is { CompositionTarget: not null } source)
-        {
-            Owner = owner;
-            WindowStartupLocation = WindowStartupLocation.Manual;
-            var topLeft = source.CompositionTarget.TransformFromDevice.Transform(content.PointToScreen(new Point(0, 0)));
-            Left = topLeft.X;
-            Top = topLeft.Y;
-            Width = content.ActualWidth;
-            Height = content.ActualHeight;
-        }
-        else
-        {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            SizeToContent = SizeToContent.WidthAndHeight;
-            Overlay.Visibility = Visibility.Collapsed;
-        }
+        if (OverlayPlacement.Cover(this, owner)) return;
+        WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        SizeToContent = SizeToContent.WidthAndHeight;
+        Overlay.Visibility = Visibility.Collapsed;
     }
 
     private void ApplyKind(DialogKind kind)

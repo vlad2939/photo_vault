@@ -44,6 +44,18 @@ function Find-ByName($root, [string] $name) {
     throw "Elementul '$name' nu a fost găsit."
 }
 
+function Find-Control($root, [string] $name, $controlType) {
+    $cond = New-Object System.Windows.Automation.AndCondition @(
+        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, $name)),
+        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, $controlType)))
+    for ($i = 0; $i -lt 20; $i++) {
+        $el = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $cond)
+        if ($el) { return $el }
+        Start-Sleep -Milliseconds 250
+    }
+    throw "Controlul '$name' nu a fost găsit."
+}
+
 function Invoke-Element($el) {
     $el.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 }
@@ -183,8 +195,62 @@ if ($edit) {
     [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 }
 
-# Dialog custom (butonul Info afișează mesajul „În curând" în Faza 0)
-Invoke-Element (Find-ByName $root 'Informații')
+# ---- Faza 2: arbore foldere + filtrare, lightbox, Info, Opțiuni, logo ----
+$treeItem = [System.Windows.Automation.ControlType]::TreeItem
+$rootNode = Find-Control $root 'Poze' $treeItem
+$rootNode.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
+Start-Sleep -Milliseconds 600
+$subNode = Find-Control $root '2001' $treeItem
+$subNode.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+Start-Sleep -Seconds 1
+Save-Screen '10-tree-filter-dark'
+$filtered = (Get-GridItems $root).Items.Count
+Write-Host "Grid filtrat pe subfolderul 2001: $filtered elemente expuse"
+if ($filtered -ge 1500) { throw "Filtrarea după folder nu funcționează." }
+Invoke-Element (Find-Control $root 'Afișează toate pozele din bibliotecă' ([System.Windows.Automation.ControlType]::Button))
+Start-Sleep -Milliseconds 600
+
+# Lightbox: Enter pe poza selectată, apoi →, zoom, Esc
+$grid = Get-GridItems $root
+$grid.Items[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+$grid.Items[0].SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+Start-Sleep -Seconds 2
+Save-Screen '11-lightbox'
+[System.Windows.Forms.SendKeys]::SendWait('{RIGHT}')
+Start-Sleep -Seconds 1
+[System.Windows.Forms.SendKeys]::SendWait('{ADD}{ADD}')
+Start-Sleep -Milliseconds 800
+Save-Screen '12-lightbox-next-zoomed'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Milliseconds 800
+Assert-Alive $proc
+Save-Screen '13-details-after-lightbox'
+
+# Modal Info
+Invoke-Element (Find-Control $root 'Informații' ([System.Windows.Automation.ControlType]::Button))
+Start-Sleep -Milliseconds 800
+Save-Screen '14-info-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Milliseconds 500
+
+# Fereastra Opțiuni
+Invoke-Element (Find-Control $root 'Opțiuni' ([System.Windows.Automation.ControlType]::Button))
+Start-Sleep -Seconds 1
+Save-Screen '15-settings-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Milliseconds 500
+
+# Click pe logo → logo mare peste fundal blurat
+Invoke-Element (Find-Control $root 'PhotoVault' ([System.Windows.Automation.ControlType]::Button))
+Start-Sleep -Seconds 1
+Save-Screen '16-logo-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Milliseconds 500
+Assert-Alive $proc
+
+# Dialog custom (Redenumire batch afișează „În curând" până în Faza 5)
+Invoke-Element (Find-Control $root 'Redenumire batch' ([System.Windows.Automation.ControlType]::Button))
 Save-Screen '07-dialog-dark'
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Milliseconds 500
@@ -194,8 +260,14 @@ Assert-Alive $proc
 Invoke-Element (Find-ByName $root 'Comută pe tema luminoasă')
 Save-Screen '08-grid-light'
 
-Invoke-Element (Find-ByName $root 'Informații')
-Save-Screen '09-dialog-light'
+Invoke-Element (Find-Control $root 'Informații' ([System.Windows.Automation.ControlType]::Button))
+Start-Sleep -Milliseconds 800
+Save-Screen '09-info-light'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Milliseconds 500
+Invoke-Element (Find-Control $root 'Opțiuni' ([System.Windows.Automation.ControlType]::Button))
+Start-Sleep -Seconds 1
+Save-Screen '09b-settings-light'
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Milliseconds 500
 Assert-Alive $proc

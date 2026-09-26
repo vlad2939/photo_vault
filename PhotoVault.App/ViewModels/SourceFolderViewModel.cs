@@ -1,4 +1,3 @@
-using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhotoVault.App.Utils;
@@ -6,24 +5,23 @@ using PhotoVault.Core.Models;
 
 namespace PhotoVault.App.ViewModels;
 
-/// <summary>Un folder sursă din secțiunea Bibliotecă (Faza 2 îl extinde cu arborele de subfoldere).</summary>
-public partial class SourceFolderViewModel : ObservableObject
+/// <summary>Folder sursă = rădăcină în arborele Bibliotecă; re-scanare / eliminare din meniul contextual.</summary>
+public partial class SourceFolderViewModel : FolderNodeViewModel
 {
     private readonly FolderTreeViewModel _owner;
 
     public SourceFolderViewModel(SourceFolder folder, int photoCount, FolderTreeViewModel owner)
+        : base(folder.FolderPath)
     {
         _owner = owner;
         Id = folder.Id;
-        FolderPath = folder.FolderPath;
         PhotoCount = photoCount;
-        var name = Path.GetFileName(folder.FolderPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
-        DisplayName = string.IsNullOrEmpty(name) ? folder.FolderPath : name;   // ex. rădăcina unui disc „D:\"
     }
 
     public long Id { get; }
-    public string FolderPath { get; }
-    public string DisplayName { get; }
+    public string FolderPath => FullPath;
+    public string DisplayName => Name;
+    public override bool IsRoot => true;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PhotoCountText))]

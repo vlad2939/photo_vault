@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Windows;
 using PhotoVault.App.Controls;
 using PhotoVault.App.ViewModels;
 
@@ -11,13 +12,21 @@ public partial class MainWindow : ThemedWindow
         InitializeComponent();
         Loaded += async (_, _) =>
         {
-            if (DataContext is MainViewModel vm) await vm.InitializeAsync();
+            if (ViewModel is { } vm) await vm.InitializeAsync();
         };
+    }
+
+    private MainViewModel? ViewModel => DataContext as MainViewModel;
+
+    /// <summary>TreeView.SelectedItem nu e bindabil → selecția e transmisă explicit ViewModel-ului.</summary>
+    private void OnFolderSelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+        if (ViewModel is { } vm && e.NewValue is FolderNodeViewModel node) vm.Library.SelectedFolder = node;
     }
 
     protected override void OnClosing(CancelEventArgs e)
     {
-        (DataContext as MainViewModel)?.Shutdown();
+        ViewModel?.Shutdown();
         base.OnClosing(e);
     }
 }

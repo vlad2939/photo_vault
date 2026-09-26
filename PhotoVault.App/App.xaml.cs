@@ -50,12 +50,14 @@ public partial class App : Application
         Loc.Apply(settings.Current.Language);
         ThemeManager.Instance.Initialize(settings.Current.Theme, settings.Current.AccentColor);
 
-        var thumbnails = new ThumbnailService(paths.ThumbnailsDirectory, new MetadataService());
+        var metadata = new MetadataService();
+        var thumbnails = new ThumbnailService(paths.ThumbnailsDirectory, metadata);
         var index = new PhotoIndexService(new SourceFolderRepository(database), new PhotoRepository(database), thumbnails);
 
         var mainWindow = new MainWindow
         {
-            DataContext = new MainViewModel(settings, ThemeManager.Instance, _dialogs, index, thumbnails, new FolderPicker())
+            DataContext = new MainViewModel(settings, ThemeManager.Instance, _dialogs, new WindowService(metadata),
+                index, thumbnails, metadata, new FolderPicker())
         };
         MainWindow = mainWindow;
         mainWindow.Show();

@@ -61,5 +61,43 @@
     <sys:String x:Key="Str.Status.IndexDone">Indexare finalizată: {0} poze noi</sys:String>
     <sys:String x:Key="Str.Status.RescanDone">Re-scanare finalizată: {0} poze noi, {1} eliminate</sys:String>
     <sys:String x:Key="Str.Status.Removed">Folderul „{0}” a fost eliminat din bibliotecă</sys:String>
+    <sys:String x:Key="Str.Library.ShowAll">Afișează toate pozele din bibliotecă</sys:String>
+    <sys:String x:Key="Str.Grid.FolderEmpty">Folderul selectat nu conține poze.</sys:String>
+    <sys:String x:Key="Str.Details.Path">Cale completă</sys:String>
+    <sys:String x:Key="Str.Details.Size">Dimensiune</sys:String>
+    <sys:String x:Key="Str.Details.Extension">Extensie</sys:String>
+    <sys:String x:Key="Str.Details.Dimensions">Dimensiuni</sys:String>
+    <sys:String x:Key="Str.Details.DateTaken">Data fotografierii</sys:String>
+    <sys:String x:Key="Str.Details.Camera">Model cameră</sys:String>
+    <sys:String x:Key="Str.Details.Lens">Obiectiv</sys:String>
+    <sys:String x:Key="Str.Details.Iso">ISO</sys:String>
+    <sys:String x:Key="Str.Details.Exposure">Timp expunere</sys:String>
+    <sys:String x:Key="Str.Details.Aperture">Diafragmă</sys:String>
+    <sys:String x:Key="Str.Details.FocalLength">Distanță focală</sys:String>
+    <sys:String x:Key="Str.Details.NoTags">Niciun tag atribuit.</sys:String>
+    <sys:String x:Key="Str.Lightbox.Back">Înapoi la galerie</sys:String>
+    <sys:String x:Key="Str.Lightbox.Previous">Poza anterioară (←)</sys:String>
+    <sys:String x:Key="Str.Lightbox.Next">Poza următoare (→)</sys:String>
+    <sys:String x:Key="Str.Lightbox.ZoomIn">Mărește (+)</sys:String>
+    <sys:String x:Key="Str.Lightbox.ZoomOut">Micșorează (−)</sys:String>
+    <sys:String x:Key="Str.Lightbox.Fit">Potrivire în ecran (0)</sys:String>
+    <sys:String x:Key="Str.Lightbox.ActualSize">Dimensiune reală 1:1 (1)</sys:String>
+    <sys:String x:Key="Str.Lightbox.Close">Închide (Esc)</sys:String>
+    <sys:String x:Key="Str.Lightbox.LoadFailed">Imaginea nu poate fi afișată.</sys:String>
+    <sys:String x:Key="Str.Dialog.Close">Închide</sys:String>
+    <sys:String x:Key="Str.Info.Version">Versiunea {0}</sys:String>
+    <sys:String x:Key="Str.Info.Author">Autor: vlad39</sys:String>
+    <sys:String x:Key="Str.Info.HowTo">Cum se folosește</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Adaugă un folder cu poze cu butonul + din secțiunea Bibliotecă; aplicația îl indexează, cu tot cu subfolderele, fără să modifice sau să copieze fișierele.|Selectează un folder din arbore pentru a vedea doar pozele lui (inclusiv subfolderele); click pe titlul „Bibliotecă” afișează din nou toate pozele.|Dublu-click pe o poză (sau Enter) o deschide pe tot ecranul; zoom cu rotița mouse-ului, deplasare prin tragere.|Click dreapta pe un folder sursă: Re-scanează (poze noi / șterse) sau Elimină din bibliotecă.|Folderele sursă și tema se gestionează și din Opțiuni (iconița roată).</sys:String>
+    <sys:String x:Key="Str.Info.Shortcuts">Scurtături de tastatură</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Deschide poza selectată pe tot ecranul|Esc=Închide vizualizarea pe tot ecranul / modalul logo / acest modal|← / →=Poza anterioară / următoare (pe tot ecranul)|Home / End=Prima / ultima poză (pe tot ecranul)|+ / −=Mărește / micșorează (pe tot ecranul)|0=Potrivire în ecran|1=Dimensiune reală (1:1)|Ctrl+A=Selectează toate pozele din grid</sys:String>
+    <sys:String x:Key="Str.Settings.Title">Opțiuni</sys:String>
+    <sys:String x:Key="Str.Settings.SourceFolders">Foldere sursă</sys:String>
+    <sys:String x:Key="Str.Settings.SourceFoldersHint">Folderele de pe disc indexate de PhotoVault. Re-scanarea detectează pozele noi și le elimină din index pe cele șterse; eliminarea unui folder nu atinge fișierele de pe disc.</sys:String>
+    <sys:String x:Key="Str.Settings.Appearance">Aspect</sys:String>
+    <sys:String x:Key="Str.Settings.ThemeDark">Temă întunecată</sys:String>
+    <sys:String x:Key="Str.Settings.ThemeLight">Temă luminoasă</sys:String>
+    <sys:String x:Key="Str.Settings.MoreSoon">Setările pentru slideshow, culoarea de accent și limba interfeței vor apărea aici în fazele următoare.</sys:String>
+    <sys:String x:Key="Str.Placeholder.BatchRename">Modulul de redenumire batch (cu previzualizarea numelor noi) va fi disponibil în Faza 5.</sys:String>
 
 </ResourceDictionary>

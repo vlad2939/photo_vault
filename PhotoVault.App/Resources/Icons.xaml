@@ -23,6 +23,13 @@
     <sys:String x:Key="Icon.Photo">&#xEB9F;</sys:String>
     <sys:String x:Key="Icon.Refresh">&#xE72C;</sys:String>
     <sys:String x:Key="Icon.Delete">&#xE74D;</sys:String>
+    <sys:String x:Key="Icon.ChevronLeft">&#xE76B;</sys:String>
+    <sys:String x:Key="Icon.Back">&#xE72B;</sys:String>
+    <sys:String x:Key="Icon.ZoomIn">&#xE8A3;</sys:String>
+    <sys:String x:Key="Icon.ZoomOut">&#xE71F;</sys:String>
+    <sys:String x:Key="Icon.FitScreen">&#xE9A6;</sys:String>
+    <sys:String x:Key="Icon.Close">&#xE711;</sys:String>
+    <sys:String x:Key="Icon.Keyboard">&#xE765;</sys:String>
     <sys:String x:Key="Icon.ChevronDown">&#xE70D;</sys:String>
     <sys:String x:Key="Icon.ChevronRight">&#xE76C;</sys:String>
 

@@ -1,3 +1,5 @@
+using PhotoVault.Core.Models;
+
 namespace PhotoVault.Core.Services;
 
 /// <summary>Metadatele EXIF de care are nevoie aplicația.</summary>
@@ -10,4 +12,7 @@ public interface IMetadataService
 {
     /// <summary>Citește metadatele; la fișiere ilizibile întoarce valori implicite.</summary>
     PhotoMetadata Read(string path);
+
+    /// <summary>Dimensiuni (orientate corect) + EXIF de bază pentru panoul de detalii.</summary>
+    PhotoDetails ReadDetails(string path);
 }

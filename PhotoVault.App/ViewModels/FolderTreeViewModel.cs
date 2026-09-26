@@ -37,6 +37,23 @@ public partial class FolderTreeViewModel : ObservableObject
     [ObservableProperty]
     public partial bool HasFolders { get; set; }
 
+    /// <summary>Folderul selectat în arbore; null = toate pozele din bibliotecă.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsShowingAll))]
+    public partial FolderNodeViewModel? SelectedFolder { get; set; }
+
+    public bool IsShowingAll => SelectedFolder is null;
+
+    partial void OnSelectedFolderChanged(FolderNodeViewModel? value) => _grid.SetFolderFilter(value?.FullPath);
+
+    /// <summary>Click pe titlul „Bibliotecă": renunță la filtru, afișează toate pozele.</summary>
+    [RelayCommand]
+    private void ShowAll()
+    {
+        if (SelectedFolder is not null) SelectedFolder.IsSelected = false;
+        SelectedFolder = null;
+    }
+
     /// <summary>Încărcarea inițială, la pornire: foldere + poze din index, apoi miniaturile rămase negenerate.</summary>
     public async Task InitializeAsync()
     {
@@ -131,12 +148,21 @@ public partial class FolderTreeViewModel : ObservableObject
         var (folders, counts, photos) = await Task.Run(() =>
             (_index.GetSourceFolders(), _index.GetPhotoCounts(), _index.GetAllPhotos()));
 
+        // Arborele se reconstruiește; selecția se păstrează dacă folderul selectat era o rădăcină încă existentă
+        var selectedPath = SelectedFolder?.FullPath;
         Folders.Clear();
         foreach (var folder in folders)
             Folders.Add(new SourceFolderViewModel(folder, counts.GetValueOrDefault(folder.Id), this));
         HasFolders = Folders.Count > 0;
 
         _grid.Load(photos);
+
+        // Un subfolder selectat anterior revine la rădăcina lui (arborele e recreat, restrâns)
+        var reselect = selectedPath is null ? null : Folders.FirstOrDefault(f =>
+            selectedPath.StartsWith(f.FullPath.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(f.FullPath, selectedPath, StringComparison.OrdinalIgnoreCase));
+        if (reselect is not null) reselect.IsSelected = true;
+        SelectedFolder = reselect;
     }
 
     private async void StartThumbnails()

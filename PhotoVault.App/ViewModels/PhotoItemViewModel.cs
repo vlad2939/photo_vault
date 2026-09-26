@@ -21,10 +21,14 @@ public partial class PhotoItemViewModel : ObservableObject
         ThumbnailAbsolutePath = thumbnailAbsolutePath;
     }
 
+    public PhotoItem Model => _photo;
     public long Id => _photo.Id;
     public long SourceFolderId => _photo.SourceFolderId;
     public string FileName => _photo.FileName;
     public string FullPath => _photo.FullPath;
+    public string Extension => _photo.Extension;
+    public long? FileSizeBytes => _photo.FileSizeBytes;
+    public int RotationDegrees => _photo.RotationDegrees;
 
     /// <summary>Eticheta de format de pe card (JPG, PNG, CR2...).</summary>
     public string FormatLabel => _photo.Extension == "jpeg" ? "JPG" : _photo.Extension.ToUpperInvariant();

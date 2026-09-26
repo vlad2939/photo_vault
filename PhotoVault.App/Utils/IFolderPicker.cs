@@ -14,6 +14,8 @@ public sealed class FolderPicker : IFolderPicker
     public string? PickFolder(string title)
     {
         var dialog = new OpenFolderDialog { Title = title, Multiselect = false };
-        return dialog.ShowDialog(System.Windows.Application.Current.MainWindow) == true ? dialog.FolderName : null;
+        var app = System.Windows.Application.Current;
+        var owner = app.Windows.OfType<System.Windows.Window>().FirstOrDefault(w => w.IsActive) ?? app.MainWindow;
+        return dialog.ShowDialog(owner) == true ? dialog.FolderName : null;
     }
 }
