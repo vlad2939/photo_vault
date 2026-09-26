@@ -1,0 +1,10 @@
+bin/
+obj/
+publish/
+.vs/
+*.user
+*.suo
+TestResults/
+# Date generate la rulare (bază de date, cache thumbnails, log-uri)
+data/
+logs/

@@ -1,0 +1,45 @@
+<!--
+    Texte UI — English. Consumate în XAML prin DynamicResource și din cod prin Loc.Get(cheie).
+    Ambele fișiere trebuie să conțină exact aceleași chei.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="Str.Toolbar.BatchRename">Batch rename</sys:String>
+    <sys:String x:Key="Str.Toolbar.Info">About</sys:String>
+    <sys:String x:Key="Str.Toolbar.Settings">Options</sys:String>
+    <sys:String x:Key="Str.Toolbar.ThemeToLight">Switch to light theme</sys:String>
+    <sys:String x:Key="Str.Toolbar.ThemeToDark">Switch to dark theme</sys:String>
+    <sys:String x:Key="Str.Toolbar.Logo">PhotoVault</sys:String>
+    <sys:String x:Key="Str.Library">Library</sys:String>
+    <sys:String x:Key="Str.Albums">Albums</sys:String>
+    <sys:String x:Key="Str.Tags">Tags</sys:String>
+    <sys:String x:Key="Str.Library.Empty">No source folders added yet.</sys:String>
+    <sys:String x:Key="Str.Albums.Empty">No albums yet.</sys:String>
+    <sys:String x:Key="Str.Tags.Empty">No tags yet.</sys:String>
+    <sys:String x:Key="Str.Albums.Add">New album</sys:String>
+    <sys:String x:Key="Str.Tags.Add">New tag</sys:String>
+    <sys:String x:Key="Str.Search.Placeholder">Search...</sys:String>
+    <sys:String x:Key="Str.Sort.NameAsc">Sort by: Name (A → Z)</sys:String>
+    <sys:String x:Key="Str.Sort.NameDesc">Sort by: Name (Z → A)</sys:String>
+    <sys:String x:Key="Str.Grid.Empty.Title">No photos indexed yet</sys:String>
+    <sys:String x:Key="Str.Grid.Empty.Subtitle">Photos from your source folders will appear here.</sys:String>
+    <sys:String x:Key="Str.Details.Title">Details</sys:String>
+    <sys:String x:Key="Str.Details.Empty">Select a photo or an album</sys:String>
+    <sys:String x:Key="Str.Footer.Credit">© concept și realizare vlad39</sys:String>
+    <sys:String x:Key="Str.Dialog.Ok">OK</sys:String>
+    <sys:String x:Key="Str.Dialog.Cancel">Cancel</sys:String>
+    <sys:String x:Key="Str.Dialog.Yes">Yes</sys:String>
+    <sys:String x:Key="Str.Dialog.No">No</sys:String>
+    <sys:String x:Key="Str.Dialog.ErrorTitle">An error occurred</sys:String>
+    <sys:String x:Key="Str.Dialog.UnexpectedError">An unexpected error occurred. Technical details were saved in the application's “logs” folder.</sys:String>
+    <sys:String x:Key="Str.Dialog.StartupError">The database could not be initialized. Make sure the application folder is writable (e.g. not running from read-only media).</sys:String>
+    <sys:String x:Key="Str.Placeholder.Title">Coming soon</sys:String>
+    <sys:String x:Key="Str.Placeholder.Message">This feature will be available in an upcoming development phase.</sys:String>
+    <sys:String x:Key="Str.Edit.Cut">Cut</sys:String>
+    <sys:String x:Key="Str.Edit.Copy">Copy</sys:String>
+    <sys:String x:Key="Str.Edit.Paste">Paste</sys:String>
+    <sys:String x:Key="Str.Edit.SelectAll">Select all</sys:String>
+
+</ResourceDictionary>

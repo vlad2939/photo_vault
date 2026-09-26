@@ -1,0 +1,76 @@
+<!--
+    Dialog modal reutilizabil (§5.1): înlocuiește MessageBox.Show().
+    Se afișează ca overlay semi-transparent peste zona client a ferestrei părinte,
+    cu un card centrat (iconiță de stare, titlu, mesaj, butoane).
+-->
+<Window x:Class="PhotoVault.App.Views.CustomDialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ResizeMode="NoResize" ShowInTaskbar="False" ShowActivated="True"
+        UseLayoutRounding="True"
+        FontFamily="{DynamicResource Font.Text}" FontSize="{DynamicResource FontSize.Body}"
+        Foreground="{DynamicResource Brush.Text.Primary}"
+        TextOptions.TextFormattingMode="Ideal">
+
+    <Grid>
+        <!-- Overlay peste fereastra părinte -->
+        <Border x:Name="Overlay" Background="{DynamicResource Brush.Overlay}" Opacity="0" />
+
+        <!-- Cardul dialogului -->
+        <Grid x:Name="Card" MinWidth="380" MaxWidth="500" Margin="24"
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              RenderTransformOrigin="0.5,0.5" Opacity="0">
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="CardScale" ScaleX="0.95" ScaleY="0.95" />
+            </Grid.RenderTransform>
+
+            <Border CornerRadius="{DynamicResource Radius.Dialog}" Background="{DynamicResource Brush.Panel.Background}">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="30" ShadowDepth="6" Direction="270" Opacity="0.35"
+                                      Color="{DynamicResource Color.Shadow}" />
+                </Border.Effect>
+            </Border>
+            <Border CornerRadius="{DynamicResource Radius.Dialog}"
+                    Background="{DynamicResource Brush.Panel.Background}"
+                    BorderBrush="{DynamicResource Brush.Panel.Border}" BorderThickness="1"
+                    Padding="24,22,24,20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Iconiță de stare: cerc colorat + simbol vectorial -->
+                    <Grid Width="36" Height="36" VerticalAlignment="Top" Margin="0,0,14,0">
+                        <Ellipse x:Name="IconBadge" />
+                        <Path x:Name="IconSymbol" Stroke="White" StrokeThickness="2.6"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+                    </Grid>
+
+                    <TextBlock x:Name="TitleText" Grid.Column="1" VerticalAlignment="Center"
+                               Style="{StaticResource Text.Title}" FontSize="17" TextWrapping="Wrap" TextTrimming="None" />
+
+                    <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" MaxHeight="360"
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <TextBlock x:Name="MessageText" TextWrapping="Wrap" LineHeight="20"
+                                   Foreground="{DynamicResource Brush.Text.Secondary}" />
+                    </ScrollViewer>
+
+                    <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,22,0,0"
+                                Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="SecondaryButton" Style="{StaticResource Button.Secondary}"
+                                Margin="0,0,10,0" Click="OnSecondaryClick" />
+                        <Button x:Name="PrimaryButton" Style="{StaticResource Button.Primary}"
+                                IsDefault="True" Click="OnPrimaryClick" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
