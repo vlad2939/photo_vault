@@ -32,3 +32,31 @@ jobs:
         with:
           name: screenshots
           path: artifacts/
+
+      - name: Publicare versiune portabilă (self-contained, un singur .exe)
+        run: >
+          dotnet publish PhotoVault.App -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true -p:DebugType=None -o publish/PhotoVault
+
+      - name: README.txt pentru folderul portabil
+        shell: powershell
+        run: |
+          @"
+          PhotoVault - aplicatie portabila
+
+          1. Dezarhiveaza folderul PhotoVault oriunde (Desktop, alt disc, stick USB).
+          2. Porneste PhotoVault.exe (dublu-click). Nu necesita instalare si nici .NET.
+          3. La prima pornire se creeaza automat folderul data\ (baza de date).
+
+          Daca Windows afiseaza "Windows protected your PC" (SmartScreen):
+          apasa "More info" -> "Run anyway" (executabilul nu este semnat digital).
+
+          (c) concept si realizare vlad39
+          "@ | Set-Content -Encoding UTF8 publish/PhotoVault/README.txt
+
+      - name: Upload versiune portabilă
+        uses: actions/upload-artifact@v4
+        with:
+          name: PhotoVault-portabil-win-x64
+          path: publish/
