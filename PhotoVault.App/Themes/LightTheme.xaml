@@ -1,0 +1,60 @@
+<!--
+    Tema luminoasă. Aceleași chei ca în DarkTheme.xaml, valori diferite.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:Boolean x:Key="Theme.IsDark">False</sys:Boolean>
+
+    <!-- Culori brute (folosite și din cod: title bar DWM, umbre) -->
+    <Color x:Key="Color.TitleBar">#F6F7F9</Color>
+    <Color x:Key="Color.TitleBarText">#111B2B</Color>
+    <Color x:Key="Color.Shadow">#1A2433</Color>
+    <sys:Double x:Key="Shadow.Opacity">0.10</sys:Double>
+
+    <!-- Suprafețe -->
+    <SolidColorBrush x:Key="Brush.Window.Background" Color="#ECEEF1" />
+    <SolidColorBrush x:Key="Brush.Bar.Background" Color="#F6F7F9" />
+    <SolidColorBrush x:Key="Brush.Panel.Background" Color="#FAFBFC" />
+    <SolidColorBrush x:Key="Brush.Panel.Border" Color="#E0E3E8" />
+    <SolidColorBrush x:Key="Brush.Card.Background" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Brush.Surface" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Brush.Surface.Hover" Color="#FDFDFE" />
+    <SolidColorBrush x:Key="Brush.Divider" Color="#E4E7EB" />
+
+    <!-- Controale -->
+    <SolidColorBrush x:Key="Brush.Control.Border" Color="#DADEE4" />
+    <SolidColorBrush x:Key="Brush.Control.Border.Hover" Color="#BFC5CE" />
+    <SolidColorBrush x:Key="Brush.Control.Background" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Brush.Control.Background.Hover" Color="#F3F5F7" />
+    <SolidColorBrush x:Key="Brush.Hover" Color="#0F0A1628" />
+    <SolidColorBrush x:Key="Brush.Pressed" Color="#1C0A1628" />
+
+    <!-- Text și iconițe -->
+    <SolidColorBrush x:Key="Brush.Text.Primary" Color="#111B2B" />
+    <SolidColorBrush x:Key="Brush.Text.Secondary" Color="#5B6472" />
+    <SolidColorBrush x:Key="Brush.Text.Tertiary" Color="#9AA1AC" />
+    <SolidColorBrush x:Key="Brush.Icon" Color="#2B3441" />
+
+    <!-- Scrollbar -->
+    <SolidColorBrush x:Key="Brush.ScrollThumb" Color="#C6CBD2" />
+    <SolidColorBrush x:Key="Brush.ScrollThumb.Hover" Color="#A5ACB6" />
+
+    <!-- Popup-uri: meniuri, dropdown-uri, tooltip-uri -->
+    <SolidColorBrush x:Key="Brush.Popup.Background" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Brush.Popup.Border" Color="#DDE1E6" />
+
+    <!-- Overlay modal (dialoguri) -->
+    <SolidColorBrush x:Key="Brush.Overlay" Color="#661A2230" />
+
+    <!-- Progres -->
+    <SolidColorBrush x:Key="Brush.Progress.Track" Color="#E2E6EA" />
+
+    <!-- Culori de stare (dialoguri) -->
+    <SolidColorBrush x:Key="Brush.Status.Info" Color="#2F7FE8" />
+    <SolidColorBrush x:Key="Brush.Status.Success" Color="#23A15A" />
+    <SolidColorBrush x:Key="Brush.Status.Warning" Color="#E09B12" />
+    <SolidColorBrush x:Key="Brush.Status.Error" Color="#DC3C42" />
+
+</ResourceDictionary>

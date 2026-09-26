@@ -1,0 +1,34 @@
+name: Windows build & UI smoke test
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build (toată soluția)
+        run: dotnet build PhotoVault.sln -c Release
+
+      - name: Teste unitare
+        run: dotnet test PhotoVault.Tests -c Release --no-build
+
+      - name: Smoke test UI (pornire aplicație + capturi de ecran)
+        shell: powershell
+        run: ./.github/scripts/smoke-test.ps1 -Exe "PhotoVault.App/bin/Release/net10.0-windows/PhotoVault.exe" -OutDir "artifacts"
+
+      - name: Upload capturi de ecran
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: artifacts/

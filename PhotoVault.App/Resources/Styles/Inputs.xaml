@@ -1,0 +1,494 @@
+<!--
+    Controale de input: TextBox, ComboBox, CheckBox, RadioButton, Slider, ProgressBar.
+    Toate cu colțuri rotunjite, accent pe focus/selecție și tranziții scurte.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ctl="clr-namespace:PhotoVault.App.Controls">
+
+    <!-- ============================ TextBox ============================ -->
+    <!-- Meniu contextual stilizat (cel implicit al TextBox-ului nu poate fi restilizat) -->
+    <ContextMenu x:Key="TextBox.ContextMenu" x:Shared="False">
+        <MenuItem Command="ApplicationCommands.Cut" Header="{DynamicResource Str.Edit.Cut}" />
+        <MenuItem Command="ApplicationCommands.Copy" Header="{DynamicResource Str.Edit.Copy}" />
+        <MenuItem Command="ApplicationCommands.Paste" Header="{DynamicResource Str.Edit.Paste}" />
+        <Separator />
+        <MenuItem Command="ApplicationCommands.SelectAll" Header="{DynamicResource Str.Edit.SelectAll}" />
+    </ContextMenu>
+    <Style TargetType="TextBox">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Background" Value="{DynamicResource Brush.Surface}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Brush.Control.Border}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource Brush.Text.Primary}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource Brush.Accent}" />
+        <Setter Property="SelectionOpacity" Value="0.35" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="MinHeight" Value="38" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font.Text}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize.Body}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
+        <Setter Property="AllowDrop" Value="True" />
+        <Setter Property="ContextMenu" Value="{StaticResource TextBox.ContextMenu}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Chrome" CornerRadius="{DynamicResource Radius.Control}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <Grid Margin="{TemplateBinding Padding}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="Placeholder" Margin="2,0,0,0"
+                                       Text="{TemplateBinding ctl:InputHelper.Placeholder}"
+                                       Foreground="{DynamicResource Brush.Text.Tertiary}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       IsHitTestVisible="False" Visibility="Collapsed" />
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <TextBlock x:Name="Icon" Grid.Column="1" Margin="8,0,0,0"
+                                       Text="{TemplateBinding ctl:InputHelper.Icon}"
+                                       FontFamily="{DynamicResource Font.Icons}" FontSize="15"
+                                       Foreground="{DynamicResource Brush.Text.Secondary}"
+                                       VerticalAlignment="Center" IsHitTestVisible="False" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Placeholder" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="ctl:InputHelper.Icon" Value="">
+                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brush.Control.Border.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
+                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource Brush.Accent}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================ ComboBox ============================ -->
+    <ControlTemplate x:Key="ComboBox.ToggleTemplate" TargetType="ToggleButton">
+        <Border x:Name="Chrome" CornerRadius="{DynamicResource Radius.Control}"
+                Background="{DynamicResource Brush.Surface}"
+                BorderBrush="{DynamicResource Brush.Control.Border}"
+                BorderThickness="1" SnapsToDevicePixels="True">
+            <Path x:Name="Arrow" Data="{DynamicResource Geometry.Chevron}"
+                  Stroke="{DynamicResource Brush.Text.Secondary}" StrokeThickness="1.4"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,2,14,0"
+                  RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <RotateTransform x:Name="ArrowRotation" />
+                </Path.RenderTransform>
+            </Path>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brush.Control.Border.Hover}" />
+                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Brush.Surface.Hover}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="ArrowRotation" Storyboard.TargetProperty="Angle" To="180" Duration="0:0:0.15" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="ArrowRotation" Storyboard.TargetProperty="Angle" To="0" Duration="0:0:0.15" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style TargetType="ComboBox">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusVisual.Rounded}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font.Text}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize.Body}" />
+        <Setter Property="MinHeight" Value="38" />
+        <Setter Property="Padding" Value="12,0,36,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton x:Name="Toggle" Template="{StaticResource ComboBox.ToggleTemplate}"
+                                      Focusable="False" ClickMode="Press"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" />
+                        <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                                          Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="Left" VerticalAlignment="Center"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                          ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" />
+                        <Popup x:Name="PART_Popup" Placement="Bottom" VerticalOffset="4" HorizontalOffset="-10"
+                               IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"
+                               Focusable="False" PopupAnimation="Fade">
+                            <!-- Marginea lasă loc umbrei în interiorul popup-ului transparent -->
+                            <Grid Margin="10,0,10,14" SnapsToDevicePixels="True"
+                                  MinWidth="{Binding ActualWidth, ElementName=Toggle}"
+                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border CornerRadius="{DynamicResource Radius.Control}"
+                                        Background="{DynamicResource Brush.Popup.Background}">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="14" ShadowDepth="3" Direction="270"
+                                                          Color="{DynamicResource Color.Shadow}"
+                                                          Opacity="{DynamicResource Shadow.Opacity}" />
+                                    </Border.Effect>
+                                </Border>
+                                <Border CornerRadius="{DynamicResource Radius.Control}"
+                                        Background="{DynamicResource Brush.Popup.Background}"
+                                        BorderBrush="{DynamicResource Brush.Popup.Border}"
+                                        BorderThickness="1" Padding="4">
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter TargetName="PART_Popup" Property="MinHeight" Value="40" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}" />
+        <Setter Property="Padding" Value="10,8" />
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Grid>
+                        <Border x:Name="Chrome" CornerRadius="{DynamicResource Radius.Small}" Background="Transparent" />
+                        <Border x:Name="Marker" Width="3" Height="14" CornerRadius="1.5" HorizontalAlignment="Left"
+                                Background="{DynamicResource Brush.Accent}" Visibility="Collapsed" />
+                        <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Brush.Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Brush.Accent.Subtle}" />
+                            <Setter TargetName="Marker" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================ CheckBox ============================ -->
+    <Style TargetType="CheckBox">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusVisual.Rounded}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font.Text}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize.Body}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="20" Height="20" VerticalAlignment="Center">
+                            <Border x:Name="Box" CornerRadius="5" BorderThickness="1.5"
+                                    Background="{DynamicResource Brush.Surface}"
+                                    BorderBrush="{DynamicResource Brush.Control.Border.Hover}" />
+                            <Border x:Name="Fill" CornerRadius="5" Background="{DynamicResource Brush.Accent}" Opacity="0" />
+                            <Path x:Name="Check" Data="{DynamicResource Geometry.Check}"
+                                  Stroke="{DynamicResource Brush.Accent.Foreground}" StrokeThickness="2"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0" />
+                            <Border x:Name="Dash" Width="10" Height="2" CornerRadius="1"
+                                    Background="{DynamicResource Brush.Accent.Foreground}" Visibility="Collapsed" />
+                        </Grid>
+                        <ContentPresenter Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Fill" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+                                        <DoubleAnimation Storyboard.TargetName="Check" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Fill" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.12" />
+                                        <DoubleAnimation Storyboard.TargetName="Check" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="{x:Null}">
+                            <Setter TargetName="Fill" Property="Opacity" Value="1" />
+                            <Setter TargetName="Dash" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================ RadioButton ============================ -->
+    <Style TargetType="RadioButton">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusVisual.Rounded}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font.Text}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize.Body}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="20" Height="20" VerticalAlignment="Center">
+                            <Ellipse x:Name="Ring" StrokeThickness="1.5"
+                                     Fill="{DynamicResource Brush.Surface}"
+                                     Stroke="{DynamicResource Brush.Control.Border.Hover}" />
+                            <Ellipse x:Name="Dot" Width="10" Height="10" Fill="{DynamicResource Brush.Accent}"
+                                     RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform>
+                                    <ScaleTransform x:Name="DotScale" ScaleX="0" ScaleY="0" />
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                        </Grid>
+                        <ContentPresenter Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Ring" Property="Stroke" Value="{DynamicResource Brush.Accent}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Ring" Property="Stroke" Value="{DynamicResource Brush.Accent}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="DotScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.12" />
+                                        <DoubleAnimation Storyboard.TargetName="DotScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="DotScale" Storyboard.TargetProperty="ScaleX" To="0" Duration="0:0:0.12" />
+                                        <DoubleAnimation Storyboard.TargetName="DotScale" Storyboard.TargetProperty="ScaleY" To="0" Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================ Slider ============================ -->
+    <!-- Track subțire, thumb rotunjit în culoarea accentului, valoarea afișată în tooltip (§5.2) -->
+    <Style x:Key="Slider.TrackButton" TargetType="RepeatButton">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="Transparent">
+                        <Border Height="4" CornerRadius="2" VerticalAlignment="Center" Background="{TemplateBinding Background}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Slider.Thumb" TargetType="Thumb">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Width" Value="18" />
+        <Setter Property="Height" Value="18" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Grid RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="ThumbScale" />
+                        </Grid.RenderTransform>
+                        <Ellipse Fill="{DynamicResource Brush.Accent}" />
+                        <Ellipse Margin="5" Fill="{DynamicResource Brush.Accent.Foreground}" Opacity="0.95" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleX" To="1.15" Duration="0:0:0.12" />
+                                        <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleY" To="1.15" Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.12" />
+                                        <DoubleAnimation Storyboard.TargetName="ThumbScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Slider">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="IsMoveToPointEnabled" Value="True" />
+        <Setter Property="AutoToolTipPlacement" Value="TopLeft" />
+        <Setter Property="AutoToolTipPrecision" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid Background="Transparent">
+                        <Border Height="4" CornerRadius="2" VerticalAlignment="Center"
+                                Background="{DynamicResource Brush.Progress.Track}" />
+                        <Track x:Name="PART_Track">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource Slider.TrackButton}" Command="Slider.DecreaseLarge"
+                                              Background="{DynamicResource Brush.Accent}" />
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource Slider.TrackButton}" Command="Slider.IncreaseLarge"
+                                              Background="Transparent" />
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource Slider.Thumb}" />
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================ ProgressBar ============================ -->
+    <Style TargetType="ProgressBar">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Height" Value="6" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Accent}" />
+        <Setter Property="Background" Value="{DynamicResource Brush.Progress.Track}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ProgressBar">
+                    <Grid x:Name="TemplateRoot" SnapsToDevicePixels="True">
+                        <Border x:Name="PART_Track" CornerRadius="3" Background="{TemplateBinding Background}" />
+                        <Border x:Name="PART_Indicator" CornerRadius="3" HorizontalAlignment="Left"
+                                Background="{TemplateBinding Foreground}" />
+                        <!-- Stare nedeterminată: segment care alunecă pe track -->
+                        <Canvas x:Name="IndeterminateRoot" ClipToBounds="True" Visibility="Collapsed">
+                            <Border x:Name="Runner" Width="90" CornerRadius="3" Background="{TemplateBinding Foreground}"
+                                    Height="{Binding ActualHeight, ElementName=TemplateRoot}">
+                                <Border.RenderTransform>
+                                    <TranslateTransform x:Name="RunnerOffset" X="-90" />
+                                </Border.RenderTransform>
+                            </Border>
+                        </Canvas>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsIndeterminate" Value="True">
+                            <Setter TargetName="PART_Indicator" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="IndeterminateRoot" Property="Visibility" Value="Visible" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="IndeterminateStoryboard">
+                                    <Storyboard RepeatBehavior="Forever">
+                                        <DoubleAnimation Storyboard.TargetName="RunnerOffset" Storyboard.TargetProperty="X"
+                                                         From="-90" To="400" Duration="0:0:1.4" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="IndeterminateStoryboard" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

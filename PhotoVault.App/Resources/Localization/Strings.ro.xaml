@@ -1,0 +1,45 @@
+<!--
+    Texte UI — Română. Consumate în XAML prin DynamicResource și din cod prin Loc.Get(cheie).
+    Ambele fișiere trebuie să conțină exact aceleași chei.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="Str.Toolbar.BatchRename">Redenumire batch</sys:String>
+    <sys:String x:Key="Str.Toolbar.Info">Informații</sys:String>
+    <sys:String x:Key="Str.Toolbar.Settings">Opțiuni</sys:String>
+    <sys:String x:Key="Str.Toolbar.ThemeToLight">Comută pe tema luminoasă</sys:String>
+    <sys:String x:Key="Str.Toolbar.ThemeToDark">Comută pe tema întunecată</sys:String>
+    <sys:String x:Key="Str.Toolbar.Logo">PhotoVault</sys:String>
+    <sys:String x:Key="Str.Library">Bibliotecă</sys:String>
+    <sys:String x:Key="Str.Albums">Albume</sys:String>
+    <sys:String x:Key="Str.Tags">Tag-uri</sys:String>
+    <sys:String x:Key="Str.Library.Empty">Niciun folder sursă adăugat încă.</sys:String>
+    <sys:String x:Key="Str.Albums.Empty">Niciun album creat.</sys:String>
+    <sys:String x:Key="Str.Tags.Empty">Niciun tag creat.</sys:String>
+    <sys:String x:Key="Str.Albums.Add">Album nou</sys:String>
+    <sys:String x:Key="Str.Tags.Add">Tag nou</sys:String>
+    <sys:String x:Key="Str.Search.Placeholder">Caută...</sys:String>
+    <sys:String x:Key="Str.Sort.NameAsc">Sortează după: Nume (A → Z)</sys:String>
+    <sys:String x:Key="Str.Sort.NameDesc">Sortează după: Nume (Z → A)</sys:String>
+    <sys:String x:Key="Str.Grid.Empty.Title">Nicio poză indexată încă</sys:String>
+    <sys:String x:Key="Str.Grid.Empty.Subtitle">Pozele din folderele sursă adăugate vor apărea aici.</sys:String>
+    <sys:String x:Key="Str.Details.Title">Detalii</sys:String>
+    <sys:String x:Key="Str.Details.Empty">Selectează o poză sau un album</sys:String>
+    <sys:String x:Key="Str.Footer.Credit">© concept și realizare vlad39</sys:String>
+    <sys:String x:Key="Str.Dialog.Ok">OK</sys:String>
+    <sys:String x:Key="Str.Dialog.Cancel">Anulează</sys:String>
+    <sys:String x:Key="Str.Dialog.Yes">Da</sys:String>
+    <sys:String x:Key="Str.Dialog.No">Nu</sys:String>
+    <sys:String x:Key="Str.Dialog.ErrorTitle">A apărut o eroare</sys:String>
+    <sys:String x:Key="Str.Dialog.UnexpectedError">A apărut o eroare neașteptată. Detaliile tehnice au fost salvate în folderul „logs” al aplicației.</sys:String>
+    <sys:String x:Key="Str.Dialog.StartupError">Baza de date nu a putut fi inițializată. Verifică dacă folderul aplicației permite scrierea (ex. nu rulează de pe un mediu read-only).</sys:String>
+    <sys:String x:Key="Str.Placeholder.Title">În curând</sys:String>
+    <sys:String x:Key="Str.Placeholder.Message">Această funcție va fi disponibilă într-o fază următoare de dezvoltare.</sys:String>
+    <sys:String x:Key="Str.Edit.Cut">Decupează</sys:String>
+    <sys:String x:Key="Str.Edit.Copy">Copiază</sys:String>
+    <sys:String x:Key="Str.Edit.Paste">Lipește</sys:String>
+    <sys:String x:Key="Str.Edit.SelectAll">Selectează tot</sys:String>
+
+</ResourceDictionary>

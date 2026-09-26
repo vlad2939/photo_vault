@@ -1,0 +1,32 @@
+<!--
+    Iconițe: glife din fontul "Segoe Fluent Icons" (nativ pe Windows 11),
+    cu fallback pe "Segoe MDL2 Assets" (aceleași coduri pentru glifele folosite).
+    Stil liniar, subțire — coerent cu mockup-urile.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <FontFamily x:Key="Font.Icons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+    <sys:String x:Key="Icon.Rename">&#xE8AC;</sys:String>
+    <sys:String x:Key="Icon.Info">&#xE946;</sys:String>
+    <sys:String x:Key="Icon.Settings">&#xE713;</sys:String>
+    <sys:String x:Key="Icon.Moon">&#xE708;</sys:String>
+    <sys:String x:Key="Icon.Sun">&#xE706;</sys:String>
+    <sys:String x:Key="Icon.Library">&#xE8F1;</sys:String>
+    <sys:String x:Key="Icon.Folder">&#xE8B7;</sys:String>
+    <sys:String x:Key="Icon.Album">&#xE8B9;</sys:String>
+    <sys:String x:Key="Icon.Tag">&#xE8EC;</sys:String>
+    <sys:String x:Key="Icon.Search">&#xE721;</sys:String>
+    <sys:String x:Key="Icon.Add">&#xE710;</sys:String>
+    <sys:String x:Key="Icon.Photo">&#xEB9F;</sys:String>
+    <sys:String x:Key="Icon.ChevronDown">&#xE70D;</sys:String>
+    <sys:String x:Key="Icon.ChevronRight">&#xE76C;</sys:String>
+
+    <!-- Geometrii vectoriale (independente de font) pentru elementele mici din template-uri -->
+    <Geometry x:Key="Geometry.Chevron">M 0,0 L 4.5,4.5 L 9,0</Geometry>
+    <Geometry x:Key="Geometry.ChevronRight">M 0,0 L 4,4 L 0,8</Geometry>
+    <Geometry x:Key="Geometry.Check">M 0,4.5 L 3.5,8 L 10,0.5</Geometry>
+
+</ResourceDictionary>

@@ -1,0 +1,13 @@
+<Project>
+  <!-- Setări comune pentru toate proiectele din soluție -->
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Permite compilarea proiectului WPF și pe mașini non-Windows (CI / build de verificare) -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Version>0.1.0</Version>
+    <Authors>vlad39</Authors>
+    <Product>PhotoVault</Product>
+    <Copyright>© concept și realizare vlad39</Copyright>
+  </PropertyGroup>
+</Project>
