@@ -152,7 +152,7 @@ Save-Screen '02-grid-dark'
 $grid = Get-GridItems $root
 Write-Host "Elemente expuse de grid prin UI Automation: $($grid.Items.Count)"
 if ($grid.Items.Count -lt 2) { throw "Grid-ul nu afișează pozele indexate." }
-Wait-ForText $root '1.500 poze' 5 | Out-Null
+Wait-ForText $root '1.500' 5 | Out-Null
 
 # Selecție (contur + bifă accent)
 $grid.Items[1].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
@@ -210,7 +210,7 @@ Assert-Alive $proc
 $root = [System.Windows.Automation.AutomationElement]::FromHandle($proc.MainWindowHandle)
 Find-ByName $root 'Comută pe tema întunecată' | Out-Null   # butonul de temă indică tema Light activă
 Write-Host "Tema Light a fost reîncărcată corect după repornire."
-Wait-ForText $root '1.500 poze' 15 | Out-Null
+Wait-ForText $root '1.500' 15 | Out-Null
 Write-Host "Indexul (1.500 poze) a fost reîncărcat corect după repornire."
 Invoke-Element (Find-ByName $root 'Comută pe tema întunecată')   # revenire la Dark pentru rulările următoare
 Start-Sleep -Milliseconds 500

@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using PhotoVault.App.Utils;
 using PhotoVault.Core.Models;
 using PhotoVault.Core.Services;
 
@@ -12,12 +11,10 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails) : Observab
     private Dictionary<long, PhotoItemViewModel> _byId = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsEmpty), nameof(CountText))]
+    [NotifyPropertyChangedFor(nameof(IsEmpty))]
     public partial ObservableCollection<PhotoItemViewModel> Photos { get; set; } = [];
 
     public bool IsEmpty => Photos.Count == 0;
-
-    public string CountText => Loc.Format(Photos.Count == 1 ? "Str.Grid.CountOne" : "Str.Grid.Count", Loc.Number(Photos.Count));
 
     /// <summary>Înlocuiește conținutul grid-ului (o singură notificare, nu zeci de mii).</summary>
     public void Load(IReadOnlyList<PhotoItem> photos)

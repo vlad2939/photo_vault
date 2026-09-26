@@ -2,7 +2,7 @@
 
 Aplicație portabilă pentru organizarea și vizualizarea albumelor foto personale.
 
-**Stadiu dezvoltare:** Faza 0 finalizată (fundație proiect, schemă bază de date, sistem de teme Dark/Light) · **Ultima actualizare:** septembrie 2026
+**Stadiu dezvoltare:** Faza 1 finalizată (import și indexare foldere sursă, miniaturi, grid de poze) · **Ultima actualizare:** septembrie 2026
 
 ---
 
@@ -44,10 +44,14 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 ### Import de poze
 
 - PhotoVault **nu** scanează automat calculatorul. Tu adaugi manual folderele pe care vrei să le indexeze, unul câte unul.
-- Din bara secundară → **Opțiuni**, sau din meniul de gestiune foldere sursă [de completat — locația exactă a butonului "Adaugă folder" în interfața finală], alegi un folder de pe disc.
-- Aplicația scanează recursiv acel folder (inclusiv subfoldere) și indexează toate pozele găsite (formate suportate: JPEG, PNG, CR2, NEF, DNG).
+- Apasă butonul **+** din dreptul secțiunii **Bibliotecă** (panoul din stânga) și alege un folder de pe disc. Lista folderelor sursă va fi disponibilă și în fereastra **Opțiuni**.
+- Aplicația scanează recursiv acel folder (inclusiv subfoldere) și indexează toate pozele găsite (formate suportate: JPEG, PNG, CR2, NEF, DNG). Progresul apare în stânga jos, în footer; poți continua să folosești aplicația între timp.
+- Miniaturile se generează în fundal și apar pe rând în grid. Pentru fișierele RAW se folosește previzualizarea JPEG încorporată de cameră (rapid, fără decodare RAW completă).
+- Nu poți adăuga un folder care e deja inclus (sau un subfolder al unui folder deja adăugat) — aplicația te anunță.
 - Folderele adăugate rămân în listă permanent — data viitoare când pornești aplicația, nu trebuie să le re-adaugi.
-- Dacă adaugi poze noi într-un folder deja indexat, folosește butonul **"Re-scanează"** din dreptul acelui folder ca aplicația să le detecteze.
+- Dacă adaugi poze noi într-un folder deja indexat, fă **click dreapta pe folder → Re-scanează** ca aplicația să le detecteze. Pozele care între timp au fost șterse sau mutate de pe disc sunt eliminate automat din index.
+- Dacă folderul nu e accesibil la re-scanare (ex. disc extern deconectat), indexul **nu** este golit — reconectează discul și re-scanează.
+- **Click dreapta pe folder → Elimină din bibliotecă** scoate folderul și pozele lui din index (fișierele de pe disc nu sunt atinse).
 - Aplicația **nu verifică duplicate** — dacă aceeași poză există fizic în două foldere diferite adăugate, va apărea de două ori.
 
 ### Navigare și vizualizare

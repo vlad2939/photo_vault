@@ -204,18 +204,14 @@
                     <!-- Căutare + sortare (funcționale în Faza 4) -->
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" MinWidth="160" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" MinWidth="120" />
                             <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="SearchBox"
                                  ctl:InputHelper.Placeholder="{DynamicResource Str.Search.Placeholder}"
                                  ctl:InputHelper.Icon="{DynamicResource Icon.Search}" />
-                        <TextBlock Grid.Column="1" Margin="16,0,4,0" VerticalAlignment="Center"
-                                   Style="{StaticResource Text.Secondary}" Text="{Binding Grid.CountText}"
-                                   Visibility="{Binding Grid.IsEmpty, Converter={StaticResource InverseBoolToVisibility}}" />
-                        <ComboBox Grid.Column="3" SelectedIndex="0" MinWidth="210">
+                        <ComboBox Grid.Column="2" SelectedIndex="0" MinWidth="200">
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameAsc}" />
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameDesc}" />
                         </ComboBox>
@@ -233,7 +229,7 @@
                              Visibility="{Binding Grid.IsEmpty, Converter={StaticResource InverseBoolToVisibility}}">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <ctl:VirtualizingWrapPanel ItemMinWidth="200" ItemHeight="212" Spacing="14" />
+                                <ctl:VirtualizingWrapPanel ItemMinWidth="170" ImageAspectRatio="1.333" ItemFooterHeight="42" Spacing="14" />
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                     </ListBox>

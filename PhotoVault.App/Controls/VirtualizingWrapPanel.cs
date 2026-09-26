@@ -25,6 +25,18 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo
         nameof(ItemHeight), typeof(double), typeof(VirtualizingWrapPanel),
         new FrameworkPropertyMetadata(214.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
 
+    /// <summary>
+    /// Raport lățime/înălțime pentru zona imaginii; dacă e &gt; 0, înălțimea celulei se calculează
+    /// din lățimea ei (imagine + <see cref="ItemFooterHeight"/>), altfel se folosește <see cref="ItemHeight"/>.
+    /// </summary>
+    public static readonly DependencyProperty ImageAspectRatioProperty = DependencyProperty.Register(
+        nameof(ImageAspectRatio), typeof(double), typeof(VirtualizingWrapPanel),
+        new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    public static readonly DependencyProperty ItemFooterHeightProperty = DependencyProperty.Register(
+        nameof(ItemFooterHeight), typeof(double), typeof(VirtualizingWrapPanel),
+        new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
     public static readonly DependencyProperty SpacingProperty = DependencyProperty.Register(
         nameof(Spacing), typeof(double), typeof(VirtualizingWrapPanel),
         new FrameworkPropertyMetadata(12.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
@@ -34,6 +46,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo
     private double _offset;
     private int _columns = 1;
     private double _itemWidth;
+    private double _itemHeight;
 
     public double ItemMinWidth
     {
@@ -47,13 +60,25 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo
         set => SetValue(ItemHeightProperty, value);
     }
 
+    public double ImageAspectRatio
+    {
+        get => (double)GetValue(ImageAspectRatioProperty);
+        set => SetValue(ImageAspectRatioProperty, value);
+    }
+
+    public double ItemFooterHeight
+    {
+        get => (double)GetValue(ItemFooterHeightProperty);
+        set => SetValue(ItemFooterHeightProperty, value);
+    }
+
     public double Spacing
     {
         get => (double)GetValue(SpacingProperty);
         set => SetValue(SpacingProperty, value);
     }
 
-    private double RowStride => ItemHeight + Spacing;
+    private double RowStride => _itemHeight + Spacing;
 
     // ------------------------------------------------------------------ Layout
 
@@ -66,6 +91,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo
         var usable = Math.Max(0, width - 2 * Edge);
         _columns = Math.Max(1, (int)((usable + Spacing) / (ItemMinWidth + Spacing)));
         _itemWidth = Math.Max(0, (usable - Spacing * (_columns - 1)) / _columns);
+        _itemHeight = ImageAspectRatio > 0 ? Math.Round(_itemWidth / ImageAspectRatio + ItemFooterHeight) : ItemHeight;
 
         var rows = (count + _columns - 1) / _columns;
         var extentHeight = rows == 0 ? 0 : rows * RowStride - Spacing + 2 * Edge;
@@ -100,7 +126,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo
             Edge + column * (_itemWidth + Spacing),
             Edge + row * RowStride - _offset,
             _itemWidth,
-            ItemHeight);
+            _itemHeight);
     }
 
     private (int First, int Last) GetRealizationRange(int count)
@@ -121,7 +147,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo
         var generator = ItemContainerGenerator;
         var start = generator.GeneratorPositionFromIndex(first);
         var childIndex = start.Offset == 0 ? start.Index : start.Index + 1;
-        var itemSize = new Size(_itemWidth, ItemHeight);
+        var itemSize = new Size(_itemWidth, _itemHeight);
 
         using (generator.StartAt(start, GeneratorDirection.Forward, allowStartAtRealizedItem: true))
         {
@@ -186,7 +212,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo
         if (_columns <= 0) return;
         var top = Edge + index / _columns * RowStride;
         if (top < _offset) SetVerticalOffset(top - Edge);
-        else if (top + ItemHeight > _offset + _viewport.Height) SetVerticalOffset(top + ItemHeight + Edge - _viewport.Height);
+        else if (top + _itemHeight > _offset + _viewport.Height) SetVerticalOffset(top + _itemHeight + Edge - _viewport.Height);
         UpdateLayout();
     }
 
