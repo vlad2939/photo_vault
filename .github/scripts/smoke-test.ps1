@@ -134,7 +134,10 @@ Save-Screen '01b-folder-picker'
 $escaped = [regex]::Replace($photosDir, '[+^%~(){}\[\]]', '{$0}')
 [System.Windows.Forms.SendKeys]::SendWait($escaped)
 Start-Sleep -Milliseconds 500
-Invoke-Element (Find-ByName $picker 'Select Folder')
+$selectCond = New-Object System.Windows.Automation.AndCondition @(
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, 'Select Folder')),
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button)))
+Invoke-Element ($picker.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $selectCond))
 
 $sw.Restart()
 $done = Wait-ForText $root 'Miniaturi generate' 240
