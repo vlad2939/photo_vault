@@ -28,10 +28,11 @@ public partial class App : Application
         RegisterGlobalExceptionHandlers();
 
         ISettingsService settings;
+        DatabaseContext database;
         try
         {
             paths.EnsureCreated();
-            var database = new DatabaseContext(paths.DatabasePath);
+            database = new DatabaseContext(paths.DatabasePath);
             database.Initialize();
 
             settings = new SettingsService(new AppSettingsRepository(database));
@@ -49,9 +50,12 @@ public partial class App : Application
         Loc.Apply(settings.Current.Language);
         ThemeManager.Instance.Initialize(settings.Current.Theme, settings.Current.AccentColor);
 
+        var thumbnails = new ThumbnailService(paths.ThumbnailsDirectory, new MetadataService());
+        var index = new PhotoIndexService(new SourceFolderRepository(database), new PhotoRepository(database), thumbnails);
+
         var mainWindow = new MainWindow
         {
-            DataContext = new MainViewModel(settings, ThemeManager.Instance, _dialogs)
+            DataContext = new MainViewModel(settings, ThemeManager.Instance, _dialogs, index, thumbnails, new FolderPicker())
         };
         MainWindow = mainWindow;
         mainWindow.Show();

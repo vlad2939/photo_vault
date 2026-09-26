@@ -1,0 +1,127 @@
+using Dapper;
+using PhotoVault.Core.Abstractions;
+using PhotoVault.Core.Models;
+
+namespace PhotoVault.Data.Repositories;
+
+public sealed class PhotoRepository(DatabaseContext db) : IPhotoRepository
+{
+    private const string SelectColumns =
+        """
+        SELECT Id, SourceFolderId, FullPath, FileName, Extension, FileSizeBytes, DateAdded,
+               DateTakenExif, RotationDegrees, ThumbnailPath, IsMissing
+        FROM Photos
+        """;
+
+    public IReadOnlyList<PhotoItem> GetAll()
+    {
+        using var connection = db.OpenConnection();
+        return connection.Query<Row>($"{SelectColumns} ORDER BY FileName COLLATE NOCASE, FullPath COLLATE NOCASE")
+            .Select(Map).ToList();
+    }
+
+    public int Count()
+    {
+        using var connection = db.OpenConnection();
+        return connection.ExecuteScalar<int>("SELECT COUNT(*) FROM Photos");
+    }
+
+    public IReadOnlyDictionary<long, int> CountBySourceFolder()
+    {
+        using var connection = db.OpenConnection();
+        return connection.Query<(long FolderId, int Count)>(
+                "SELECT SourceFolderId, COUNT(*) FROM Photos GROUP BY SourceFolderId")
+            .ToDictionary(r => r.FolderId, r => r.Count);
+    }
+
+    public IReadOnlyList<PhotoItem> GetBySourceFolder(long sourceFolderId)
+    {
+        using var connection = db.OpenConnection();
+        return connection.Query<Row>($"{SelectColumns} WHERE SourceFolderId = @sourceFolderId", new { sourceFolderId })
+            .Select(Map).ToList();
+    }
+
+    public IReadOnlyList<PhotoItem> GetWithoutThumbnail()
+    {
+        using var connection = db.OpenConnection();
+        // Ordinea din grid → miniaturile apar de sus în jos
+        return connection.Query<Row>($"{SelectColumns} WHERE ThumbnailPath IS NULL ORDER BY FileName COLLATE NOCASE")
+            .Select(Map).ToList();
+    }
+
+    public void InsertMany(IReadOnlyList<PhotoItem> photos)
+    {
+        if (photos.Count == 0) return;
+        using var connection = db.OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
+            """
+            INSERT INTO Photos (SourceFolderId, FullPath, FileName, Extension, FileSizeBytes, DateAdded, RotationDegrees, IsMissing)
+            VALUES ($folder, $path, $name, $ext, $size, $added, 0, 0);
+            SELECT last_insert_rowid();
+            """;
+        var folder = command.Parameters.Add("$folder", Microsoft.Data.Sqlite.SqliteType.Integer);
+        var path = command.Parameters.Add("$path", Microsoft.Data.Sqlite.SqliteType.Text);
+        var name = command.Parameters.Add("$name", Microsoft.Data.Sqlite.SqliteType.Text);
+        var ext = command.Parameters.Add("$ext", Microsoft.Data.Sqlite.SqliteType.Text);
+        var size = command.Parameters.Add("$size", Microsoft.Data.Sqlite.SqliteType.Integer);
+        var added = command.Parameters.Add("$added", Microsoft.Data.Sqlite.SqliteType.Text);
+
+        // Comandă pregătită o singură dată, refolosită pentru tot lotul (rapid la zeci de mii de rânduri)
+        foreach (var photo in photos)
+        {
+            folder.Value = photo.SourceFolderId;
+            path.Value = photo.FullPath;
+            name.Value = photo.FileName;
+            ext.Value = photo.Extension;
+            size.Value = (object?)photo.FileSizeBytes ?? DBNull.Value;
+            added.Value = SqliteDates.ToDb(photo.DateAdded);
+            photo.Id = (long)command.ExecuteScalar()!;
+        }
+        transaction.Commit();
+    }
+
+    public void DeleteMany(IReadOnlyCollection<long> ids)
+    {
+        if (ids.Count == 0) return;
+        using var connection = db.OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        foreach (var chunk in ids.Chunk(500))
+            connection.Execute("DELETE FROM Photos WHERE Id IN @chunk", new { chunk }, transaction);
+        transaction.Commit();
+    }
+
+    public void UpdateThumbnails(IReadOnlyCollection<ThumbnailResult> results)
+    {
+        if (results.Count == 0) return;
+        using var connection = db.OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        // ThumbnailPath '' = imagine ilizibilă → nu se mai reîncearcă la fiecare pornire
+        connection.Execute(
+            "UPDATE Photos SET ThumbnailPath = @Path, DateTakenExif = COALESCE(@Taken, DateTakenExif) WHERE Id = @Id",
+            results.Select(r => new { Id = r.PhotoId, Path = r.ThumbnailPath ?? string.Empty, Taken = SqliteDates.ToDb(r.DateTaken) }),
+            transaction);
+        transaction.Commit();
+    }
+
+    private static PhotoItem Map(Row r) => new()
+    {
+        Id = r.Id,
+        SourceFolderId = r.SourceFolderId,
+        FullPath = r.FullPath,
+        FileName = r.FileName,
+        Extension = r.Extension,
+        FileSizeBytes = r.FileSizeBytes,
+        DateAdded = SqliteDates.FromDb(r.DateAdded),
+        DateTakenExif = SqliteDates.FromDbNullable(r.DateTakenExif),
+        RotationDegrees = (int)r.RotationDegrees,
+        ThumbnailPath = r.ThumbnailPath,
+        IsMissing = r.IsMissing != 0,
+    };
+
+    private sealed record Row(long Id, long SourceFolderId, string FullPath, string FileName, string Extension,
+        long? FileSizeBytes, string DateAdded, string? DateTakenExif, long RotationDegrees, string? ThumbnailPath,
+        long IsMissing);
+}

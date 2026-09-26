@@ -173,4 +173,11 @@
         </Setter>
     </Style>
 
+    <!-- Rând folder sursă în secțiunea Bibliotecă -->
+    <Style x:Key="Library.FolderItem" TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
 </ResourceDictionary>

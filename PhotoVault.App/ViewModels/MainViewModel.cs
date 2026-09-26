@@ -7,41 +7,47 @@ using PhotoVault.Core.Services;
 namespace PhotoVault.App.ViewModels;
 
 /// <summary>
-/// ViewModel-ul ferestrei principale: bara secundară (§5.3) și footer-ul (§5.5).
-/// Faza 0: doar comutarea temei este funcțională; celelalte butoane afișează
-/// un mesaj informativ până la implementarea modulelor lor.
+/// ViewModel-ul ferestrei principale: compune panourile (Bibliotecă, grid, footer)
+/// și comenzile barei secundare (§5.3).
 /// </summary>
 public partial class MainViewModel : ObservableObject
 {
     private readonly ISettingsService _settings;
     private readonly IThemeService _theme;
     private readonly IDialogService _dialogs;
+    private readonly CancellationTokenSource _shutdown = new();
 
-    public MainViewModel(ISettingsService settings, IThemeService theme, IDialogService dialogs)
+    public MainViewModel(ISettingsService settings, IThemeService theme, IDialogService dialogs,
+        IPhotoIndexService index, IThumbnailService thumbnails, IFolderPicker folderPicker)
     {
         _settings = settings;
         _theme = theme;
         _dialogs = dialogs;
         IsDarkTheme = theme.CurrentTheme == AppTheme.Dark;
+
+        Status = new StatusBarViewModel();
+        Grid = new PhotoGridViewModel(thumbnails);
+        Library = new FolderTreeViewModel(index, dialogs, folderPicker, Status, Grid, _shutdown.Token);
     }
+
+    /// <summary>Footer: progres indexare / mesaje de stare.</summary>
+    public StatusBarViewModel Status { get; }
+
+    /// <summary>Grid-ul central de miniaturi.</summary>
+    public PhotoGridViewModel Grid { get; }
+
+    /// <summary>Secțiunea Bibliotecă (foldere sursă).</summary>
+    public FolderTreeViewModel Library { get; }
 
     /// <summary>Tema curentă; comută iconița butonului (lună = dark, soare = light).</summary>
     [ObservableProperty]
     public partial bool IsDarkTheme { get; set; }
 
-    // ---- Footer: zona de stare / progres (populată din Faza 1, la indexare) ----
+    /// <summary>Apelat după afișarea ferestrei.</summary>
+    public Task InitializeAsync() => Library.InitializeAsync();
 
-    [ObservableProperty]
-    public partial string? StatusText { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsProgressVisible { get; set; }
-
-    [ObservableProperty]
-    public partial double ProgressValue { get; set; }
-
-    [ObservableProperty]
-    public partial double ProgressMaximum { get; set; } = 100;
+    /// <summary>Oprește operațiunile de fundal la închiderea aplicației.</summary>
+    public void Shutdown() => _shutdown.Cancel();
 
     [RelayCommand]
     private void ToggleTheme()

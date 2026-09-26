@@ -24,7 +24,7 @@
     <sys:String x:Key="Str.Sort.NameAsc">Sort by: Name (A → Z)</sys:String>
     <sys:String x:Key="Str.Sort.NameDesc">Sort by: Name (Z → A)</sys:String>
     <sys:String x:Key="Str.Grid.Empty.Title">No photos indexed yet</sys:String>
-    <sys:String x:Key="Str.Grid.Empty.Subtitle">Photos from your source folders will appear here.</sys:String>
+    <sys:String x:Key="Str.Grid.Empty.Subtitle">Add a folder with photos using the + button in the Library section.</sys:String>
     <sys:String x:Key="Str.Details.Title">Details</sys:String>
     <sys:String x:Key="Str.Details.Empty">Select a photo or an album</sys:String>
     <sys:String x:Key="Str.Footer.Credit">© concept și realizare vlad39</sys:String>
@@ -41,5 +41,27 @@
     <sys:String x:Key="Str.Edit.Copy">Copy</sys:String>
     <sys:String x:Key="Str.Edit.Paste">Paste</sys:String>
     <sys:String x:Key="Str.Edit.SelectAll">Select all</sys:String>
+    <sys:String x:Key="Str.Library.Add">Add source folder</sys:String>
+    <sys:String x:Key="Str.Library.PickFolder">Choose a folder with photos</sys:String>
+    <sys:String x:Key="Str.Library.Rescan">Rescan</sys:String>
+    <sys:String x:Key="Str.Library.Remove">Remove from library</sys:String>
+    <sys:String x:Key="Str.Library.CannotAddTitle">The folder can't be added</sys:String>
+    <sys:String x:Key="Str.Library.NotFound">The folder “{0}” no longer exists or is not accessible.</sys:String>
+    <sys:String x:Key="Str.Library.AlreadyAdded">The folder “{0}” is already in the library.</sys:String>
+    <sys:String x:Key="Str.Library.InsideExisting">The folder “{0}” is already part of your library, as a subfolder of “{1}”. Its photos are already indexed.</sys:String>
+    <sys:String x:Key="Str.Library.ContainsExisting">The folder “{0}” contains the source folder “{1}”, which is already added. Remove “{1}” first, then add the parent folder.</sys:String>
+    <sys:String x:Key="Str.Library.UnavailableTitle">Folder unavailable</sys:String>
+    <sys:String x:Key="Str.Library.Unavailable">The folder “{0}” is not accessible right now (e.g. an external drive is disconnected). Its photos stay in the index; rescan after reconnecting.</sys:String>
+    <sys:String x:Key="Str.Library.RemoveTitle">Remove the folder from the library?</sys:String>
+    <sys:String x:Key="Str.Library.RemoveConfirm">The {1} photos in “{0}” will be removed from the index, along with their album memberships and tags. Files on disk are NOT touched.</sys:String>
+    <sys:String x:Key="Str.Status.Scanning">Scanning folder...</sys:String>
+    <sys:String x:Key="Str.Status.Indexing">Indexing: {0} / {1} photos</sys:String>
+    <sys:String x:Key="Str.Status.Thumbnails">Generating thumbnails: {0} / {1}</sys:String>
+    <sys:String x:Key="Str.Status.ThumbnailsDone">Thumbnails generated: {0}</sys:String>
+    <sys:String x:Key="Str.Status.IndexDone">Indexing complete: {0} new photos</sys:String>
+    <sys:String x:Key="Str.Status.RescanDone">Rescan complete: {0} new photos, {1} removed</sys:String>
+    <sys:String x:Key="Str.Status.Removed">The folder “{0}” was removed from the library</sys:String>
+    <sys:String x:Key="Str.Grid.Count">{0} photos</sys:String>
+    <sys:String x:Key="Str.Grid.CountOne">1 photo</sys:String>
 
 </ResourceDictionary>

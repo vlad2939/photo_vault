@@ -21,6 +21,8 @@
     <sys:String x:Key="Icon.Search">&#xE721;</sys:String>
     <sys:String x:Key="Icon.Add">&#xE710;</sys:String>
     <sys:String x:Key="Icon.Photo">&#xEB9F;</sys:String>
+    <sys:String x:Key="Icon.Refresh">&#xE72C;</sys:String>
+    <sys:String x:Key="Icon.Delete">&#xE74D;</sys:String>
     <sys:String x:Key="Icon.ChevronDown">&#xE70D;</sys:String>
     <sys:String x:Key="Icon.ChevronRight">&#xE76C;</sys:String>
 

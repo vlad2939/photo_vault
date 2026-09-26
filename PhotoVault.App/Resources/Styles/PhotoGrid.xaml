@@ -1,0 +1,124 @@
+<!--
+    Cardurile foto din grid-ul central (§5.2, §6.1): colțuri rotunjite, umbră discretă,
+    scale 1.0 → 1.02 la hover, contur + bifă în culoarea accentului la selecție.
+    Template-ul e al containerului (ListBoxItem) și se leagă direct la PhotoItemViewModel.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="PhotoCard.Container" TargetType="ListBoxItem">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="700" />
+        <Setter Property="ToolTip" Value="{Binding FullPath}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Grid x:Name="Root" RenderTransformOrigin="0.5,0.5" Background="Transparent">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="RootScale" />
+                        </Grid.RenderTransform>
+
+                        <!-- Umbra (pe un Border fără copii → nu re-randează conținutul) -->
+                        <Border CornerRadius="10" Background="{DynamicResource Brush.Card.Background}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270"
+                                                  Color="{DynamicResource Color.Shadow}"
+                                                  Opacity="{DynamicResource Shadow.Opacity}" />
+                            </Border.Effect>
+                        </Border>
+
+                        <Border x:Name="Card" CornerRadius="10" BorderThickness="1"
+                                Background="{DynamicResource Brush.Card.Background}"
+                                BorderBrush="{DynamicResource Brush.Panel.Border}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="42" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Zona imaginii: placeholder + miniatura (UniformToFill, colțuri de sus rotunjite) -->
+                                <Border CornerRadius="9,9,0,0" Background="{DynamicResource Brush.Surface}">
+                                    <TextBlock x:Name="Placeholder" Style="{DynamicResource Text.Icon}" FontSize="30"
+                                               Foreground="{DynamicResource Brush.Text.Tertiary}"
+                                               Text="{DynamicResource Icon.Photo}" />
+                                </Border>
+                                <Border CornerRadius="9,9,0,0">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{Binding Thumbnail}" Stretch="UniformToFill" />
+                                    </Border.Background>
+                                </Border>
+
+                                <!-- Nume fișier + etichetă format -->
+                                <Grid Grid.Row="1" Margin="12,0,10,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{DynamicResource Text.Body}" VerticalAlignment="Center"
+                                               Text="{Binding FileName}" />
+                                    <Border Grid.Column="1" Margin="8,0,0,0" Padding="6,1" CornerRadius="4"
+                                            VerticalAlignment="Center" BorderThickness="1"
+                                            BorderBrush="{DynamicResource Brush.Control.Border}"
+                                            Background="{DynamicResource Brush.Surface}">
+                                        <TextBlock FontSize="11" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource Brush.Text.Secondary}"
+                                                   Text="{Binding FormatLabel}" />
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <!-- Hover: strat subtil peste card -->
+                        <Border x:Name="HoverLayer" CornerRadius="10" Background="{DynamicResource Brush.Hover}"
+                                Opacity="0" IsHitTestVisible="False" />
+
+                        <!-- Selecție: contur accent + bifă în colțul din dreapta sus (ca în mockup) -->
+                        <Border x:Name="SelectionRing" CornerRadius="10" BorderThickness="2"
+                                BorderBrush="{DynamicResource Brush.Accent}" Visibility="Collapsed" IsHitTestVisible="False" />
+                        <Grid x:Name="CheckBadge" Width="24" Height="24" Margin="0,10,10,0"
+                              HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Collapsed">
+                            <Ellipse Fill="{DynamicResource Brush.Accent}" />
+                            <Path Data="{DynamicResource Geometry.Check}" Stroke="{DynamicResource Brush.Accent.Foreground}"
+                                  StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsThumbnailUnavailable}" Value="True">
+                            <Setter TargetName="Placeholder" Property="Opacity" Value="0.6" />
+                        </DataTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource Brush.Control.Border.Hover}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="RootScale" Storyboard.TargetProperty="ScaleX" To="1.02" Duration="0:0:0.15" />
+                                        <DoubleAnimation Storyboard.TargetName="RootScale" Storyboard.TargetProperty="ScaleY" To="1.02" Duration="0:0:0.15" />
+                                        <DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="RootScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.15" />
+                                        <DoubleAnimation Storyboard.TargetName="RootScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.15" />
+                                        <DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="SelectionRing" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="CheckBadge" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

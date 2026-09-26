@@ -21,10 +21,12 @@
                 <ResourceDictionary Source="/PhotoVault;component/Resources/Styles/Inputs.xaml" />
                 <ResourceDictionary Source="/PhotoVault;component/Resources/Styles/Menus.xaml" />
                 <ResourceDictionary Source="/PhotoVault;component/Resources/Styles/Lists.xaml" />
+                <ResourceDictionary Source="/PhotoVault;component/Resources/Styles/PhotoGrid.xaml" />
                 <ResourceDictionary Source="/PhotoVault;component/Resources/Localization/Strings.ro.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <conv:BoolToVisibilityConverter x:Key="InverseBoolToVisibility" Invert="True" />
             <conv:StringToVisibilityConverter x:Key="StringToVisibility" />
         </ResourceDictionary>
     </Application.Resources>
