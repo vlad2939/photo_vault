@@ -2,7 +2,7 @@
 
 Aplicație portabilă pentru organizarea și vizualizarea albumelor foto personale.
 
-**Stadiu dezvoltare:** Faza 1 finalizată (import și indexare foldere sursă, miniaturi, grid de poze) · **Ultima actualizare:** septembrie 2026
+**Stadiu dezvoltare:** Faza 2 finalizată (arbore foldere, vizualizare pe tot ecranul, panou de detalii, Info, Opțiuni) · **Ultima actualizare:** septembrie 2026
 
 ---
 
@@ -56,8 +56,10 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 
 ### Navigare și vizualizare
 
-- Panoul din stânga arată structura de foldere (ca în Windows Explorer), cu subdirectoare, plus lista de Albume și lista de Tag-uri.
-- Selectând un folder, un album sau un tag, grid-ul central afișează pozele corespunzătoare.
+- Panoul din stânga arată structura de foldere (ca în Windows Explorer), cu subdirectoare, plus lista de Albume și lista de Tag-uri. Subfolderele se încarcă atunci când deschizi un nivel (săgeata din stânga folderului).
+- Selectând un folder, grid-ul central afișează pozele din acel folder **și din toate subfolderele lui**. Click pe titlul **Bibliotecă** afișează din nou toate pozele.
+- Click pe o poză afișează în panoul din dreapta detaliile ei: cale completă, dimensiune, extensie și — dacă există în fișier — dimensiunile în pixeli, data fotografierii, camera, obiectivul, ISO, timpul de expunere, diafragma și distanța focală.
+- **Dublu-click** pe o poză (sau **Enter**) o deschide pe tot ecranul: ← / → pentru navigare, rotița mouse-ului sau + / − pentru zoom, tragere cu mouse-ul pentru deplasare când imaginea e mărită, 0 = potrivire în ecran, 1 = dimensiune reală, Esc = închidere.
 - Dublu-click pe o poză deschide vizualizarea fullscreen (lightbox) — navigare cu săgețile stânga/dreapta, zoom cu scroll, pan cu drag.
 - Panoul din dreapta/jos arată detalii despre poza sau albumul selectat curent.
 
