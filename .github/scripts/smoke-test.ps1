@@ -128,9 +128,12 @@ Save-Screen '01-main-dark'
 # ---- Faza 1: adăugare folder sursă prin dialogul nativ + indexare + miniaturi ----
 Invoke-Element (Find-ByName $root 'Adaugă folder sursă')
 $picker = Find-TopWindow 'Alege un folder cu poze'
-$editType = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Edit)
-$folderEdit = $picker.FindAll([System.Windows.Automation.TreeScope]::Descendants, $editType) | Where-Object { $_.Current.Name -like 'Folder*' } | Select-Object -First 1
-$folderEdit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($photosDir)
+Start-Sleep -Seconds 1
+Save-Screen '01b-folder-picker'
+# Câmpul „Folder:" are focus la deschidere → calea se tastează direct (caracterele speciale SendKeys sunt escapate)
+$escaped = [regex]::Replace($photosDir, '[+^%~(){}\[\]]', '{$0}')
+[System.Windows.Forms.SendKeys]::SendWait($escaped)
+Start-Sleep -Milliseconds 500
 Invoke-Element (Find-ByName $picker 'Select Folder')
 
 $sw.Restart()
