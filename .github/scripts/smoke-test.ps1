@@ -134,10 +134,14 @@ Save-Screen '01b-folder-picker'
 $escaped = [regex]::Replace($photosDir, '[+^%~(){}\[\]]', '{$0}')
 [System.Windows.Forms.SendKeys]::SendWait($escaped)
 Start-Sleep -Milliseconds 500
-$selectCond = New-Object System.Windows.Automation.AndCondition @(
-    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, 'Select Folder')),
-    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Button)))
-Invoke-Element ($picker.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $selectCond))
+# Enter #1 navighează în folderul tastat; dacă dialogul e încă deschis, Enter #2 (buton implicit „Select Folder") îl alege
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+Start-Sleep -Seconds 2
+$nameCond = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, 'Alege un folder cu poze')
+if ([System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $nameCond)) {
+    Save-Screen '01c-folder-picker-navigated'
+    [System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+}
 
 $sw.Restart()
 $done = Wait-ForText $root 'Miniaturi generate' 240
