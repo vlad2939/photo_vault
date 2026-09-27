@@ -20,7 +20,20 @@ jobs:
         run: dotnet build PhotoVault.sln -c Release
 
       - name: Teste unitare
-        run: dotnet test PhotoVault.Tests -c Release --no-build
+        run: dotnet test PhotoVault.Tests -c Release --no-build --filter "Category!=RealRaw"
+
+      # Validarea extragerii previzualizării pe fișiere RAW reale (§9 Faza 8), descărcate din surse publice
+      - name: Mostre RAW reale (CR2 / NEF / DNG)
+        continue-on-error: true
+        shell: powershell
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./.github/scripts/download-raw-samples.ps1 -OutDir "${{ runner.temp }}/raw-samples"
+
+      - name: Test pe fișiere RAW reale
+        env:
+          RAW_SAMPLES_DIR: ${{ runner.temp }}/raw-samples
+        run: dotnet test PhotoVault.Tests -c Release --no-build --filter "Category=RealRaw" --logger "console;verbosity=detailed"
 
       - name: Smoke test UI (pornire aplicație + capturi de ecran)
         shell: powershell
@@ -33,33 +46,30 @@ jobs:
           name: screenshots
           path: artifacts/
 
-      - name: Publicare versiune portabilă (self-contained, un singur .exe)
-        run: >
-          dotnet publish PhotoVault.App -c Release -r win-x64 --self-contained true
-          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
-          -p:EnableCompressionInSingleFile=true -p:DebugType=None -o publish/PhotoVault
+      # Același script pe care îl folosește utilizatorul pe PC-ul lui (compilare + publicare + arhivă .zip)
+      - name: Publicare versiune portabilă (build-app.bat)
+        shell: cmd
+        run: build-app.bat notest
 
-      - name: README.txt pentru folderul portabil
+      # Aplicația publicată pornită de pe un „stick", fără .NET; apoi mutată pe „alt calculator" + realiniere foldere
+      - name: Test de portabilitate
         shell: powershell
-        run: |
-          @"
-          PhotoVault - aplicatie portabila
+        run: ./.github/scripts/portability-test.ps1 -PublishDir "publish/PhotoVault" -OutDir "portability"
 
-          1. Dezarhiveaza folderul PhotoVault oriunde (Desktop, alt disc, stick USB).
-          2. Porneste PhotoVault.exe (dublu-click). Nu necesita instalare si nici .NET.
-          3. La prima pornire se creeaza automat folderul data\ (baza de date).
-
-          Daca Windows afiseaza "Windows protected your PC" (SmartScreen):
-          apasa "More info" -> "Run anyway" (executabilul nu este semnat digital).
-
-          (c) concept si realizare vlad39
-          "@ | Set-Content -Encoding UTF8 publish/PhotoVault/README.txt
+      - name: Upload capturi test de portabilitate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portabilitate
+          path: portability/
 
       - name: Upload versiune portabilă
         uses: actions/upload-artifact@v4
         with:
           name: PhotoVault-portabil-win-x64
-          path: publish/
+          path: |
+            publish/
+            !publish/*.zip
 
   # Profiling pe o bibliotecă de 50.000 de poze (§9 Faza 7). Durează ~15–25 min, deci rulează doar
   # la cerere (Run workflow) sau la un commit care conține „[perf]" în mesaj.

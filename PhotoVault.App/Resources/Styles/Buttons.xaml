@@ -233,4 +233,17 @@
         </Setter>
     </Style>
 
+    <!-- Buton-filtru comutabil (ex. „Doar favorite", §12.3): aspect secundar; activ = fundal și contur în accent -->
+    <Style x:Key="ToggleButton.Filter" TargetType="ToggleButton" BasedOn="{StaticResource Button.Secondary}">
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="Padding" Value="12,8" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Brush.Accent.Subtle}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Accent.Text}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
 </ResourceDictionary>

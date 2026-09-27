@@ -11,6 +11,11 @@
 
     <sys:String x:Key="Icon.Rename">&#xE8AC;</sys:String>
     <sys:String x:Key="Icon.Play">&#xE768;</sys:String>
+    <sys:String x:Key="Icon.Warning">&#xE7BA;</sys:String>
+    <sys:String x:Key="Icon.Backup">&#xE74E;</sys:String>
+    <sys:String x:Key="Icon.Heart">&#xEB51;</sys:String>
+    <sys:String x:Key="Icon.HeartFill">&#xEB52;</sys:String>
+    <sys:String x:Key="Icon.Relocate">&#xE8DE;</sys:String>
     <sys:String x:Key="Icon.Pause">&#xE769;</sys:String>
     <sys:String x:Key="Icon.Previous">&#xE892;</sys:String>
     <sys:String x:Key="Icon.Next">&#xE893;</sys:String>

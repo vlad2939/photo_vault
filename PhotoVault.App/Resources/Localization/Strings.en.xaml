@@ -89,9 +89,9 @@
     <sys:String x:Key="Str.Info.Version">Version {0}</sys:String>
     <sys:String x:Key="Str.Info.Author">Author: vlad39</sys:String>
     <sys:String x:Key="Str.Info.HowTo">How to use it</sys:String>
-    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).|Select one or more photos (Ctrl / Shift + click, Ctrl+A), then right-click → Add to album / Add tag. Click the “Albums” title to see albums as a grid of cards; double-click opens an album.|The selected photo's tags appear in the right panel: “+” adds, “×” removes. Click a tag on the left to see all photos that have it.|The search field (Ctrl+F) filters the displayed photos by file name, tags and albums; the name sort order is changed from the list next to it. R rotates the selected photo by 90° (the original file is not modified).|Batch rename (first icon in the top bar): choose a folder on disk, type a pattern (e.g. Greece_{counter:000}) and see the new names before applying. Photos already in the library keep their albums, tags and rotation.|Slideshow (the button above the photo list, or F5): starts with the displayed photos, from the selected one. Space = pause / play, ← / → = navigate, Esc = exit. Duration, fade, effect intensity and music (looping MP3s) are set in Options.</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).|Select one or more photos (Ctrl / Shift + click, Ctrl+A), then right-click → Add to album / Add tag. Click the “Albums” title to see albums as a grid of cards; double-click opens an album.|The selected photo's tags appear in the right panel: “+” adds, “×” removes. Click a tag on the left to see all photos that have it.|The search field (Ctrl+F) filters the displayed photos by file name, tags and albums; the name sort order is changed from the list next to it. R rotates the selected photo by 90° (the original file is not modified).|Batch rename (first icon in the top bar): choose a folder on disk, type a pattern (e.g. Greece_{counter:000}) and see the new names before applying. Photos already in the library keep their albums, tags and rotation.|Slideshow (the button above the photo list, or F5): starts with the displayed photos, from the selected one. Space = pause / play, ← / → = navigate, Esc = exit. Duration, fade, effect intensity and music (looping MP3s) are set in Options.|If a source folder has moved (different drive letter, another computer), a warning icon appears next to it: right-click → Change location... and choose the new path — albums, tags and rotations are kept.|Favorites: the heart on a card (or the F key) marks the photo; the Favorites button above the grid shows only favorites. The slider next to sorting (or Ctrl + mouse wheel) changes the thumbnail size.</sys:String>
     <sys:String x:Key="Str.Info.Shortcuts">Keyboard shortcuts</sys:String>
-    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid|Ctrl / Shift + click=Multiple selection in the grid|R=Rotate the photo 90° (grid or full screen)|Ctrl+F=Focus the search field|Esc (in search)=Clear the search|F5=Start the slideshow|Space=Pause / play (slideshow)|Esc=Exit the slideshow</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid|Ctrl / Shift + click=Multiple selection in the grid|R=Rotate the photo 90° (grid or full screen)|Ctrl+F=Focus the search field|Esc (in search)=Clear the search|F5=Start the slideshow|Space=Pause / play (slideshow)|Esc=Exit the slideshow|F=Add / remove the photo from favorites (grid or full screen)|Ctrl + mouse wheel=Larger / smaller thumbnails (grid)|M=Add MP3 music (slideshow)</sys:String>
     <sys:String x:Key="Str.Settings.Title">Options</sys:String>
     <sys:String x:Key="Str.Settings.SourceFolders">Source folders</sys:String>
     <sys:String x:Key="Str.Settings.SourceFoldersHint">Folders on disk indexed by PhotoVault. Rescanning detects new photos and removes deleted ones from the index; removing a folder never touches files on disk.</sys:String>
@@ -217,6 +217,8 @@
     <sys:String x:Key="Str.Slideshow.Previous">Previous photo</sys:String>
     <sys:String x:Key="Str.Slideshow.Next">Next photo</sys:String>
     <sys:String x:Key="Str.Slideshow.Exit">Exit slideshow</sys:String>
+    <sys:String x:Key="Str.Slideshow.AddMusic">Add music (MP3)</sys:String>
+    <sys:String x:Key="Str.Slideshow.MusicUnavailable">Music cannot be played (no audio device or unreadable MP3 files)</sys:String>
     <sys:String x:Key="Str.Settings.Slideshow">Slideshow</sys:String>
     <sys:String x:Key="Str.Settings.SlideshowHint">Each photo slowly zooms in or out and drifts in a random direction (Ken Burns effect), fading into the next one.</sys:String>
     <sys:String x:Key="Str.Settings.Duration">Photo duration</sys:String>
@@ -251,5 +253,39 @@
     <sys:String x:Key="Str.Library.RescanAll">Rescan all</sys:String>
     <sys:String x:Key="Str.Library.RescanAllTooltip">Look for new photos in all source folders and remove deleted or moved photos from the index</sys:String>
     <sys:String x:Key="Str.Library.UnavailableMany" xml:space="preserve">The following folders are not accessible right now (e.g. an external drive is disconnected) and were skipped; their photos remain in the library:&#x0a;&#x0a;{0}</sys:String>
+
+    <!-- Schimbarea locației folderelor sursă (Faza 8, §11) -->
+    <sys:String x:Key="Str.Library.Relocate">Change location...</sys:String>
+    <sys:String x:Key="Str.Library.RelocateTitle">Change folder location</sys:String>
+    <sys:String x:Key="Str.Library.RelocatePick">Choose the new location of the folder “{0}”</sys:String>
+    <sys:String x:Key="Str.Library.RelocateConfirm" xml:space="preserve">At the new location “{0}”, {1} of the {2} in the library were found.&#x0a;&#x0a;Update the location? Albums, tags and rotations are kept; photos not found stay in the library until the next rescan.</sys:String>
+    <sys:String x:Key="Str.Library.RelocateNoneFound" xml:space="preserve">None of the folder's {1} were found at “{0}” (with the same subfolder structure).&#x0a;&#x0a;Is this really the new location? If you update it and then rescan, the photos not found will be removed from the library.</sys:String>
+    <sys:String x:Key="Str.Library.RelocateApply">Update location</sys:String>
+    <sys:String x:Key="Str.Status.Relocated">Folder location updated: {0}</sys:String>
+    <sys:String x:Key="Str.Library.UnavailableHint">The folder is not accessible right now (drive disconnected or different path). Its photos remain in the library; if the folder has moved, use “Change location...”.</sys:String>
+
+    <!-- Copii de siguranță (§12.1) -->
+    <sys:String x:Key="Str.Backup.Title">Backups</sys:String>
+    <sys:String x:Key="Str.Backup.Hint">Before operations that cannot be undone (deleting an album, a tag or a source folder, removing missing photos on rescan, batch renaming a library folder, changing a folder's location) the application automatically saves a copy of the database in the data\ folder. The last {0} copies are kept.</sys:String>
+    <sys:String x:Key="Str.Backup.None">No copies yet (the last {0} are kept).</sys:String>
+    <sys:String x:Key="Str.Backup.Status">Latest copy: {0} · copies kept: {1} of maximum {2}.</sys:String>
+    <sys:String x:Key="Str.Backup.CreateNow">Create a copy now</sys:String>
+    <sys:String x:Key="Str.Backup.OpenFolder">Open folder</sys:String>
+    <sys:String x:Key="Str.Backup.Created">The backup was created: {0}</sys:String>
+    <sys:String x:Key="Str.Backup.Failed">The backup could not be created (check that the application folder is writable).</sys:String>
+
+    <!-- Favorite (§12.3), dimensiunea miniaturilor (§12.4) -->
+    <sys:String x:Key="Str.Favorite.Add">Add to favorites</sys:String>
+    <sys:String x:Key="Str.Favorite.Remove">Remove from favorites</sys:String>
+    <sys:String x:Key="Str.Favorite.AddKey">Add to favorites (F)</sys:String>
+    <sys:String x:Key="Str.Favorite.RemoveKey">Remove from favorites (F)</sys:String>
+    <sys:String x:Key="Str.Favorite.Filter">Favorites</sys:String>
+    <sys:String x:Key="Str.Favorite.FilterTooltip">Show only favorite photos (within the current folder, album or search)</sys:String>
+    <sys:String x:Key="Str.Favorite.Empty">No favorite photos here. Mark a photo with the heart on its card or with the F key.</sys:String>
+    <sys:String x:Key="Str.Favorite.ShowAll">Show all photos</sys:String>
+    <sys:String x:Key="Str.Status.FavoriteAdded">Added to favorites: {0}</sys:String>
+    <sys:String x:Key="Str.Status.FavoriteRemoved">Removed from favorites: {0}</sys:String>
+    <sys:String x:Key="Str.Grid.Size">Thumbnail size</sys:String>
+    <sys:String x:Key="Str.Grid.SizeTooltip">Thumbnail size (also Ctrl + mouse wheel on the grid)</sys:String>
 
 </ResourceDictionary>

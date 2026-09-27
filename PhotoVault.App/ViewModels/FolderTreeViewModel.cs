@@ -151,6 +151,44 @@ public partial class FolderTreeViewModel : ObservableObject
         });
     }
 
+    /// <summary>
+    /// Realinierea unui folder sursă mutat (altă literă de disc, alt calculator, alt drive extern — §11):
+    /// se alege noua locație, se arată câte poze se regăsesc acolo, apoi căile sunt actualizate în index,
+    /// fără a pierde albumele, tag-urile sau rotirile.
+    /// </summary>
+    public async Task RelocateAsync(SourceFolderViewModel folder)
+    {
+        var path = _folderPicker.PickFolder(Loc.Format("Str.Library.RelocatePick", folder.DisplayName));
+        if (path is null) return;
+
+        var (validation, conflict) = _index.ValidateRelocation(folder.Id, path);
+        var messageKey = validation switch
+        {
+            FolderValidation.NotFound => "Str.Library.NotFound",
+            FolderValidation.AlreadyAdded => "Str.Library.AlreadyAdded",
+            FolderValidation.InsideExisting => "Str.Library.InsideExisting",
+            FolderValidation.ContainsExisting => "Str.Library.ContainsExisting",
+            _ => null,
+        };
+        if (messageKey is not null)
+        {
+            _dialogs.Show(Loc.Get("Str.Library.RelocateTitle"), Loc.Format(messageKey, path, conflict), DialogKind.Warning);
+            return;
+        }
+
+        var preview = await _index.PreviewRelocationAsync(folder.Id, path);
+        var (kind, message) = preview.Found == 0
+            ? (DialogKind.Warning, Loc.Format("Str.Library.RelocateNoneFound", path, Loc.PhotoCount(preview.Total)))
+            : (DialogKind.Info, Loc.Format("Str.Library.RelocateConfirm", path, Loc.Number(preview.Found), Loc.PhotoCount(preview.Total)));
+        var answer = _dialogs.Show(Loc.Get("Str.Library.RelocateTitle"), message, kind, DialogButtons.YesNo,
+            primaryText: Loc.Get("Str.Library.RelocateApply"), secondaryText: Loc.Get("Str.Dialog.Cancel"));
+        if (answer != DialogResultKind.Yes) return;
+
+        await _index.RelocateSourceFolderAsync(folder.Id, path);
+        await ReloadAsync();
+        _status.ShowMessage(Loc.Format("Str.Status.Relocated", path));
+    }
+
     public async Task RemoveAsync(SourceFolderViewModel folder)
     {
         var answer = _dialogs.Show(Loc.Get("Str.Library.RemoveTitle"),
@@ -192,14 +230,19 @@ public partial class FolderTreeViewModel : ObservableObject
 
     private async Task ReloadAsync()
     {
-        var (folders, counts, photos) = await Task.Run(() =>
-            (_index.GetSourceFolders(), _index.GetPhotoCounts(), _index.GetAllPhotos()));
+        var (folders, counts, photos, available) = await Task.Run(() =>
+        {
+            var list = _index.GetSourceFolders();
+            // Verificare silențioasă, pe fundal: un disc deconectat nu blochează interfața (§12.2)
+            var exists = list.ToDictionary(f => f.Id, f => Directory.Exists(f.FolderPath));
+            return (list, _index.GetPhotoCounts(), _index.GetAllPhotos(), exists);
+        });
 
         // Arborele se reconstruiește; selecția se păstrează dacă folderul selectat era o rădăcină încă existentă
         var selectedPath = SelectedFolder?.FullPath;
         Folders.Clear();
         foreach (var folder in folders)
-            Folders.Add(new SourceFolderViewModel(folder, counts.GetValueOrDefault(folder.Id), this));
+            Folders.Add(new SourceFolderViewModel(folder, counts.GetValueOrDefault(folder.Id), available[folder.Id], this));
         HasFolders = Folders.Count > 0;
 
         _grid.Load(photos);

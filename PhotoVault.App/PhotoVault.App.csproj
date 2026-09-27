@@ -21,6 +21,11 @@
     <ProjectReference Include="..\PhotoVault.Data\PhotoVault.Data.csproj" />
   </ItemGroup>
 
+  <!-- README.txt din folderul portabil (§3.2): doar la publicare, nu și în bin/ -->
+  <ItemGroup>
+    <None Include="Portable\README.txt" Link="README.txt" CopyToOutputDirectory="Never" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <Resource Include="Resources\Images\logo.png" />
     <Resource Include="Resources\Images\logo_128.png" />

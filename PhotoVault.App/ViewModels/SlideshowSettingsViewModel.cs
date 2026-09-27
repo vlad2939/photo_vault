@@ -92,6 +92,9 @@ public partial class SlideshowSettingsViewModel : ObservableObject
         LoadTracks();
     }
 
+    /// <summary>Reîncarcă lista (piesele pot fi adăugate și din bara slideshow-ului).</summary>
+    public void Reload() => LoadTracks();
+
     private void LoadTracks()
     {
         Tracks.Clear();

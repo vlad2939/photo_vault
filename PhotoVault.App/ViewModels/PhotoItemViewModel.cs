@@ -34,6 +34,18 @@ public partial class PhotoItemViewModel : ObservableObject
     public long? FileSizeBytes => _photo.FileSizeBytes;
     public int RotationDegrees => _photo.RotationDegrees;
 
+    /// <summary>Poză favorită (§12.3) — inimioara de pe card.</summary>
+    public bool IsFavorite
+    {
+        get => _photo.IsFavorite;
+        set
+        {
+            if (_photo.IsFavorite == value) return;
+            _photo.IsFavorite = value;
+            OnPropertyChanged();
+        }
+    }
+
     /// <summary>Rotirea logică s-a schimbat (§6.9) → miniatura se re-afișează rotită.</summary>
     public void SetRotation(int degrees)
     {

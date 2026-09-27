@@ -20,3 +20,6 @@ public sealed record ScanResult(int Added, int Removed, int Total);
 /// <summary>Rezultatul generării unei miniaturi.</summary>
 /// <param name="ThumbnailPath">Cale relativă în data/thumbnails/, sau null dacă imaginea nu a putut fi citită.</param>
 public sealed record ThumbnailResult(long PhotoId, string? ThumbnailPath, DateTime? DateTaken);
+
+/// <summary>Previzualizarea schimbării locației unui folder sursă: câte poze se regăsesc la noua cale.</summary>
+public sealed record RelocationPreview(int Total, int Found);

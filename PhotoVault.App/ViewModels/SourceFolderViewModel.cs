@@ -10,13 +10,20 @@ public partial class SourceFolderViewModel : FolderNodeViewModel
 {
     private readonly FolderTreeViewModel _owner;
 
-    public SourceFolderViewModel(SourceFolder folder, int photoCount, FolderTreeViewModel owner)
+    public SourceFolderViewModel(SourceFolder folder, int photoCount, bool isAvailable, FolderTreeViewModel owner)
         : base(folder.FolderPath)
     {
         _owner = owner;
         Id = folder.Id;
         PhotoCount = photoCount;
+        IsAvailable = isAvailable;
     }
+
+    /// <summary>
+    /// false dacă folderul nu e accesibil acum (disc extern deconectat, altă literă de disc, alt calculator):
+    /// pozele rămân în bibliotecă, iar folderul poate fi realiniat cu „Schimbă locația...".
+    /// </summary>
+    public override bool IsAvailable { get; }
 
     public long Id { get; }
     public string FolderPath => FullPath;
@@ -34,4 +41,7 @@ public partial class SourceFolderViewModel : FolderNodeViewModel
 
     [RelayCommand]
     private Task Remove() => _owner.RemoveAsync(this);
+
+    [RelayCommand]
+    private Task Relocate() => _owner.RelocateAsync(this);
 }

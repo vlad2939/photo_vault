@@ -72,8 +72,7 @@ function Start-App {
     $p = Start-Process -FilePath $exePath -WorkingDirectory $appDir -PassThru
     for ($i = 0; $i -lt 120 -and $p.MainWindowHandle -eq 0; $i++) { Start-Sleep -Milliseconds 250; $p.Refresh() }
     Assert-Alive $p
-    $screen = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
-    [Native]::SetWindowPos($p.MainWindowHandle, [IntPtr]::Zero, 0, 0, [Math]::Min(1440, $screen.Width), [Math]::Min(900, $screen.Height - 40), 0x0040) | Out-Null
+    # Fereastra principală pornește maximizată — nu mai e nevoie de redimensionare
     [Native]::SetForegroundWindow($p.MainWindowHandle) | Out-Null
     return $p
 }

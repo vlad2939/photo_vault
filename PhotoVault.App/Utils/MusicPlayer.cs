@@ -9,7 +9,11 @@ namespace PhotoVault.App.Utils;
 public interface IMusicPlayer : IDisposable
 {
     /// <summary>Pornește redarea în buclă; false dacă nu există nicio piesă redabilă sau niciun dispozitiv audio.</summary>
-    bool Start(IReadOnlyList<string> playlist, int volumePercent);
+    /// <param name="startWith">Piesa cu care începe redarea (ex. piesele tocmai adăugate din slideshow); implicit prima.</param>
+    bool Start(IReadOnlyList<string> playlist, int volumePercent, string? startWith = null);
+
+    /// <summary>Numele piesei care începe să fie redată (pe thread-ul UI).</summary>
+    event Action<string>? TrackStarted;
 
     void Pause();
     void Resume();
@@ -29,12 +33,18 @@ public sealed class MusicPlayer(ISlideshowService slideshow) : IMusicPlayer
     private bool _paused;
     private bool _disposed;
 
-    public bool Start(IReadOnlyList<string> playlist, int volumePercent)
+    public event Action<string>? TrackStarted;
+
+    public bool Start(IReadOnlyList<string> playlist, int volumePercent, string? startWith = null)
     {
+        if (_disposed) return false;
+        ReleaseTrack();
+        _paused = false;
         _tracks = slideshow.GetPlayableTracks(playlist);
         _volume = Math.Clamp(volumePercent, 0, 100) / 100f;
         if (_tracks.Count == 0) return false;
-        _index = -1;
+        var start = startWith is null ? -1 : _tracks.ToList().FindIndex(t => string.Equals(t, startWith, StringComparison.OrdinalIgnoreCase));
+        _index = start >= 0 ? start - 1 : -1;   // PlayNext avansează la indexul următor
         return PlayNext();
     }
 
@@ -64,6 +74,7 @@ public sealed class MusicPlayer(ISlideshowService slideshow) : IMusicPlayer
                 _output.PlaybackStopped += OnPlaybackStopped;
                 _output.Init(_reader);
                 if (!_paused) _output.Play();
+                TrackStarted?.Invoke(Path.GetFileNameWithoutExtension(_tracks[_index]));
                 return true;
             }
             catch (NAudio.MmException)
@@ -72,10 +83,9 @@ public sealed class MusicPlayer(ISlideshowService slideshow) : IMusicPlayer
                 ReleaseTrack();
                 return false;
             }
-            catch (Exception e) when (e is IOException or InvalidOperationException or FormatException
-                                           or UnauthorizedAccessException or System.Runtime.InteropServices.COMException)
+            catch (Exception e) when (e is not OutOfMemoryException)
             {
-                // Fișier șters între timp / format nesuportat → piesa următoare
+                // Fișier șters între timp / MP3 ilizibil (NAudio aruncă tipuri variate, ex. InvalidDataException) → piesa următoare
                 ReleaseTrack();
             }
         }

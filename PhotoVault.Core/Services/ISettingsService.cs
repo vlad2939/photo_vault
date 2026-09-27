@@ -22,4 +22,7 @@ public interface ISettingsService
 
     /// <summary>Schimbă limba interfeței („ro" / „en") și o persistă; se aplică la următoarea pornire.</summary>
     void SetLanguage(string language);
+
+    /// <summary>Dimensiunea miniaturilor din grid (§12.4), limitată la intervalul permis, persistată imediat.</summary>
+    void SetGridThumbnailSize(double size);
 }

@@ -22,20 +22,25 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
     private readonly IMetadataService _metadata;
     private readonly ISlideshowService _slideshow;
     private readonly IMusicPlayer _music;
-    private readonly AppSettings _settings;
+    private readonly ISettingsService _settingsService;
+    private readonly IFilePicker _filePicker;
+    private AppSettings Settings => _settingsService.Current;
     private readonly DispatcherTimer _advance = new();
     private readonly Dictionary<long, Task<ImageSource?>> _loads = [];
     private int _version;
     private bool _musicStarted;
 
-    public SlideshowViewModel(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title, AppSettings settings,
+    public SlideshowViewModel(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title, ISettingsService settings,
+        IFilePicker filePicker,
         IMetadataService metadata, ISlideshowService slideshow, IMusicPlayer music)
     {
         _photos = photos;
         _metadata = metadata;
         _slideshow = slideshow;
         _music = music;
-        _settings = settings;
+        _settingsService = settings;
+        _filePicker = filePicker;
+        _music.TrackStarted += name => NowPlaying = name;
         Title = title;
         Index = Math.Clamp(startIndex, 0, Math.Max(0, photos.Count - 1));
 
@@ -52,8 +57,8 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
 
     public string Title { get; }
     public int Count => _photos.Count;
-    public TimeSpan DisplayDuration => TimeSpan.FromSeconds(_settings.SlideshowDurationSec);
-    public TimeSpan FadeDuration => TimeSpan.FromMilliseconds(_settings.SlideshowFadeMs);
+    public TimeSpan DisplayDuration => TimeSpan.FromSeconds(Settings.SlideshowDurationSec);
+    public TimeSpan FadeDuration => TimeSpan.FromMilliseconds(Settings.SlideshowFadeMs);
 
     /// <summary>Mișcarea Ken Burns durează toată prezența pozei pe ecran: fade-in + afișare + fade-out.</summary>
     public TimeSpan MotionDuration => DisplayDuration + FadeDuration + FadeDuration;
@@ -76,7 +81,7 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
     /// <summary>Pornește slideshow-ul (după afișarea ferestrei).</summary>
     public void Start()
     {
-        _musicStarted = _music.Start(_settings.SlideshowPlaylistPaths, _settings.SlideshowVolume);
+        _musicStarted = _music.Start(Settings.SlideshowPlaylistPaths, Settings.SlideshowVolume);
         _ = ShowCurrentAsync();
     }
 
@@ -108,6 +113,34 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     private void Exit() => CloseRequested?.Invoke();
+
+    /// <summary>Piesa redată acum (afișată discret deasupra barei de control); gol fără muzică.</summary>
+    [ObservableProperty]
+    public partial string NowPlaying { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Butonul „Muzică" din bara de control: alegerea uneia sau mai multor piese MP3. Piesele se adaugă în playlist-ul
+    /// salvat (același din Opțiuni → Slideshow) și redarea pornește imediat cu prima piesă aleasă.
+    /// </summary>
+    [RelayCommand]
+    private void AddMusic()
+    {
+        // Poza nu avansează cât timp dialogul e deschis
+        _advance.Stop();
+        var files = _filePicker.PickFiles(Loc.Get("Str.Settings.MusicPick"), Loc.Get("Str.Settings.MusicFilter") + "|*.mp3");
+        if (files.Count > 0)
+        {
+            var playlist = Settings.SlideshowPlaylistPaths;
+            foreach (var file in files)
+                if (!playlist.Contains(file, StringComparer.OrdinalIgnoreCase)) playlist.Add(file);
+            _settingsService.Save();
+
+            _musicStarted = _music.Start(playlist, Settings.SlideshowVolume, files[0]);
+            if (!_musicStarted) NowPlaying = Loc.Get("Str.Slideshow.MusicUnavailable");
+            else if (!IsPlaying) _music.Pause();
+        }
+        if (IsPlaying) _advance.Start();
+    }
 
     private void Advance()
     {
@@ -149,7 +182,7 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
         }
 
         FileName = photo.FileName;
-        var motion = _slideshow.NextMotion(_settings.SlideshowZoomIntensity, _settings.SlideshowPanIntensity);
+        var motion = _slideshow.NextMotion(Settings.SlideshowZoomIntensity, Settings.SlideshowPanIntensity);
         SlideReady?.Invoke(new SlideshowSlide(photo, image, motion));
         if (IsPlaying) _advance.Start();
     }

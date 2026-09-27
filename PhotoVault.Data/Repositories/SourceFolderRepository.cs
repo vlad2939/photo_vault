@@ -44,6 +44,34 @@ public sealed class SourceFolderRepository(DatabaseContext db) : ISourceFolderRe
             new { id, value = SqliteDates.ToDb(lastScanned) });
     }
 
+    public void Relocate(long id, string newFolderPath)
+    {
+        using var connection = db.OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        var oldFolderPath = connection.ExecuteScalar<string>("SELECT FolderPath FROM SourceFolders WHERE Id = @id", new { id }, transaction)
+                            ?? throw new InvalidOperationException($"Folder sursă inexistent: {id}");
+        var oldRoot = WithSeparator(oldFolderPath);
+        var newRoot = WithSeparator(newFolderPath);
+
+        connection.Execute("UPDATE SourceFolders SET FolderPath = @newFolderPath WHERE Id = @id", new { id, newFolderPath }, transaction);
+
+        // Două etape (marcaj temporar, apoi calea finală): FullPath e UNIQUE, iar noua locație poate fi
+        // chiar un subfolder al celei vechi — o actualizare directă ar putea ciocni temporar două rânduri.
+        const string marker = "|";
+        connection.Execute(
+            """
+            UPDATE Photos SET FullPath = @marker || @newRoot || substr(FullPath, length(@oldRoot) + 1)
+            WHERE SourceFolderId = @id AND substr(FullPath, 1, length(@oldRoot)) = @oldRoot COLLATE NOCASE
+            """, new { id, marker, oldRoot, newRoot }, transaction);
+        connection.Execute(
+            "UPDATE Photos SET FullPath = substr(FullPath, 2) WHERE SourceFolderId = @id AND substr(FullPath, 1, 1) = @marker",
+            new { id, marker }, transaction);
+        transaction.Commit();
+    }
+
+    private static string WithSeparator(string path) =>
+        path.EndsWith(Path.DirectorySeparatorChar) ? path : path + Path.DirectorySeparatorChar;
+
     private static SourceFolder Map(Row r) => new()
     {
         Id = r.Id,

@@ -4,7 +4,7 @@ using PhotoVault.Core.Utils;
 
 namespace PhotoVault.Core.Services;
 
-public sealed class BatchRenameService(IPhotoRepository photos) : IBatchRenameService
+public sealed class BatchRenameService(IPhotoRepository photos, IDatabaseBackup? backup = null) : IBatchRenameService
 {
     // Setul Windows (independent de platforma pe care rulează testele)
     private static readonly char[] InvalidChars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'];
@@ -83,6 +83,9 @@ public sealed class BatchRenameService(IPhotoRepository photos) : IBatchRenameSe
             if (File.Exists(move.To) && !sources.Contains(move.To))
                 throw new BatchRenameException(RenameFailure.TargetExists, Path.GetFileName(move.To));
         }
+
+        // §12.1: folder indexat → căile din bibliotecă vor fi rescrise
+        if (photos.CountInFolder(folderPath) > 0) backup?.CreateBackup();
 
         // Două etape (nume temporar → nume final): permite schimburi de nume (A→B, B→A) și redenumiri doar ca majuscule
         var toTemp = new List<(string From, string Temp)>();

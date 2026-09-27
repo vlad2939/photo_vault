@@ -1,19 +1,15 @@
 <!--
     Stiluri comune pentru ferestrele pe tot ecranul (vizualizare poză și slideshow, §5.8 / §6.4):
     „pastile" semi-transparente în colțurile de sus, bară de control rotunjită jos,
-    butoane-glifă în culoarea accentului. Paleta e mereu închisă, independentă de temă.
+    butoane-glifă în culoarea accentului. Culorile (Viewer.*) vin din tema activă: închise în Dark, deschise în Light.
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <SolidColorBrush x:Key="Viewer.PillBackground" Color="#B3202124" />
-    <SolidColorBrush x:Key="Viewer.PillBorder" Color="#26FFFFFF" />
-    <SolidColorBrush x:Key="Viewer.Text" Color="#F2F2F2" />
-    <SolidColorBrush x:Key="Viewer.DividerBrush" Color="#33FFFFFF" />
 
     <Style x:Key="Viewer.Pill" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource Viewer.PillBackground}" />
-        <Setter Property="BorderBrush" Value="{StaticResource Viewer.PillBorder}" />
+        <Setter Property="Background" Value="{DynamicResource Viewer.PillBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Viewer.PillBorder}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="14" />
         <Setter Property="Padding" Value="16,10" />
@@ -37,13 +33,13 @@
         <Setter Property="Width" Value="1" />
         <Setter Property="Height" Value="30" />
         <Setter Property="Margin" Value="20,0" />
-        <Setter Property="Background" Value="{StaticResource Viewer.DividerBrush}" />
+        <Setter Property="Background" Value="{DynamicResource Viewer.DividerBrush}" />
     </Style>
 
     <Style x:Key="Viewer.PillText" TargetType="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="Foreground" Value="{StaticResource Viewer.Text}" />
+        <Setter Property="Foreground" Value="{DynamicResource Viewer.Text}" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
     </Style>
 
@@ -73,10 +69,10 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Circle" Property="Fill" Value="#1FFFFFFF" />
+                            <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource Viewer.ButtonHover}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Circle" Property="Fill" Value="#33FFFFFF" />
+                            <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource Viewer.ButtonPressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.35" />
@@ -96,15 +92,15 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
                     <Grid>
-                        <Ellipse x:Name="Circle" Fill="#14FFFFFF" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="2" />
+                        <Ellipse x:Name="Circle" Fill="{DynamicResource Viewer.CircleFill}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="2" />
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Circle" Property="Fill" Value="#2EFFFFFF" />
+                            <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource Viewer.CircleHover}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Circle" Property="Fill" Value="#40FFFFFF" />
+                            <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource Viewer.CirclePressed}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

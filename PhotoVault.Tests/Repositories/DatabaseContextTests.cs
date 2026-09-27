@@ -19,7 +19,7 @@ public class DatabaseContextTests
         Assert.Contains("idx_albumphotos_photo", indexes);
         Assert.Contains("idx_phototags_tag", indexes);
 
-        Assert.Equal(4, db.Context.GetSchemaVersion());
+        Assert.Equal(5, db.Context.GetSchemaVersion());
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class DatabaseContextTests
         using var db = new TestDatabase();
         db.Context.Initialize();
         db.Context.Initialize();
-        Assert.Equal(4, db.Context.GetSchemaVersion());
+        Assert.Equal(5, db.Context.GetSchemaVersion());
     }
 
     [Fact]

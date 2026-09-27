@@ -43,6 +43,9 @@ public partial class FolderNodeViewModel : ObservableObject
     /// <summary>Folder sursă (rădăcină) — are meniu contextual și contor de poze.</summary>
     public virtual bool IsRoot => false;
 
+    /// <summary>Folderul e accesibil pe disc (relevant doar pentru folderele sursă).</summary>
+    public virtual bool IsAvailable => true;
+
     [ObservableProperty]
     public partial bool IsSelected { get; set; }
 

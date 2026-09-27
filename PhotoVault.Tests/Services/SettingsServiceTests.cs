@@ -92,4 +92,21 @@ public class SettingsServiceTests
         service.SetLanguage("fr");            // necunoscută → română
         Assert.Equal("ro", new SettingsService(repository).Load().Language);
     }
+
+    [Fact]
+    public void GridThumbnailSize_ClampedAndPersisted()
+    {
+        using var db = new TestDatabase();
+        var repository = new AppSettingsRepository(db.Context);
+        var service = new SettingsService(repository);
+        Assert.Equal(AppSettings.DefaultGridThumbnailSize, service.Load().GridThumbnailSize);
+
+        service.SetGridThumbnailSize(251.6);
+        Assert.Equal(252, new SettingsService(repository).Load().GridThumbnailSize);
+
+        service.SetGridThumbnailSize(999);
+        Assert.Equal(AppSettings.MaxGridThumbnailSize, new SettingsService(repository).Load().GridThumbnailSize);
+        service.SetGridThumbnailSize(10);
+        Assert.Equal(AppSettings.MinGridThumbnailSize, new SettingsService(repository).Load().GridThumbnailSize);
+    }
 }

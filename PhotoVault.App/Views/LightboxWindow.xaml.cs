@@ -32,6 +32,7 @@ public partial class LightboxWindow : Window
             case Key.D0 or Key.NumPad0: Viewer.Fit(); break;
             case Key.D1 or Key.NumPad1: Viewer.ActualSize(); break;
             case Key.R: ViewModel?.RotateCommand.Execute(null); break;
+            case Key.F: ViewModel?.ToggleFavoriteCommand.Execute(null); _chrome.Show(); break;
             default: return;
         }
         e.Handled = true;

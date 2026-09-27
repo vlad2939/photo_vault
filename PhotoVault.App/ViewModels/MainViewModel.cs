@@ -3,6 +3,7 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhotoVault.App.Utils;
+using PhotoVault.Core.Abstractions;
 using PhotoVault.Core.Models;
 using PhotoVault.Core.Services;
 
@@ -46,7 +47,8 @@ public partial class MainViewModel : ObservableObject
 
     public MainViewModel(ISettingsService settings, IThemeService theme, IDialogService dialogs, IWindowService windows,
         IPhotoIndexService index, IThumbnailService thumbnails, IMetadataService metadata, IAlbumService albumService,
-        ITagService tagService, IPhotoService photoService, IFolderPicker folderPicker, IFilePicker filePicker, IAppLifetime lifetime)
+        ITagService tagService, IPhotoService photoService, IFolderPicker folderPicker, IFilePicker filePicker, IAppLifetime lifetime,
+        IDatabaseBackup backup)
     {
         _settings = settings;
         _theme = theme;
@@ -65,7 +67,14 @@ public partial class MainViewModel : ObservableObject
         Tags = new TagViewModel(tagService, dialogs);
         SlideshowSettings = new SlideshowSettingsViewModel(settings, filePicker);
         General = new GeneralSettingsViewModel(settings, theme, dialogs, lifetime);
+        Backups = new BackupSettingsViewModel(backup, dialogs);
 
+        ThumbnailSize = settings.Current.GridThumbnailSize;
+        _thumbnailSizeSave.Tick += (_, _) =>
+        {
+            _thumbnailSizeSave.Stop();
+            _settings.SetGridThumbnailSize(ThumbnailSize);
+        };
         Grid.PropertyChanged += OnGridPropertyChanged;
         _searchDebounce.Tick += (_, _) =>
         {
@@ -94,6 +103,7 @@ public partial class MainViewModel : ObservableObject
     public TagViewModel Tags { get; }
     public SlideshowSettingsViewModel SlideshowSettings { get; }
     public GeneralSettingsViewModel General { get; }
+    public BackupSettingsViewModel Backups { get; }
 
     [ObservableProperty]
     public partial bool IsDarkTheme { get; set; }
@@ -262,6 +272,56 @@ public partial class MainViewModel : ObservableObject
             if (rotations.TryGetValue(photo.Id, out var degrees)) photo.SetRotation(degrees);
     }
 
+    // ------------------------------------------------------------------ Dimensiunea miniaturilor (§12.4)
+
+    private readonly DispatcherTimer _thumbnailSizeSave = new() { Interval = TimeSpan.FromMilliseconds(500) };
+
+    /// <summary>Lățimea minimă a cardurilor din grid (slider / Ctrl + rotiță); miniaturile de pe disc nu se regenerează.</summary>
+    [ObservableProperty]
+    public partial double ThumbnailSize { get; set; }
+
+    public double MinThumbnailSize => AppSettings.MinGridThumbnailSize;
+    public double MaxThumbnailSize => AppSettings.MaxGridThumbnailSize;
+
+    partial void OnThumbnailSizeChanged(double value)
+    {
+        // Salvare după ce utilizatorul s-a oprit din tras de slider (nu la fiecare pixel)
+        _thumbnailSizeSave.Stop();
+        _thumbnailSizeSave.Start();
+    }
+
+    /// <summary>Ctrl + rotița mouse-ului pe grid: pas de 20 px.</summary>
+    public void ZoomThumbnails(int direction) =>
+        ThumbnailSize = Math.Clamp(ThumbnailSize + 20 * Math.Sign(direction), MinThumbnailSize, MaxThumbnailSize);
+
+    // ------------------------------------------------------------------ Favorite (§12.3)
+
+    /// <summary>Filtrul rapid „Arată doar favorite", peste orice context (folder, album, tag, căutare).</summary>
+    [ObservableProperty]
+    public partial bool FavoritesOnly { get; set; }
+
+    partial void OnFavoritesOnlyChanged(bool value) => Grid.FavoritesOnly = value;
+
+    /// <summary>
+    /// Inimioara de pe card (parametru = poza) sau tasta F / meniul contextual (pozele selectate):
+    /// dacă toate țintele sunt deja favorite, sunt scoase din favorite; altfel devin toate favorite.
+    /// </summary>
+    [RelayCommand]
+    private void ToggleFavorite(PhotoItemViewModel? photo)
+    {
+        IReadOnlyList<PhotoItemViewModel> targets =
+            photo is not null && !Grid.SelectedPhotos.Contains(photo) ? [photo]
+            : Grid.SelectedPhotos.Count > 0 ? Grid.SelectedPhotos
+            : Grid.SelectedPhoto is { } single ? [single] : [];
+        if (targets.Count == 0) return;
+
+        var value = !targets.All(p => p.IsFavorite);
+        _photoService.SetFavorite(targets.Select(p => p.Id).ToList(), value);
+        foreach (var target in targets) target.IsFavorite = value;
+        if (FavoritesOnly && !value) Grid.Refilter();
+        Status.ShowMessage(Loc.Format(value ? "Str.Status.FavoriteAdded" : "Str.Status.FavoriteRemoved", Loc.PhotoCount(targets.Count)));
+    }
+
     private void OnLibraryReloaded()
     {
         Albums.Reload();
@@ -403,7 +463,12 @@ public partial class MainViewModel : ObservableObject
     private void OpenInfo() => _windows.ShowInfo();
 
     [RelayCommand]
-    private void OpenSettings() => _windows.ShowSettings(this);
+    private void OpenSettings()
+    {
+        Backups.Refresh();
+        SlideshowSettings.Reload();
+        _windows.ShowSettings(this);
+    }
 
     [RelayCommand]
     private void OpenLogo() => _windows.ShowLogo();

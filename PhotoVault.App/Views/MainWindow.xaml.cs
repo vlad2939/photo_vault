@@ -34,12 +34,21 @@ public partial class MainWindow : ThemedWindow
     private void OnPhotoListMouseDown(object sender, MouseButtonEventArgs e)
     {
         if (e.ClickCount != 2 || ViewModel is not { } vm) return;
+        if (FindAncestor<Button>(e.OriginalSource as DependencyObject) is not null) return;   // ex. dublu-click pe inimioară
         var item = FindAncestor<ListBoxItem>(e.OriginalSource as DependencyObject);
         if (item?.DataContext is not PhotoItemViewModel photo) return;
 
         e.Handled = true;
         vm.Grid.SelectedPhoto = photo;
         vm.Grid.OpenCommand.Execute(photo);
+    }
+
+    /// <summary>Ctrl + rotița mouse-ului pe grid: miniaturi mai mari / mai mici (§12.4).</summary>
+    private void OnPhotoListMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (Keyboard.Modifiers != ModifierKeys.Control || ViewModel is not { } vm) return;
+        vm.ZoomThumbnails(e.Delta);
+        e.Handled = true;
     }
 
     /// <summary>Selecția multiplă din grid (ListBox.SelectedItems nu e bindabil).</summary>
@@ -77,6 +86,11 @@ public partial class MainWindow : ThemedWindow
         var rotate = MenuItem("Str.Photo.Rotate", vm.RotateCommand, null, "Icon.Rotate");
         rotate.InputGestureText = "R";
         menu.Items.Add(rotate);
+        var allFavorite = vm.Grid.SelectedPhotos.Count > 0 && vm.Grid.SelectedPhotos.All(p => p.IsFavorite);
+        var favorite = MenuItem(allFavorite ? "Str.Favorite.Remove" : "Str.Favorite.Add", vm.ToggleFavoriteCommand, null,
+            allFavorite ? "Icon.HeartFill" : "Icon.Heart");
+        favorite.InputGestureText = "F";
+        menu.Items.Add(favorite);
         var slideshow = MenuItem("Str.Slideshow.StartHere", vm.StartSlideshowCommand, vm.Grid.SelectedPhoto, "Icon.Slideshow");
         slideshow.InputGestureText = "F5";
         menu.Items.Add(slideshow);

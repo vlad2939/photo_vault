@@ -3,7 +3,7 @@ using PhotoVault.Core.Models;
 
 namespace PhotoVault.Core.Services;
 
-public sealed class TagService(ITagRepository tags) : ITagService
+public sealed class TagService(ITagRepository tags, IDatabaseBackup? backup = null) : ITagService
 {
     public IReadOnlyList<TagSummary> GetTags() => tags.GetAll();
 
@@ -22,7 +22,11 @@ public sealed class TagService(ITagRepository tags) : ITagService
         return true;
     }
 
-    public void Delete(long tagId) => tags.Delete(tagId);
+    public void Delete(long tagId)
+    {
+        backup?.CreateBackup();   // §12.1: tag-ul dispare de pe toate pozele
+        tags.Delete(tagId);
+    }
 
     public int Assign(long tagId, IReadOnlyCollection<long> photoIds) =>
         photoIds.Count == 0 ? 0 : tags.Assign(tagId, photoIds);

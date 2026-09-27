@@ -22,4 +22,7 @@ public sealed class PhotoItem
     public string? ThumbnailPath { get; set; }
 
     public bool IsMissing { get; set; }
+
+    /// <summary>Poză marcată ca favorită (§12.3) — steag simplu, independent de tag-uri.</summary>
+    public bool IsFavorite { get; set; }
 }

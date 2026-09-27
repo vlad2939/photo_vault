@@ -63,6 +63,16 @@ public partial class LightboxViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanGoPrevious))]
     private void Previous() => GoTo(Index - 1);
 
+    /// <summary>F / inimioara din bară: marchează / demarchează poza curentă ca favorită (§12.3).</summary>
+    [RelayCommand]
+    private void ToggleFavorite()
+    {
+        if (Current is not { } photo) return;
+        var value = !photo.IsFavorite;
+        _photoService.SetFavorite([photo.Id], value);
+        photo.IsFavorite = value;
+    }
+
     /// <summary>R în lightbox: rotire logică 90° a pozei curente (se reflectă și în grid).</summary>
     [RelayCommand]
     private void Rotate()

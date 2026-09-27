@@ -11,7 +11,8 @@ namespace PhotoVault.Core.Services;
 public sealed class PhotoIndexService(
     ISourceFolderRepository folders,
     IPhotoRepository photos,
-    IThumbnailService thumbnails) : IPhotoIndexService
+    IThumbnailService thumbnails,
+    IDatabaseBackup? backup = null) : IPhotoIndexService
 {
     private const int InsertBatchSize = 500;
     private const int ProgressStep = 20;
@@ -54,6 +55,53 @@ public sealed class PhotoIndexService(
                 return (FolderValidation.ContainsExisting, existing.FolderPath);
         }
         return (FolderValidation.Ok, null);
+    }
+
+    public (FolderValidation Result, string? ConflictingFolder) ValidateRelocation(long sourceFolderId, string newFolderPath)
+    {
+        if (!Directory.Exists(newFolderPath)) return (FolderValidation.NotFound, null);
+
+        var candidate = WithTrailingSeparator(Path.GetFullPath(newFolderPath));
+        foreach (var existing in folders.GetAll().Where(f => f.Id != sourceFolderId))
+        {
+            var current = WithTrailingSeparator(Path.GetFullPath(existing.FolderPath));
+            if (string.Equals(candidate, current, StringComparison.OrdinalIgnoreCase))
+                return (FolderValidation.AlreadyAdded, existing.FolderPath);
+            if (candidate.StartsWith(current, StringComparison.OrdinalIgnoreCase))
+                return (FolderValidation.InsideExisting, existing.FolderPath);
+            if (current.StartsWith(candidate, StringComparison.OrdinalIgnoreCase))
+                return (FolderValidation.ContainsExisting, existing.FolderPath);
+        }
+        return (FolderValidation.Ok, null);
+    }
+
+    public Task<RelocationPreview> PreviewRelocationAsync(long sourceFolderId, string newFolderPath) => Task.Run(() =>
+    {
+        var folder = folders.GetById(sourceFolderId) ?? throw new InvalidOperationException($"Folder sursă inexistent: {sourceFolderId}");
+        var oldRoot = WithTrailingSeparator(folder.FolderPath);
+        var newRoot = WithTrailingSeparator(Path.GetFullPath(newFolderPath));
+        var indexed = photos.GetBySourceFolder(sourceFolderId);
+        var found = indexed.Count(p => p.FullPath.StartsWith(oldRoot, StringComparison.OrdinalIgnoreCase)
+                                       && File.Exists(newRoot + p.FullPath[oldRoot.Length..]));
+        return new RelocationPreview(indexed.Count, found);
+    });
+
+    public async Task RelocateSourceFolderAsync(long sourceFolderId, string newFolderPath)
+    {
+        // Nu în paralel cu o scanare a aceluiași index
+        await _scanLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            await Task.Run(() =>
+            {
+                backup?.CreateBackup();   // §12.1: rescrie căile tuturor pozelor folderului
+                folders.Relocate(sourceFolderId, Path.GetFullPath(newFolderPath));
+            }).ConfigureAwait(false);
+        }
+        finally
+        {
+            _scanLock.Release();
+        }
     }
 
     public async Task<(SourceFolder Folder, ScanResult Result)> AddSourceFolderAsync(string folderPath,
@@ -106,6 +154,7 @@ public sealed class PhotoIndexService(
             await Task.Run(() =>
             {
                 var thumbnailPaths = photos.GetBySourceFolder(sourceFolderId).Select(p => p.ThumbnailPath).ToList();
+                backup?.CreateBackup();   // §12.1: ștergere în masă din index (cu albume / tag-uri asociate)
                 folders.Delete(sourceFolderId);   // ON DELETE CASCADE → Photos, AlbumPhotos, PhotoTags
                 foreach (var path in thumbnailPaths) thumbnails.Delete(path);
             }).ConfigureAwait(false);
@@ -264,6 +313,7 @@ public sealed class PhotoIndexService(
         // Poze șterse/mutate extern: eliminate direct din index, fără confirmare (§4)
         if (missing.Count > 0)
         {
+            backup?.CreateBackup();   // §12.1: pozele lipsă își pierd albumele / tag-urile odată cu eliminarea
             photos.DeleteMany(missing.Select(p => p.Id).ToList());
             foreach (var photo in missing) thumbnails.Delete(photo.ThumbnailPath);
         }

@@ -1,7 +1,7 @@
 <!--
     Slideshow (§5.8, §6.10): pe tot ecranul, fundal negru, efect Ken Burns + fade între poze.
     Informațiile din colțurile de sus și bara de control de jos apar / dispar împreună (auto-hide după 3 s).
-    Paleta e mereu închisă (independentă de tema aplicației), ca în mockup.
+    Culorile urmează tema activă (Dark: ca în mockup; Light: variantă deschisă).
 -->
 <Window x:Class="PhotoVault.App.Views.SlideshowWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -13,9 +13,9 @@
         d:DataContext="{d:DesignInstance Type=vm:SlideshowViewModel, IsDesignTimeCreatable=False}"
         Title="{DynamicResource Str.Slideshow.Title}"
         WindowStyle="None" ResizeMode="NoResize" WindowState="Maximized"
-        ShowInTaskbar="False" Background="Black" UseLayoutRounding="True"
+        ShowInTaskbar="False" Background="{DynamicResource Viewer.Background}" UseLayoutRounding="True"
         FontFamily="{DynamicResource Font.Text}" FontSize="{DynamicResource FontSize.Body}"
-        Foreground="#F2F2F2">
+        Foreground="{DynamicResource Viewer.Text}">
 
     <Window.Resources>
         <!-- Play / Pause: butonul central, cerc conturat cu accentul (ca în mockup) -->
@@ -33,7 +33,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid x:Name="Root" Background="Black">
+    <Grid x:Name="Root" Background="{DynamicResource Viewer.Background}">
         <!-- Scena: două straturi suprapuse (ieșire fade-out / intrare fade-in), fiecare cu mișcarea lui Ken Burns -->
         <Grid x:Name="Stage" ClipToBounds="True">
             <Image x:Name="LayerA" Stretch="Uniform" Opacity="0" RenderTransformOrigin="0.5,0.5"
@@ -49,12 +49,12 @@
                 <StackPanel Orientation="Horizontal">
                     <Image Width="26" Height="26" Source="pack://application:,,,/PhotoVault;component/Resources/Images/logo_128.png"
                            RenderOptions.BitmapScalingMode="HighQuality" />
-                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="15" FontWeight="SemiBold" Foreground="White"
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource Viewer.Text}"
                                Text="PhotoVault" />
-                    <Border Width="1" Height="22" Margin="16,0" Background="#33FFFFFF" />
+                    <Border Width="1" Height="22" Margin="16,0" Background="{DynamicResource Viewer.DividerBrush}" />
                     <TextBlock VerticalAlignment="Center" FontFamily="{DynamicResource Font.Icons}" FontSize="16"
                                Foreground="{DynamicResource Brush.Accent}" Text="{DynamicResource Icon.Folder}" />
-                    <TextBlock x:Name="TitleText" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="#F2F2F2"
+                    <TextBlock x:Name="TitleText" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="{DynamicResource Viewer.Text}"
                                MaxWidth="420" TextTrimming="CharacterEllipsis" Text="{Binding Title}" />
                 </StackPanel>
             </Border>
@@ -62,10 +62,21 @@
             <!-- Dreapta sus: numele pozei curente -->
             <Border Margin="0,22,24,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Viewer.Pill}">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center" FontFamily="{DynamicResource Font.Icons}" FontSize="16" Foreground="#E0E0E0"
+                    <TextBlock VerticalAlignment="Center" FontFamily="{DynamicResource Font.Icons}" FontSize="16" Foreground="{DynamicResource Viewer.Icon}"
                                Text="{DynamicResource Icon.Photo}" />
-                    <TextBlock x:Name="FileNameText" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="#F2F2F2"
+                    <TextBlock x:Name="FileNameText" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="{DynamicResource Viewer.Text}"
                                MaxWidth="360" TextTrimming="CharacterEllipsis" Text="{Binding FileName}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Piesa redată acum: discret, deasupra barei de control -->
+            <Border Margin="0,0,0,116" HorizontalAlignment="Center" VerticalAlignment="Bottom" Padding="14,6"
+                    Style="{StaticResource Viewer.Pill}" CornerRadius="16"
+                    Visibility="{Binding NowPlaying, Converter={StaticResource StringToVisibility}}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource Viewer.PillIcon}" FontSize="13" Text="{DynamicResource Icon.Music}" />
+                    <TextBlock x:Name="NowPlayingText" Margin="8,0,0,0" MaxWidth="420" Style="{StaticResource Viewer.PillText}"
+                               FontSize="13" Text="{Binding NowPlaying}" />
                 </StackPanel>
             </Border>
 
@@ -80,8 +91,13 @@
                             Command="{Binding NextCommand}"
                             ToolTip="{DynamicResource Str.Slideshow.Next}" AutomationProperties.Name="{DynamicResource Str.Slideshow.Next}" />
                     <Border Style="{StaticResource Viewer.Divider}" />
+                    <!-- Muzică: alegerea uneia sau mai multor piese MP3, redate imediat (și salvate în playlist) -->
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Music}"
+                            Command="{Binding AddMusicCommand}"
+                            ToolTip="{DynamicResource Str.Slideshow.AddMusic}" AutomationProperties.Name="{DynamicResource Str.Slideshow.AddMusic}" />
+                    <Border Style="{StaticResource Viewer.Divider}" />
                     <TextBlock x:Name="CounterText" MinWidth="72" VerticalAlignment="Center" TextAlignment="Center" FontSize="15"
-                               Foreground="#F2F2F2" Text="{Binding CounterText}" />
+                               Foreground="{DynamicResource Viewer.Text}" Text="{Binding CounterText}" />
                     <Border Style="{StaticResource Viewer.Divider}" />
                     <Button Style="{StaticResource Viewer.Button}" FontSize="16" Content="{DynamicResource Icon.Close}"
                             Command="{Binding ExitCommand}"
