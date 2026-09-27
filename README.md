@@ -2,7 +2,7 @@
 
 Aplicație portabilă pentru organizarea și vizualizarea albumelor foto personale.
 
-**Stadiu dezvoltare:** Faza 2 finalizată (arbore foldere, vizualizare pe tot ecranul, panou de detalii, Info, Opțiuni) · **Ultima actualizare:** septembrie 2026
+**Stadiu dezvoltare:** Faza 3 finalizată (albume și tag-uri) · **Ultima actualizare:** septembrie 2026
 
 ---
 
@@ -63,15 +63,21 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 
 ### Albume
 
-- Creezi un album nou, îi dai un nume, apoi adaugi poze în el (selecție multiplă din grid → "Adaugă la album").
+- Creezi un album cu butonul **+** din dreptul secțiunii **Albume** (panoul stâng) sau direct din meniul pozelor.
+- Selectezi poze în grid (click; **Ctrl + click** pentru mai multe; **Shift + click** pentru un interval; **Ctrl + A** pentru toate), apoi **click dreapta → Adaugă la album** → alegi un album existent sau **Album nou...**.
+- Click pe titlul **Albume** afișează albumele ca grid de carduri (copertă, nume, dată creare, număr de poze). Un click pe card arată detaliile albumului în panoul din dreapta; **dublu-click** (sau click pe album în lista din stânga) deschide albumul.
+- În interiorul unui album: **click dreapta → Elimină din album** sau **Setează ca copertă a albumului**. Coperta implicită este prima poză adăugată.
+- **Click dreapta pe un album** în lista din stânga (sau pe card): redenumire / ștergere. Ștergerea unui album elimină doar gruparea — pozele rămân în bibliotecă și pe disc.
 - **Flux recomandat:** dacă vrei un album din 95 de poze dintr-un folder cu 100, e mai rapid să adaugi tot folderul (100 poze) în album și apoi să elimini cele 5 nedorite, decât să selectezi manual 95.
 - Eliminarea unei poze dintr-un album **nu șterge fișierul** de pe disc și nu o elimină din restul aplicației — poza rămâne indexată normal, doar nu mai apare în acel album specific.
 - O poză poate face parte din mai multe albume simultan.
 
 ### Tag-uri
 
-- Poți crea etichete custom (ex. "Familie", "Vacanță 2024") și le poți atribui uneia sau mai multor poze.
-- Filtrarea după tag afișează toate pozele care au acel tag, indiferent din ce folder provin.
+- Poți crea etichete custom (ex. "Familie", "Vacanță 2024") și le poți atribui uneia sau mai multor poze: selecție în grid → **click dreapta → Adaugă tag** → tag existent sau **Tag nou...**.
+- Tag-urile pozei selectate apar în panoul din dreapta: **+** adaugă un tag, **×** îl elimină de pe poză.
+- Click pe un tag din panoul stâng afișează toate pozele care îl au, indiferent din ce folder provin.
+- Numele tag-urilor sunt unice (fără diferență între majuscule și minuscule). **Click dreapta pe tag** → redenumire / ștergere (ștergerea îl elimină de pe toate pozele; pozele nu sunt afectate).
 
 ### Redenumire batch (utilitar separat)
 
