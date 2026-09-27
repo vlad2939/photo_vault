@@ -49,7 +49,7 @@
                            RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock Margin="10,0,0,0" Style="{StaticResource Viewer.PillText}" FontSize="15" FontWeight="SemiBold"
                                Foreground="White" Text="PhotoVault" />
-                    <Border Width="1" Height="22" Margin="16,0" Background="{StaticResource Viewer.Divider}" />
+                    <Border Width="1" Height="22" Margin="16,0" Background="{StaticResource Viewer.DividerBrush}" />
                     <TextBlock Style="{StaticResource Viewer.PillIcon}" Text="{DynamicResource Icon.Folder}" />
                     <TextBlock Margin="10,0,0,0" MaxWidth="420" Style="{StaticResource Viewer.PillText}" Text="{Binding Title}" />
                 </StackPanel>

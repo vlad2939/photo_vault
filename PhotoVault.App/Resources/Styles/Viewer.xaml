@@ -9,7 +9,7 @@
     <SolidColorBrush x:Key="Viewer.PillBackground" Color="#B3202124" />
     <SolidColorBrush x:Key="Viewer.PillBorder" Color="#26FFFFFF" />
     <SolidColorBrush x:Key="Viewer.Text" Color="#F2F2F2" />
-    <SolidColorBrush x:Key="Viewer.Divider" Color="#33FFFFFF" />
+    <SolidColorBrush x:Key="Viewer.DividerBrush" Color="#33FFFFFF" />
 
     <Style x:Key="Viewer.Pill" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource Viewer.PillBackground}" />
@@ -37,7 +37,7 @@
         <Setter Property="Width" Value="1" />
         <Setter Property="Height" Value="30" />
         <Setter Property="Margin" Value="20,0" />
-        <Setter Property="Background" Value="{StaticResource Viewer.Divider}" />
+        <Setter Property="Background" Value="{StaticResource Viewer.DividerBrush}" />
     </Style>
 
     <Style x:Key="Viewer.PillText" TargetType="TextBlock">
