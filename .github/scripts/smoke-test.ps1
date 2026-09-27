@@ -16,6 +16,7 @@ public static class Native {
     [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
     [DllImport("user32.dll")] public static extern bool SetProcessDPIAware();
     [DllImport("user32.dll")] public static extern void mouse_event(uint flags, int dx, int dy, uint data, UIntPtr extra);
+    [DllImport("user32.dll")] public static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);
 }
 "@
 [Native]::SetProcessDPIAware() | Out-Null
@@ -285,13 +286,25 @@ function Open-PhotoContextMenu($root) {
     Start-Sleep -Milliseconds 700
 }
 
+function Click-At($el) {
+    $pt = $el.GetClickablePoint()
+    [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point([int]$pt.X, [int]$pt.Y)
+    Start-Sleep -Milliseconds 150
+    [Native]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
+    [Native]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
+    Start-Sleep -Milliseconds 400   # peste intervalul de dublu-click
+}
+
+# Selecție ca un utilizator: click pe prima poză, apoi Ctrl+click pe următoarele
 function Select-Photos($root, [int] $count) {
     $g = Get-GridItems $root
-    $g.Items[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
-    for ($i = 1; $i -lt $count; $i++) {
-        $g.Items[$i].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).AddToSelection()
-    }
+    Click-At $g.Items[0]
+    [Native]::keybd_event(0x11, 0, 0, [UIntPtr]::Zero)          # Ctrl apăsat
+    for ($i = 1; $i -lt $count; $i++) { Click-At $g.Items[$i] }
+    [Native]::keybd_event(0x11, 0, 0x0002, [UIntPtr]::Zero)     # Ctrl eliberat
     Start-Sleep -Milliseconds 300
+    $selected = @($g.Items | Where-Object { $_.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Current.IsSelected }).Count
+    Write-Host "Poze selectate: $selected"
 }
 
 # Album nou din panoul stâng (+) → prompt stilizat
