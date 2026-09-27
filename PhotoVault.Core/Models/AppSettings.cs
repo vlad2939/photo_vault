@@ -25,6 +25,13 @@ public sealed class AppSettings
 
     public List<string> SlideshowPlaylistPaths { get; set; } = [];
 
+    /// <summary>Lățimea minimă a cardurilor din grid, în pixeli (§12.4: 120 = mic … 320 = mare).</summary>
+    public double GridThumbnailSize { get; set; } = DefaultGridThumbnailSize;
+
+    public const double DefaultGridThumbnailSize = 170;
+    public const double MinGridThumbnailSize = 120;
+    public const double MaxGridThumbnailSize = 320;
+
     /// <summary>Volumul muzicii din slideshow, 0–100.</summary>
     public int SlideshowVolume { get; set; } = 70;
 
@@ -50,4 +57,5 @@ public static class AppSettingKeys
     public const string SlideshowZoomIntensity = "SlideshowZoomIntensity";
     public const string SlideshowPlaylistPaths = "SlideshowPlaylistPaths";
     public const string SlideshowVolume = "SlideshowVolume";
+    public const string GridThumbnailSize = "GridThumbnailSize";
 }

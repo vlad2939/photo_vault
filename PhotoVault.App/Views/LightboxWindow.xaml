@@ -89,6 +89,23 @@
                             ToolTip="{DynamicResource Str.Lightbox.ActualSize}" AutomationProperties.Name="{DynamicResource Str.Lightbox.ActualSize}">
                         <TextBlock FontFamily="{DynamicResource Font.Text}" FontSize="13" FontWeight="SemiBold" Text="1:1" />
                     </Button>
+                    <!-- Favorite (§12.3): inimă plină = poză favorită -->
+                    <Button Command="{Binding ToggleFavoriteCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource Viewer.Button}">
+                                <Setter Property="Content" Value="{DynamicResource Icon.Heart}" />
+                                <Setter Property="ToolTip" Value="{DynamicResource Str.Favorite.AddKey}" />
+                                <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Favorite.Add}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Current.IsFavorite}" Value="True">
+                                        <Setter Property="Content" Value="{DynamicResource Icon.HeartFill}" />
+                                        <Setter Property="ToolTip" Value="{DynamicResource Str.Favorite.RemoveKey}" />
+                                        <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Favorite.Remove}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                     <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Rotate}" Command="{Binding RotateCommand}"
                             ToolTip="{DynamicResource Str.Lightbox.Rotate}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Rotate}" />
 

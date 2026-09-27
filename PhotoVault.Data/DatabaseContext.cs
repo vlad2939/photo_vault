@@ -50,8 +50,12 @@ public sealed partial class DatabaseContext
         connection.Execute("PRAGMA journal_mode = WAL;");
 
         var currentVersion = connection.ExecuteScalar<long>("PRAGMA user_version;");
+        var pending = LoadMigrations().Where(m => m.Version > currentVersion).ToList();
 
-        foreach (var (version, script) in LoadMigrations().Where(m => m.Version > currentVersion))
+        // O bază existentă care urmează să fie actualizată (versiune nouă a aplicației) → copie de siguranță înainte (§12.1)
+        if (currentVersion > 0 && pending.Count > 0) new DatabaseBackup(this).CreateBackup(force: true);
+
+        foreach (var (version, script) in pending)
         {
             using var transaction = connection.BeginTransaction();
             connection.Execute(script, transaction: transaction);

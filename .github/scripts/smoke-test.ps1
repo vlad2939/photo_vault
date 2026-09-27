@@ -567,6 +567,46 @@ Save-Screen '53-settings-slideshow-dark'
 Start-Sleep -Milliseconds 500
 Assert-Alive $proc
 
+# ---- Capitolul 12: favorite, dimensiunea miniaturilor, copii de siguranță ----
+$g = Get-GridItems $root
+Click-At $g.Items[0]
+[System.Windows.Forms.SendKeys]::SendWait('f')          # F = adaugă la favorite
+Start-Sleep -Milliseconds 600
+Save-Screen '60-favorite-heart-dark'
+$favFilter = Find-Control $root 'Favorite' $button
+$favFilter.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Toggle()
+Wait-ForText $root '1 poză' 5 | Out-Null
+Write-Host "Filtrul „Favorite”: 1 poză"
+Save-Screen '61-favorites-filter-dark'
+$favFilter.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Toggle()
+Wait-ForText $root '1.500 de poze' 5 | Out-Null
+
+$sizeSlider = Find-Control $root 'Dimensiunea miniaturilor' ([System.Windows.Automation.ControlType]::Slider)
+$range = $sizeSlider.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+$range.SetValue(300)
+Start-Sleep -Seconds 1
+Save-Screen '62-thumbnails-large-dark'
+$range.SetValue(120)
+Start-Sleep -Seconds 1
+Save-Screen '63-thumbnails-small-dark'
+$range.SetValue(170)
+Start-Sleep -Milliseconds 800
+Assert-Alive $proc
+
+Invoke-Element (Find-Control $root 'Opțiuni' $button)
+$settingsWindow = Find-Window 'Opțiuni'
+Invoke-Element (Find-Control $settingsWindow 'Creează o copie acum' $button)
+Wait-ForText ([System.Windows.Automation.AutomationElement]::RootElement) 'Copia de siguranță a fost creată' 10 | Out-Null
+Save-Screen '64-backup-created-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+Start-Sleep -Milliseconds 600
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Milliseconds 600
+$backups = @(Get-ChildItem (Join-Path $appDir 'data') -Filter 'photovault.db.bak.*')
+Write-Host "Copii de siguranță în data\: $($backups.Count) ($($backups.Name -join ', '))"
+if ($backups.Count -lt 2) { throw "Lipsesc copiile de siguranță (automată la redenumirea batch + manuală)." }
+Assert-Alive $proc
+
 # Comutare pe tema luminoasă
 Invoke-Element (Find-ByName $root 'Comută pe tema luminoasă')
 Save-Screen '08-grid-light'

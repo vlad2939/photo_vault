@@ -350,13 +350,13 @@
                                    Visibility="{Binding IsPhotosView, Converter={StaticResource BoolToVisibility}}" />
                     </Grid>
 
-                    <!-- Căutare (nume fișier + tag-uri + albume, Ctrl+F) + sortare după nume (§6.7) -->
+                    <!-- Căutare (Ctrl+F) · doar favorite (§12.3) · sortare (§6.7) · dimensiune miniaturi (§12.4) · slideshow (§6.10) -->
                     <Grid Grid.Row="1" Visibility="{Binding IsPhotosView, Converter={StaticResource BoolToVisibility}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" MinWidth="120" />
-                            <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="SearchBox"
@@ -369,12 +369,34 @@
                                 <KeyBinding Key="Escape" Command="{Binding ClearSearchCommand}" />
                             </TextBox.InputBindings>
                         </TextBox>
-                        <ComboBox Grid.Column="2" SelectedIndex="{Binding SortIndex}" MinWidth="200">
+                        <ToggleButton Grid.Column="1" Margin="10,0,0,0" Style="{StaticResource ToggleButton.Filter}"
+                                      IsChecked="{Binding FavoritesOnly}"
+                                      ToolTip="{DynamicResource Str.Favorite.FilterTooltip}"
+                                      AutomationProperties.Name="{DynamicResource Str.Favorite.Filter}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="FavoritesFilterIcon" FontFamily="{DynamicResource Font.Icons}" FontSize="13"
+                                           VerticalAlignment="Center" Text="{DynamicResource Icon.Heart}" />
+                                <TextBlock Margin="7,0,0,0" Text="{DynamicResource Str.Favorite.Filter}" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ComboBox Grid.Column="2" Margin="10,0,0,0" SelectedIndex="{Binding SortIndex}" MinWidth="150">
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameAsc}" />
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameDesc}" />
                         </ComboBox>
+                        <!-- Dimensiunea miniaturilor: mic ↔ mare (și Ctrl + rotița mouse-ului pe grid) -->
+                        <StackPanel Grid.Column="3" Margin="12,0,0,0" Orientation="Horizontal" VerticalAlignment="Center"
+                                    ToolTip="{DynamicResource Str.Grid.SizeTooltip}">
+                            <TextBlock Style="{StaticResource Text.Icon}" FontSize="11" Foreground="{DynamicResource Brush.Text.Secondary}"
+                                       Text="{DynamicResource Icon.Photo}" />
+                            <Slider Width="96" Margin="6,0" VerticalAlignment="Center"
+                                    Minimum="{Binding MinThumbnailSize, Mode=OneTime}" Maximum="{Binding MaxThumbnailSize, Mode=OneTime}"
+                                    SmallChange="10" LargeChange="40"
+                                    Value="{Binding ThumbnailSize}" AutomationProperties.Name="{DynamicResource Str.Grid.Size}" />
+                            <TextBlock Style="{StaticResource Text.Icon}" FontSize="16" Foreground="{DynamicResource Brush.Text.Secondary}"
+                                       Text="{DynamicResource Icon.Photo}" />
+                        </StackPanel>
                         <!-- Slideshow cu pozele afișate (§6.10) -->
-                        <Button Grid.Column="4" Style="{StaticResource Button.Primary}" Command="{Binding StartSlideshowCommand}"
+                        <Button Grid.Column="4" Margin="12,0,0,0" Style="{StaticResource Button.Primary}" Command="{Binding StartSlideshowCommand}"
                                 ToolTip="{DynamicResource Str.Slideshow.StartTooltip}"
                                 AutomationProperties.Name="{DynamicResource Str.Slideshow.Start}"
                                 IsEnabled="{Binding Grid.IsEmpty, Converter={StaticResource InverseBoolean}}">
@@ -391,6 +413,7 @@
                     <!-- Grid miniaturi: virtualizat (doar rândurile vizibile au containere) -->
                     <ListBox x:Name="PhotoList" Margin="-6,8,-10,-8" ItemsSource="{Binding Grid.Photos}"
                              PreviewMouseLeftButtonDown="OnPhotoListMouseDown"
+                             PreviewMouseWheel="OnPhotoListMouseWheel"
                              SelectionChanged="OnPhotoSelectionChanged"
                              ContextMenuOpening="OnPhotoContextMenuOpening"
                              SelectionMode="Extended"
@@ -410,10 +433,11 @@
                             <!-- Enter → lightbox (dublu-click: OnPhotoListMouseDown); R → rotire 90° -->
                             <KeyBinding Key="Enter" Command="{Binding Grid.OpenCommand}" />
                             <KeyBinding Key="R" Command="{Binding RotateCommand}" />
+                            <KeyBinding Key="F" Command="{Binding ToggleFavoriteCommand}" />
                         </ListBox.InputBindings>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <ctl:VirtualizingWrapPanel ItemMinWidth="170" ImageAspectRatio="1.333" ItemFooterHeight="42" Spacing="14" />
+                                <ctl:VirtualizingWrapPanel ItemMinWidth="{Binding ThumbnailSize}" ImageAspectRatio="1.333" ItemFooterHeight="42" Spacing="14" />
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                     </ListBox>
@@ -425,6 +449,17 @@
                                    Foreground="{DynamicResource Brush.Text.Tertiary}" Text="{DynamicResource Icon.Folder}" />
                         <TextBlock Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Secondary}"
                                    Text="{DynamicResource Str.Grid.FolderEmpty}" />
+                    </StackPanel>
+
+                    <!-- Filtrul „doar favorite" fără rezultate în contextul curent (§12.3) -->
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"
+                                Visibility="{Binding Grid.IsFavoritesEmpty, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Style="{StaticResource Text.Icon}" FontSize="30"
+                                   Foreground="{DynamicResource Brush.Text.Tertiary}" Text="{DynamicResource Icon.Heart}" />
+                        <TextBlock Margin="0,12,0,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="380"
+                                   Style="{StaticResource Text.Secondary}" Text="{DynamicResource Str.Favorite.Empty}" />
+                        <ToggleButton Margin="0,14,0,0" HorizontalAlignment="Center" Style="{StaticResource ToggleButton.Filter}"
+                                      IsChecked="{Binding FavoritesOnly}" Content="{DynamicResource Str.Favorite.ShowAll}" />
                     </StackPanel>
 
                     <!-- Căutare fără rezultate -->

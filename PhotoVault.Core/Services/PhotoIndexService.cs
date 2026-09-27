@@ -11,7 +11,8 @@ namespace PhotoVault.Core.Services;
 public sealed class PhotoIndexService(
     ISourceFolderRepository folders,
     IPhotoRepository photos,
-    IThumbnailService thumbnails) : IPhotoIndexService
+    IThumbnailService thumbnails,
+    IDatabaseBackup? backup = null) : IPhotoIndexService
 {
     private const int InsertBatchSize = 500;
     private const int ProgressStep = 20;
@@ -91,7 +92,11 @@ public sealed class PhotoIndexService(
         await _scanLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            await Task.Run(() => folders.Relocate(sourceFolderId, Path.GetFullPath(newFolderPath))).ConfigureAwait(false);
+            await Task.Run(() =>
+            {
+                backup?.CreateBackup();   // §12.1: rescrie căile tuturor pozelor folderului
+                folders.Relocate(sourceFolderId, Path.GetFullPath(newFolderPath));
+            }).ConfigureAwait(false);
         }
         finally
         {
@@ -149,6 +154,7 @@ public sealed class PhotoIndexService(
             await Task.Run(() =>
             {
                 var thumbnailPaths = photos.GetBySourceFolder(sourceFolderId).Select(p => p.ThumbnailPath).ToList();
+                backup?.CreateBackup();   // §12.1: ștergere în masă din index (cu albume / tag-uri asociate)
                 folders.Delete(sourceFolderId);   // ON DELETE CASCADE → Photos, AlbumPhotos, PhotoTags
                 foreach (var path in thumbnailPaths) thumbnails.Delete(path);
             }).ConfigureAwait(false);
@@ -307,6 +313,7 @@ public sealed class PhotoIndexService(
         // Poze șterse/mutate extern: eliminate direct din index, fără confirmare (§4)
         if (missing.Count > 0)
         {
+            backup?.CreateBackup();   // §12.1: pozele lipsă își pierd albumele / tag-urile odată cu eliminarea
             photos.DeleteMany(missing.Select(p => p.Id).ToList());
             foreach (var photo in missing) thumbnails.Delete(photo.ThumbnailPath);
         }

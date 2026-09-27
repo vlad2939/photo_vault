@@ -15,4 +15,6 @@ public sealed class PhotoService(IPhotoRepository photos) : IPhotoService
     }
 
     public IReadOnlyDictionary<long, string> GetSearchKeywords() => photos.GetSearchKeywords();
+
+    public void SetFavorite(IReadOnlyCollection<long> photoIds, bool isFavorite) => photos.SetFavorite(photoIds, isFavorite);
 }

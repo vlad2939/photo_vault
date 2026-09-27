@@ -65,4 +65,15 @@ public sealed class PhotoServiceTests : IDisposable
     }
 
     public void Dispose() => _db.Dispose();
+
+    [Fact]
+    public void SetFavorite_PersistsAndIsLoadedWithPhotos()
+    {
+        _photos.SetFavorite([_ids[0], _ids[2]], true);
+        var repository = new PhotoRepository(_db.Context);
+        Assert.Equal([true, false, true], repository.GetAll().Select(p => p.IsFavorite));
+
+        _photos.SetFavorite([_ids[0]], false);
+        Assert.Equal([false, false, true], repository.GetAll().Select(p => p.IsFavorite));
+    }
 }

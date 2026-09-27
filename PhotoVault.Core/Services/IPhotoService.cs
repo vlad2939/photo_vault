@@ -8,4 +8,7 @@ public interface IPhotoService
 
     /// <summary>Pentru fiecare poză cu tag-uri sau albume: textul lor (nume tag-uri + nume albume), folosit la căutare.</summary>
     IReadOnlyDictionary<long, string> GetSearchKeywords();
+
+    /// <summary>Setează flag-ul „Favorite" (§12.3) pentru pozele date.</summary>
+    void SetFavorite(IReadOnlyCollection<long> photoIds, bool isFavorite);
 }

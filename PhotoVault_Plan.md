@@ -215,7 +215,7 @@ CREATE TABLE AppSettings (
 -- "SlideshowPlaylistPaths" (JSON array), "SlideshowVolume" (0–100)
 ```
 
-**Notă privind evoluția schemei**: schema e aplicată prin scripturi de migrare numerotate, incluse în assembly (`PhotoVault.Data/Migrations/NNN_*.sql`), iar versiunea curentă e ținută în `PRAGMA user_version`; o bază de date existentă se actualizează automat la pornire. Migrări aplicate până acum: `001_InitialSchema` (schema de mai sus), `002_RetryFailedThumbnails` (reîncercarea miniaturilor RAW eșuate), `003_AlbumSubtitle` (coloana `Albums.Subtitle`), `004_PerformanceIndexes` (indecși pentru biblioteci mari). Convenție: `Photos.ThumbnailPath` = `NULL` → miniatură negenerată încă; `''` (text gol) → fișier ilizibil (se afișează iconița de rezervă, nu se reîncearcă la fiecare pornire, dar se reîncearcă la re-scanarea folderului).
+**Notă privind evoluția schemei**: schema e aplicată prin scripturi de migrare numerotate, incluse în assembly (`PhotoVault.Data/Migrations/NNN_*.sql`), iar versiunea curentă e ținută în `PRAGMA user_version`; o bază de date existentă se actualizează automat la pornire. Migrări aplicate până acum: `001_InitialSchema` (schema de mai sus), `002_RetryFailedThumbnails` (reîncercarea miniaturilor RAW eșuate), `003_AlbumSubtitle` (coloana `Albums.Subtitle`), `004_PerformanceIndexes` (indecși pentru biblioteci mari), `005_Favorites` (coloana `Photos.IsFavorite`, §12.3). Convenție: `Photos.ThumbnailPath` = `NULL` → miniatură negenerată încă; `''` (text gol) → fișier ilizibil (se afișează iconița de rezervă, nu se reîncearcă la fiecare pornire, dar se reîncearcă la re-scanarea folderului).
 
 **Notă privind eliminarea automată din index**: la fiecare re-scanare manuală a unui `SourceFolder`, aplicația verifică existența fizică a fiecărui fișier din `Photos`; dacă lipsește, rândul este șters direct (cu efect de cascadă asupra `AlbumPhotos` și `PhotoTags`), fără prompt de confirmare.
 
@@ -598,6 +598,8 @@ Acest README este documentul de referință pentru utilizator (tu), separat de d
 
 ## 12. Îmbunătățiri post-MVP
 
+> **Stare (după Faza 8): toate cele patru au fost implementate** în versiunea 1.1.0, la cererea utilizatorului — detaliile de implementare sunt în §15.
+
 Aceste patru funcționalități **nu fac parte din scope-ul ferm** stabilit în restul documentului (§1-§11) și **nu sunt incluse** în roadmap-ul din §9. Sunt candidate cu efort mic și valoare practică mare, de evaluat și eventual implementat **după** ce aplicația de bază (Fazele 0-8) e completă și funcțională, ideal după câteva săptămâni de utilizare reală — abia atunci se vede clar ce chiar lipsește în practică.
 
 ### 12.1 Backup automat al bazei de date
@@ -671,7 +673,7 @@ Aceste patru funcționalități **nu fac parte din scope-ul ferm** stabilit în 
 
 ---
 
-## 15. Decizii stabilite în timpul implementării (Fazele 0–8)
+## 15. Decizii stabilite în timpul implementării (Fazele 0–8 + §12)
 
 Clarificări și ajustări convenite pe parcursul dezvoltării; au prioritate față de formulările inițiale din secțiunile anterioare acolo unde diferă (secțiunile relevante au fost deja actualizate).
 
@@ -695,6 +697,10 @@ Clarificări și ajustări convenite pe parcursul dezvoltării; au prioritate fa
 | Realiniere foldere sursă (§11) | „Schimbă locația..." (meniul contextual al folderului + Opțiuni): se alege noua cale, se previzualizează câte poze se regăsesc (avertizare dacă niciuna), apoi calea folderului și a pozelor e actualizată într-o tranzacție — Id-urile rămân, deci albumele, tag-urile, rotirile și miniaturile se păstrează. Folderele inaccesibile sunt marcate cu iconiță de avertizare (verificare silențioasă pe fundal la încărcare) |
 | Publicare (§8) | Profil `Portabil.pubxml` + `publish.ps1` (folder + arhivă .zip); self-contained, single-file, compresie, fără simboluri. **Fără `PublishTrimmed`**: WPF nu suportă trimming (NETSDK1168). Rezultat: `PhotoVault.exe` ~77 MB + `README.txt`. Componentele native sunt despachetate de .NET la prima pornire în `%TEMP%\.net` (datele rămân în folderul aplicației) |
 | Testare finală | CI: test pe fișiere RAW reale (CR2/NEF/DNG descărcate din surse publice, „cel mai bun efort"); test de portabilitate pe versiunea publicată: pornire de pe un „stick" fără .NET accesibil, apoi copiere pe „alt calculator" + mutarea pozelor la altă cale + realiniere + re-scanare fără pierderi. Versiunea 1.0.0 |
+| §12.1 Copii de siguranță | `IDatabaseBackup` (Data: API-ul de backup SQLite, copie consistentă și cu baza în WAL, fișier de sine stătător `photovault.db.bak.{yyyyMMdd-HHmmss-fff}` în `data/`); înainte de: ștergere album / tag / folder sursă, eliminarea pozelor lipsă la re-scanare, redenumire batch pe folder indexat, schimbarea locației unui folder, migrarea schemei la o versiune nouă; se păstrează ultimele 5; operațiunile în lanț (sub 1 minut) nu creează copii suplimentare; secțiune „Copii de siguranță" în Opțiuni (copie manuală, deschidere folder); restaurare manuală documentată în README |
+| §12.2 Verificare foldere | Implementată deja în Faza 8: la fiecare încărcare a bibliotecii, `Directory.Exists` pe fundal pentru fiecare folder sursă; folderul inaccesibil primește iconiță de avertizare (arbore + Opțiuni), fără pop-up și fără ștergeri; indicatorul dispare la reîncărcare / re-scanare dacă folderul redevine accesibil |
+| §12.3 Favorite | Migrarea 005 (`Photos.IsFavorite`); inimioară pe card (plină + mereu vizibilă pentru favorite, la hover pentru celelalte), tasta F și meniul contextual (inclusiv selecție multiplă: dacă toate sunt favorite → se scot, altfel devin toate favorite), inimioară + F pe tot ecranul; butonul-filtru „Favorite" în bara grid-ului, aplicat peste context + căutare |
+| §12.4 Dimensiune miniaturi | Glisor în bara grid-ului (120–320 px lățime minimă a cardului) + Ctrl + rotița mouse-ului (pas 20 px); cheia `GridThumbnailSize` în `AppSettings`, salvată după 0,5 s de la ultima modificare; miniaturile de pe disc (300 px) nu se regenerează |
 | ImageSharp | Versiunea 3.1.x (4.x cere cheie de licență la build) |
 | Structura proiectului | Pe lângă §3.3: `PhotoVault.Core/Abstractions/` (interfețele repository-urilor, ca serviciile din Core să nu depindă de Data), `PhotoVault.App/Utils/` (teme, DWM, dialoguri, localizare), `PhotoVault.App/Resources/Localization/` (texte RO/EN) |
 | Verificare pe Windows | Workflow GitHub Actions (`.github/workflows/windows-build.yml`): build, teste unitare, smoke test UI cu capturi de ecran și versiune portabilă descărcabilă, la fiecare push |

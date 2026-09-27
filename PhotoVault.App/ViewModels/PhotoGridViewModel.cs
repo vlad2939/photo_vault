@@ -23,7 +23,7 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
     private IReadOnlyList<PhotoItemViewModel> _selection = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsEmpty), nameof(IsLibraryEmpty), nameof(IsFolderEmpty), nameof(IsSearchEmpty), nameof(CountText))]
+    [NotifyPropertyChangedFor(nameof(IsEmpty), nameof(IsLibraryEmpty), nameof(IsFolderEmpty), nameof(IsSearchEmpty), nameof(IsFavoritesEmpty), nameof(CountText))]
     public partial ObservableCollection<PhotoItemViewModel> Photos { get; set; } = [];
 
     /// <summary>Poza curentă (ultima selectată) — sursa panoului de detalii.</summary>
@@ -48,10 +48,27 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
     public bool IsLibraryEmpty => _all.Count == 0;
 
     /// <summary>Contextul curent (folder / album / tag) nu conține poze.</summary>
-    public bool IsFolderEmpty => Photos.Count == 0 && _all.Count > 0 && !IsSearching;
+    public bool IsFolderEmpty => Photos.Count == 0 && _all.Count > 0 && !IsSearching && !FavoritesOnly;
 
     /// <summary>Căutarea nu a găsit nimic în contextul curent.</summary>
     public bool IsSearchEmpty => Photos.Count == 0 && _all.Count > 0 && IsSearching;
+
+    /// <summary>Filtrul „doar favorite" e activ, dar în contextul curent nu există nicio poză favorită.</summary>
+    public bool IsFavoritesEmpty => Photos.Count == 0 && _all.Count > 0 && FavoritesOnly && !IsSearching;
+
+    /// <summary>Filtrul rapid „Arată doar favorite" (§12.3), aplicat peste context + căutare.</summary>
+    public bool FavoritesOnly
+    {
+        get;
+        set
+        {
+            if (!SetProperty(ref field, value)) return;
+            ApplyFilter();
+        }
+    }
+
+    /// <summary>Reaplică filtrele (ex. după ce o poză a ieșit din favorite cât timp filtrul e activ).</summary>
+    public void Refilter() => ApplyFilter();
 
     public bool IsSearching => _searchTerms.Length > 0;
 
@@ -131,6 +148,7 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
         if (index < 0) return;
 
         var selected = windows.ShowLightbox(Photos, index, ContextTitle);
+        if (FavoritesOnly) ApplyFilter();   // o poză scoasă din favorite pe ecran complet dispare din filtru
         // După închidere, poza la care s-a ajuns rămâne selectată în grid
         if (selected is not null) SelectedPhoto = selected;
     }
@@ -138,6 +156,7 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
     private void ApplyFilter()
     {
         IEnumerable<PhotoItemViewModel> filtered = _filter is null ? _all : _all.Where(_filter);
+        if (FavoritesOnly) filtered = filtered.Where(p => p.IsFavorite);
         if (IsSearching)
             filtered = filtered.Where(p => SearchText.MatchesNormalized(_searchTerms, p.SearchName, _keywords.GetValueOrDefault(p.Id)));
         // _all vine din DB deja sortat ascendent după nume → descendent = ordinea inversă

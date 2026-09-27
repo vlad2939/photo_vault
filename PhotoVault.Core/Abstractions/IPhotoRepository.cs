@@ -35,6 +35,9 @@ public interface IPhotoRepository
     /// <summary>Marchează pentru reîncercare miniaturile eșuate (ThumbnailPath = '') dintr-un folder sursă.</summary>
     void ResetFailedThumbnails(long sourceFolderId);
 
+    /// <summary>Marchează / demarchează pozele ca favorite (§12.3), într-o tranzacție.</summary>
+    void SetFavorite(IReadOnlyCollection<long> photoIds, bool isFavorite);
+
     /// <summary>Numărul de poze indexate aflate direct în folderul dat (fără subfoldere).</summary>
     int CountInFolder(string folderPath);
 

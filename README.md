@@ -2,7 +2,7 @@
 
 Aplicație portabilă pentru organizarea și vizualizarea albumelor foto personale.
 
-**Versiune:** 1.0.0 — toate fazele de dezvoltare (0–8) finalizate · **Ultima actualizare:** septembrie 2026
+**Versiune:** 1.1.0 — fazele de dezvoltare 0–8 + îmbunătățirile din capitolul 12 (copii de siguranță, verificarea folderelor, favorite, dimensiunea miniaturilor) · **Ultima actualizare:** septembrie 2026
 
 ---
 
@@ -122,6 +122,24 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 - **Culoarea de accent** — 6 buline (portocaliu, albastru, verde, roșu, mov, turcoaz); se aplică imediat în toată aplicația (butoane, selecție, slidere, bara slideshow-ului), adaptată temei Dark / Light.
 - **Limba** — Română sau English; se aplică după repornire. Aplicația te întreabă dacă vrei să repornească imediat („Repornește acum" / „Mai târziu").
 
+### Favorite
+
+- Pune mouse-ul pe o poză și apasă **inimioara** din colțul din dreapta jos al miniaturii (sau selectează una ori mai multe poze și apasă **F**, ori click dreapta → **Adaugă la favorite**). Pozele favorite au inimioara plină, mereu vizibilă.
+- Butonul **Favorite** de deasupra grid-ului arată doar pozele favorite din contextul curent (folder, album, tag, rezultatul căutării); apasă-l din nou pentru toate pozele.
+- Pe tot ecranul: tasta **F** sau inimioara din bara de jos.
+- Favoritele sunt un simplu marcaj, separat de tag-uri — nu trebuie create sau configurate.
+
+### Dimensiunea miniaturilor
+
+- Glisorul de lângă lista de sortare mărește sau micșorează miniaturile din grid (de la foarte mici, pentru o privire de ansamblu, la mari, pentru detalii); la fel **Ctrl + rotița mouse-ului** peste grid.
+- Dimensiunea aleasă se păstrează la următoarea pornire. Miniaturile de pe disc nu se regenerează.
+
+### Copii de siguranță ale bibliotecii
+
+- Înainte de orice operațiune care nu se poate anula — ștergerea unui album, a unui tag sau a unui folder sursă, eliminarea pozelor lipsă la re-scanare, redenumirea batch a unui folder din bibliotecă, schimbarea locației unui folder, actualizarea aplicației la o versiune nouă — PhotoVault salvează automat o copie a bazei de date în `data/`, cu numele `photovault.db.bak.<data-ora>`. Se păstrează ultimele **5** copii; cele mai vechi se șterg singure.
+- **Opțiuni → Copii de siguranță** arată data ultimei copii și permite o copie manuală („Creează o copie acum") sau deschiderea folderului.
+- **Restaurare** (dacă ceva n-a ieșit cum voiai): închide aplicația, în `data/` redenumește `photovault.db` (ex. în `photovault.db.vechi`), apoi redenumește copia dorită `photovault.db.bak.<data-ora>` în `photovault.db`; dacă există, șterge și `photovault.db-wal` / `photovault.db-shm`. La repornire, biblioteca e cea din copie.
+
 ### Rotire poze
 
 - Poți roti o poză din 90 în 90 de grade (tastă `R` sau click dreapta → **Rotește 90°**; funcționează și pentru mai multe poze selectate, și în vizualizarea pe tot ecranul).
@@ -143,6 +161,8 @@ Aceeași listă apare și în aplicație, în modalul **Informații** (iconița 
 | `0` | Potrivire în ecran |
 | `1` | Dimensiune reală (1:1) |
 | `R` | Rotește poza cu 90° (în grid — și pentru mai multe poze selectate — sau pe tot ecranul) |
+| `F` | Adaugă / elimină poza din favorite (în grid — și pentru mai multe poze selectate — sau pe tot ecranul) |
+| `Ctrl` + rotița mouse-ului | Miniaturi mai mari / mai mici (grid) |
 | `Ctrl+A` | Selectează toate pozele din grid |
 | `Ctrl` / `Shift` + click | Selecție multiplă în grid |
 | `Ctrl+F` | Focus pe câmpul de căutare |
@@ -164,7 +184,8 @@ PhotoVault/
 ```
 
 - `data/thumbnails/` e împărțit în subfoldere (`ab/`, `cd/`...) ca Windows să rămână rapid și la zeci de mii de miniaturi. Dacă ștergi doar acest folder, miniaturile se regenerează automat la pornire (durează), fără pierderi de organizare.
-- `data/photovault.db` conține **tot**: folderele sursă, albumele, tag-urile, rotirile și setările. Pentru o copie de siguranță, închide aplicația și copiază folderul `data/`.
+- `data/photovault.db` conține **tot**: folderele sursă, albumele, tag-urile, favoritele, rotirile și setările. Pentru o copie de siguranță completă (inclusiv miniaturile), închide aplicația și copiază folderul `data/`.
+- `data/photovault.db.bak.<data-ora>` — copiile de siguranță automate ale bazei de date (ultimele 5; vezi „Copii de siguranță ale bibliotecii").
 
 **Nu șterge și nu edita manual** fișierele din `data/` — acolo e stocată toată organizarea ta (albume, tag-uri, rotații, setări). Ștergerea lor înseamnă pierderea acestei organizări (pozele originale de pe disc rămân neafectate, dar trebuie reindexate de la zero).
 

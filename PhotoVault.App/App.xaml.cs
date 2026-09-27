@@ -53,18 +53,19 @@ public partial class App : Application
         var metadata = new MetadataService();
         var thumbnails = new ThumbnailService(paths.ThumbnailsDirectory, metadata);
         var photoRepository = new PhotoRepository(database);
-        var index = new PhotoIndexService(new SourceFolderRepository(database), photoRepository, thumbnails);
+        var backup = new DatabaseBackup(database);   // §12.1: copii automate înainte de operațiunile distructive
+        var index = new PhotoIndexService(new SourceFolderRepository(database), photoRepository, thumbnails, backup);
         var photoService = new PhotoService(photoRepository);
         var folderPicker = new FolderPicker();
-        var windows = new WindowService(metadata, photoService, new BatchRenameService(photoRepository), _dialogs, folderPicker,
+        var windows = new WindowService(metadata, photoService, new BatchRenameService(photoRepository, backup), _dialogs, folderPicker,
             settings, new SlideshowService());
 
         var mainWindow = new MainWindow
         {
             DataContext = new MainViewModel(settings, ThemeManager.Instance, _dialogs, windows,
                 index, thumbnails, metadata,
-                new AlbumService(new AlbumRepository(database)), new TagService(new TagRepository(database)),
-                photoService, folderPicker, new FilePicker(), new AppLifetime())
+                new AlbumService(new AlbumRepository(database), backup), new TagService(new TagRepository(database), backup),
+                photoService, folderPicker, new FilePicker(), new AppLifetime(), backup)
         };
         MainWindow = mainWindow;
         mainWindow.Show();

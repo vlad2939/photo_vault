@@ -3,7 +3,7 @@ using PhotoVault.Core.Models;
 
 namespace PhotoVault.Core.Services;
 
-public sealed class AlbumService(IAlbumRepository albums) : IAlbumService
+public sealed class AlbumService(IAlbumRepository albums, IDatabaseBackup? backup = null) : IAlbumService
 {
     public IReadOnlyList<AlbumSummary> GetAlbums() => albums.GetAll();
 
@@ -26,7 +26,11 @@ public sealed class AlbumService(IAlbumRepository albums) : IAlbumService
         albums.Update(albumId, NormalizeName(name), NormalizeSubtitle(subtitle));
     }
 
-    public void Delete(long albumId) => albums.Delete(albumId);
+    public void Delete(long albumId)
+    {
+        backup?.CreateBackup();   // §12.1: ștergerea unui album e ireversibilă
+        albums.Delete(albumId);
+    }
 
     public int AddPhotos(long albumId, IReadOnlyCollection<long> photoIds) =>
         photoIds.Count == 0 ? 0 : albums.AddPhotos(albumId, photoIds);

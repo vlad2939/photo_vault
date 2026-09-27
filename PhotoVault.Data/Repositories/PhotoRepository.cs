@@ -9,7 +9,7 @@ public sealed class PhotoRepository(DatabaseContext db) : IPhotoRepository
     private const string SelectColumns =
         """
         SELECT Id, SourceFolderId, FullPath, FileName, Extension, FileSizeBytes, DateAdded,
-               DateTakenExif, RotationDegrees, ThumbnailPath, IsMissing
+               DateTakenExif, RotationDegrees, ThumbnailPath, IsMissing, IsFavorite
         FROM Photos
         """;
 
@@ -147,6 +147,17 @@ public sealed class PhotoRepository(DatabaseContext db) : IPhotoRepository
             new { sourceFolderId });
     }
 
+    public void SetFavorite(IReadOnlyCollection<long> photoIds, bool isFavorite)
+    {
+        if (photoIds.Count == 0) return;
+        using var connection = db.OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        foreach (var chunk in photoIds.Chunk(500))
+            connection.Execute("UPDATE Photos SET IsFavorite = @value WHERE Id IN @chunk",
+                new { value = isFavorite ? 1 : 0, chunk }, transaction);
+        transaction.Commit();
+    }
+
     public int CountInFolder(string folderPath)
     {
         var prefix = Path.TrimEndingDirectorySeparator(folderPath) + Path.DirectorySeparatorChar;
@@ -191,9 +202,10 @@ public sealed class PhotoRepository(DatabaseContext db) : IPhotoRepository
         RotationDegrees = (int)r.RotationDegrees,
         ThumbnailPath = r.ThumbnailPath,
         IsMissing = r.IsMissing != 0,
+        IsFavorite = r.IsFavorite != 0,
     };
 
     private sealed record Row(long Id, long SourceFolderId, string FullPath, string FileName, string Extension,
         long? FileSizeBytes, string DateAdded, string? DateTakenExif, long RotationDegrees, string? ThumbnailPath,
-        long IsMissing);
+        long IsMissing, long IsFavorite);
 }
