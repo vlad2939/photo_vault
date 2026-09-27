@@ -88,9 +88,9 @@
     <sys:String x:Key="Str.Info.Version">Version {0}</sys:String>
     <sys:String x:Key="Str.Info.Author">Author: vlad39</sys:String>
     <sys:String x:Key="Str.Info.HowTo">How to use it</sys:String>
-    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).|Select one or more photos (Ctrl / Shift + click, Ctrl+A), then right-click → Add to album / Add tag. Click the “Albums” title to see albums as a grid of cards; double-click opens an album.|The selected photo's tags appear in the right panel: “+” adds, “×” removes. Click a tag on the left to see all photos that have it.</sys:String>
     <sys:String x:Key="Str.Info.Shortcuts">Keyboard shortcuts</sys:String>
-    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid|Ctrl / Shift + click=Multiple selection in the grid</sys:String>
     <sys:String x:Key="Str.Settings.Title">Options</sys:String>
     <sys:String x:Key="Str.Settings.SourceFolders">Source folders</sys:String>
     <sys:String x:Key="Str.Settings.SourceFoldersHint">Folders on disk indexed by PhotoVault. Rescanning detects new photos and removes deleted ones from the index; removing a folder never touches files on disk.</sys:String>
@@ -99,5 +99,47 @@
     <sys:String x:Key="Str.Settings.ThemeLight">Light theme</sys:String>
     <sys:String x:Key="Str.Settings.MoreSoon">Slideshow settings, accent color and interface language will appear here in upcoming phases.</sys:String>
     <sys:String x:Key="Str.Placeholder.BatchRename">The batch rename module (with a preview of the new names) will be available in Phase 5.</sys:String>
+    <sys:String x:Key="Str.Context.AllPhotos">All photos</sys:String>
+    <sys:String x:Key="Str.Albums.ShowAll">Show all albums</sys:String>
+    <sys:String x:Key="Str.Albums.Back">Back to albums</sys:String>
+    <sys:String x:Key="Str.Albums.Open">Open album</sys:String>
+    <sys:String x:Key="Str.Albums.Rename">Rename...</sys:String>
+    <sys:String x:Key="Str.Albums.Delete">Delete album</sys:String>
+    <sys:String x:Key="Str.Albums.NewEllipsis">New album...</sys:String>
+    <sys:String x:Key="Str.Albums.NewTitle">New album</sys:String>
+    <sys:String x:Key="Str.Albums.NewMessage">Choose a name for the album.</sys:String>
+    <sys:String x:Key="Str.Albums.NamePlaceholder">e.g. Greece holiday 2024</sys:String>
+    <sys:String x:Key="Str.Albums.RenameTitle">Rename album</sys:String>
+    <sys:String x:Key="Str.Albums.RenameMessage">New album name:</sys:String>
+    <sys:String x:Key="Str.Albums.DeleteTitle">Delete the album?</sys:String>
+    <sys:String x:Key="Str.Albums.DeleteConfirm">The album “{0}” ({1} photos) will be deleted. The photos stay in the library and on disk — only the grouping is removed.</sys:String>
+    <sys:String x:Key="Str.Albums.EmptyTitle">No albums yet</sys:String>
+    <sys:String x:Key="Str.Albums.EmptyHint">Select photos in the grid, then right-click → Add to album. Or create an album with the + button in the left panel.</sys:String>
+    <sys:String x:Key="Str.Tags.Rename">Rename...</sys:String>
+    <sys:String x:Key="Str.Tags.Delete">Delete tag</sys:String>
+    <sys:String x:Key="Str.Tags.NewEllipsis">New tag...</sys:String>
+    <sys:String x:Key="Str.Tags.NewTitle">New tag</sys:String>
+    <sys:String x:Key="Str.Tags.NewMessage">Type the tag name.</sys:String>
+    <sys:String x:Key="Str.Tags.NamePlaceholder">e.g. sea, sunset, family</sys:String>
+    <sys:String x:Key="Str.Tags.RenameTitle">Rename tag</sys:String>
+    <sys:String x:Key="Str.Tags.RenameMessage">New tag name:</sys:String>
+    <sys:String x:Key="Str.Tags.Duplicate">A tag named “{0}” already exists.</sys:String>
+    <sys:String x:Key="Str.Tags.DeleteTitle">Delete the tag?</sys:String>
+    <sys:String x:Key="Str.Tags.DeleteConfirm">The tag “{0}” will be removed from the {1} photos that have it, then deleted. The photos are not affected.</sys:String>
+    <sys:String x:Key="Str.Photo.Open">Open full screen</sys:String>
+    <sys:String x:Key="Str.Photo.AddToAlbum">Add to album</sys:String>
+    <sys:String x:Key="Str.Photo.AddTag">Add tag</sys:String>
+    <sys:String x:Key="Str.Photo.SetCover">Set as album cover</sys:String>
+    <sys:String x:Key="Str.Photo.RemoveFromAlbum">Remove from album</sys:String>
+    <sys:String x:Key="Str.Details.AddTag">Add tag</sys:String>
+    <sys:String x:Key="Str.Details.RemoveTag">Remove tag</sys:String>
+    <sys:String x:Key="Str.Details.Created">Created</sys:String>
+    <sys:String x:Key="Str.Details.PhotoCount">Photos</sys:String>
+    <sys:String x:Key="Str.Status.AddedToAlbum">{0} photos added to the album “{1}”</sys:String>
+    <sys:String x:Key="Str.Status.RemovedFromAlbum">{0} photos removed from the album “{1}”</sys:String>
+    <sys:String x:Key="Str.Status.CoverSet">The cover of the album “{0}” was changed</sys:String>
+    <sys:String x:Key="Str.Status.TagAdded">Tag “{0}” added to {1} photos</sys:String>
+    <sys:String x:Key="Str.Grid.Count">{0} photos</sys:String>
+    <sys:String x:Key="Str.Grid.CountOne">1 photo</sys:String>
 
 </ResourceDictionary>

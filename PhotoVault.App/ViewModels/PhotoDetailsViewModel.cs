@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using PhotoVault.Core.Models;
 using PhotoVault.App.Utils;
 using PhotoVault.Core.Services;
 
@@ -10,11 +12,38 @@ public sealed record DetailRow(string Label, string Value);
 
 /// <summary>
 /// Panoul lateral de detalii (§5.6) pentru poza selectată: nume, cale, dimensiune, extensie
-/// (din index) + câteva informații EXIF citite asincron. Tag-urile se adaugă în Faza 3.
+/// (din index), câteva informații EXIF citite asincron și tag-urile pozei (adăugare / eliminare).
 /// </summary>
-public partial class PhotoDetailsViewModel(IMetadataService metadata) : ObservableObject
+public partial class PhotoDetailsViewModel(IMetadataService metadata, ITagService tags) : ObservableObject
 {
     private int _version;
+
+    /// <summary>Tag-urile pozei curente (etichete cu „×" pentru eliminare).</summary>
+    public ObservableCollection<Tag> Tags { get; } = [];
+
+    [ObservableProperty]
+    public partial bool HasTags { get; set; }
+
+    /// <summary>Un tag a fost eliminat de pe poză din panou → contoarele trebuie actualizate.</summary>
+    public event Action? TagsModified;
+
+    /// <summary>Reîncarcă tag-urile pozei curente (după atribuire / redenumire / ștergere).</summary>
+    public void RefreshTags()
+    {
+        Tags.Clear();
+        if (Photo is not null)
+            foreach (var tag in tags.GetTagsForPhoto(Photo.Id)) Tags.Add(tag);
+        HasTags = Tags.Count > 0;
+    }
+
+    [RelayCommand]
+    private void RemoveTag(Tag tag)
+    {
+        if (Photo is null) return;
+        tags.Unassign(tag.Id, Photo.Id);
+        RefreshTags();
+        TagsModified?.Invoke();
+    }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPhoto))]
@@ -28,6 +57,7 @@ public partial class PhotoDetailsViewModel(IMetadataService metadata) : Observab
     {
         Photo = photo;
         Rows.Clear();
+        RefreshTags();
         if (photo is null) return;
         var version = ++_version;
 

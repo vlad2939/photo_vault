@@ -88,9 +88,9 @@
     <sys:String x:Key="Str.Info.Version">Versiunea {0}</sys:String>
     <sys:String x:Key="Str.Info.Author">Autor: vlad39</sys:String>
     <sys:String x:Key="Str.Info.HowTo">Cum se folosește</sys:String>
-    <sys:String x:Key="Str.Info.HowToText">Adaugă un folder cu poze cu butonul + din secțiunea Bibliotecă; aplicația îl indexează, cu tot cu subfolderele, fără să modifice sau să copieze fișierele.|Selectează un folder din arbore pentru a vedea doar pozele lui (inclusiv subfolderele); click pe titlul „Bibliotecă” afișează din nou toate pozele.|Dublu-click pe o poză (sau Enter) o deschide pe tot ecranul; zoom cu rotița mouse-ului, deplasare prin tragere.|Click dreapta pe un folder sursă: Re-scanează (poze noi / șterse) sau Elimină din bibliotecă.|Folderele sursă și tema se gestionează și din Opțiuni (iconița roată).</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Adaugă un folder cu poze cu butonul + din secțiunea Bibliotecă; aplicația îl indexează, cu tot cu subfolderele, fără să modifice sau să copieze fișierele.|Selectează un folder din arbore pentru a vedea doar pozele lui (inclusiv subfolderele); click pe titlul „Bibliotecă” afișează din nou toate pozele.|Dublu-click pe o poză (sau Enter) o deschide pe tot ecranul; zoom cu rotița mouse-ului, deplasare prin tragere.|Click dreapta pe un folder sursă: Re-scanează (poze noi / șterse) sau Elimină din bibliotecă.|Folderele sursă și tema se gestionează și din Opțiuni (iconița roată).|Selectează una sau mai multe poze (Ctrl / Shift + click, Ctrl+A), apoi click dreapta → Adaugă la album / Adaugă tag. Click pe titlul „Albume” afișează albumele ca grid de carduri; dublu-click deschide un album.|Tag-urile pozei selectate apar în panoul din dreapta: „+” adaugă, „×” elimină. Click pe un tag din stânga afișează toate pozele care îl au.</sys:String>
     <sys:String x:Key="Str.Info.Shortcuts">Scurtături de tastatură</sys:String>
-    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Deschide poza selectată pe tot ecranul|Esc=Închide vizualizarea pe tot ecranul / modalul logo / acest modal|← / →=Poza anterioară / următoare (pe tot ecranul)|Home / End=Prima / ultima poză (pe tot ecranul)|+ / −=Mărește / micșorează (pe tot ecranul)|0=Potrivire în ecran|1=Dimensiune reală (1:1)|Ctrl+A=Selectează toate pozele din grid</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Deschide poza selectată pe tot ecranul|Esc=Închide vizualizarea pe tot ecranul / modalul logo / acest modal|← / →=Poza anterioară / următoare (pe tot ecranul)|Home / End=Prima / ultima poză (pe tot ecranul)|+ / −=Mărește / micșorează (pe tot ecranul)|0=Potrivire în ecran|1=Dimensiune reală (1:1)|Ctrl+A=Selectează toate pozele din grid|Ctrl / Shift + click=Selecție multiplă în grid</sys:String>
     <sys:String x:Key="Str.Settings.Title">Opțiuni</sys:String>
     <sys:String x:Key="Str.Settings.SourceFolders">Foldere sursă</sys:String>
     <sys:String x:Key="Str.Settings.SourceFoldersHint">Folderele de pe disc indexate de PhotoVault. Re-scanarea detectează pozele noi și le elimină din index pe cele șterse; eliminarea unui folder nu atinge fișierele de pe disc.</sys:String>
@@ -99,5 +99,47 @@
     <sys:String x:Key="Str.Settings.ThemeLight">Temă luminoasă</sys:String>
     <sys:String x:Key="Str.Settings.MoreSoon">Setările pentru slideshow, culoarea de accent și limba interfeței vor apărea aici în fazele următoare.</sys:String>
     <sys:String x:Key="Str.Placeholder.BatchRename">Modulul de redenumire batch (cu previzualizarea numelor noi) va fi disponibil în Faza 5.</sys:String>
+    <sys:String x:Key="Str.Context.AllPhotos">Toate pozele</sys:String>
+    <sys:String x:Key="Str.Albums.ShowAll">Afișează toate albumele</sys:String>
+    <sys:String x:Key="Str.Albums.Back">Înapoi la albume</sys:String>
+    <sys:String x:Key="Str.Albums.Open">Deschide albumul</sys:String>
+    <sys:String x:Key="Str.Albums.Rename">Redenumește...</sys:String>
+    <sys:String x:Key="Str.Albums.Delete">Șterge albumul</sys:String>
+    <sys:String x:Key="Str.Albums.NewEllipsis">Album nou...</sys:String>
+    <sys:String x:Key="Str.Albums.NewTitle">Album nou</sys:String>
+    <sys:String x:Key="Str.Albums.NewMessage">Alege un nume pentru album.</sys:String>
+    <sys:String x:Key="Str.Albums.NamePlaceholder">ex. Vacanță Grecia 2024</sys:String>
+    <sys:String x:Key="Str.Albums.RenameTitle">Redenumește albumul</sys:String>
+    <sys:String x:Key="Str.Albums.RenameMessage">Noul nume al albumului:</sys:String>
+    <sys:String x:Key="Str.Albums.DeleteTitle">Ștergi albumul?</sys:String>
+    <sys:String x:Key="Str.Albums.DeleteConfirm">Albumul „{0}” ({1} poze) va fi șters. Pozele rămân în bibliotecă și pe disc — se șterge doar gruparea lor.</sys:String>
+    <sys:String x:Key="Str.Albums.EmptyTitle">Niciun album creat încă</sys:String>
+    <sys:String x:Key="Str.Albums.EmptyHint">Selectează poze în grid, apoi click dreapta → Adaugă la album. Sau creează un album cu butonul + din panoul stâng.</sys:String>
+    <sys:String x:Key="Str.Tags.Rename">Redenumește...</sys:String>
+    <sys:String x:Key="Str.Tags.Delete">Șterge tag-ul</sys:String>
+    <sys:String x:Key="Str.Tags.NewEllipsis">Tag nou...</sys:String>
+    <sys:String x:Key="Str.Tags.NewTitle">Tag nou</sys:String>
+    <sys:String x:Key="Str.Tags.NewMessage">Scrie numele tag-ului.</sys:String>
+    <sys:String x:Key="Str.Tags.NamePlaceholder">ex. mare, apus, familie</sys:String>
+    <sys:String x:Key="Str.Tags.RenameTitle">Redenumește tag-ul</sys:String>
+    <sys:String x:Key="Str.Tags.RenameMessage">Noul nume al tag-ului:</sys:String>
+    <sys:String x:Key="Str.Tags.Duplicate">Există deja un tag numit „{0}”.</sys:String>
+    <sys:String x:Key="Str.Tags.DeleteTitle">Ștergi tag-ul?</sys:String>
+    <sys:String x:Key="Str.Tags.DeleteConfirm">Tag-ul „{0}” va fi eliminat de pe cele {1} poze care îl au și șters. Pozele nu sunt afectate.</sys:String>
+    <sys:String x:Key="Str.Photo.Open">Deschide pe tot ecranul</sys:String>
+    <sys:String x:Key="Str.Photo.AddToAlbum">Adaugă la album</sys:String>
+    <sys:String x:Key="Str.Photo.AddTag">Adaugă tag</sys:String>
+    <sys:String x:Key="Str.Photo.SetCover">Setează ca copertă a albumului</sys:String>
+    <sys:String x:Key="Str.Photo.RemoveFromAlbum">Elimină din album</sys:String>
+    <sys:String x:Key="Str.Details.AddTag">Adaugă tag</sys:String>
+    <sys:String x:Key="Str.Details.RemoveTag">Elimină tag-ul</sys:String>
+    <sys:String x:Key="Str.Details.Created">Data creării</sys:String>
+    <sys:String x:Key="Str.Details.PhotoCount">Număr de poze</sys:String>
+    <sys:String x:Key="Str.Status.AddedToAlbum">{0} poze adăugate în albumul „{1}”</sys:String>
+    <sys:String x:Key="Str.Status.RemovedFromAlbum">{0} poze eliminate din albumul „{1}”</sys:String>
+    <sys:String x:Key="Str.Status.CoverSet">Coperta albumului „{0}” a fost schimbată</sys:String>
+    <sys:String x:Key="Str.Status.TagAdded">Tag-ul „{0}” adăugat la {1} poze</sys:String>
+    <sys:String x:Key="Str.Grid.Count">{0} poze</sys:String>
+    <sys:String x:Key="Str.Grid.CountOne">1 poză</sys:String>
 
 </ResourceDictionary>

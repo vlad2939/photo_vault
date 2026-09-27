@@ -270,6 +270,86 @@ Save-Screen '16-logo-dark'
 Start-Sleep -Milliseconds 500
 Assert-Alive $proc
 
+# ---- Faza 3: albume și tag-uri ----
+$menuItem = [System.Windows.Automation.ControlType]::MenuItem
+$button = [System.Windows.Automation.ControlType]::Button
+
+function Open-PhotoContextMenu($root) {
+    $g = Get-GridItems $root
+    $g.Items[0].SetFocus()
+    [System.Windows.Forms.SendKeys]::SendWait('+{F10}')
+    Start-Sleep -Milliseconds 700
+}
+
+function Select-Photos($root, [int] $count) {
+    $g = Get-GridItems $root
+    $g.Items[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+    for ($i = 1; $i -lt $count; $i++) {
+        $g.Items[$i].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).AddToSelection()
+    }
+    Start-Sleep -Milliseconds 300
+}
+
+# Album nou din panoul stâng (+) → prompt stilizat
+Invoke-Element (Find-Control $root 'Album nou' $button)
+Start-Sleep -Milliseconds 800
+Save-Screen '20-album-prompt-dark'
+[System.Windows.Forms.SendKeys]::SendWait('Vacanta 2024{ENTER}')
+Start-Sleep -Milliseconds 800
+Find-Control $root 'Vacanta 2024' ([System.Windows.Automation.ControlType]::ListItem) | Out-Null
+
+# 4 poze selectate → click dreapta → Adaugă la album → Vacanta 2024
+Select-Photos $root 4
+Open-PhotoContextMenu $root
+$desktop = [System.Windows.Automation.AutomationElement]::RootElement
+$addToAlbum = Find-Control $desktop 'Adaugă la album' $menuItem
+$addToAlbum.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
+Start-Sleep -Milliseconds 600
+Save-Screen '21-context-menu-album-dark'
+Invoke-Element (Find-Control $desktop 'Vacanta 2024' $menuItem)
+Wait-ForText $root '4 poze adăugate' 5 | Out-Null
+
+# Aceeași selecție → Adaugă tag → Tag nou... → „mare"
+Open-PhotoContextMenu $root
+$addTag = Find-Control $desktop 'Adaugă tag' $menuItem
+$addTag.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
+Start-Sleep -Milliseconds 500
+Invoke-Element (Find-Control $desktop 'Tag nou...' $menuItem)
+Start-Sleep -Milliseconds 800
+[System.Windows.Forms.SendKeys]::SendWait('mare{ENTER}')
+Wait-ForText $root 'Tag-ul ' 5 | Out-Null
+Save-Screen '22-photo-details-tags-dark'
+
+# Grid-ul de carduri de albume + detalii album
+Invoke-Element (Find-Control $root 'Afișează toate albumele' $button)
+Start-Sleep -Seconds 1
+$albumCard = Find-Control (Find-ByName $root 'AlbumGrid') 'Vacanta 2024' ([System.Windows.Automation.ControlType]::ListItem)
+$albumCard.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+Start-Sleep -Milliseconds 800
+Save-Screen '23-albums-grid-dark'
+
+# Dublu-click pe card → albumul deschis (4 poze); elimină o poză din album → 3 poze
+Invoke-DoubleClick $albumCard
+Start-Sleep -Seconds 1
+Wait-ForText $root '4 poze' 5 | Out-Null
+Select-Photos $root 1
+Open-PhotoContextMenu $root
+Invoke-Element (Find-Control $desktop 'Elimină din album' $menuItem)
+Wait-ForText $root '3 poze' 5 | Out-Null
+Save-Screen '24-album-open-dark'
+
+# Filtrare după tag
+$tagItem = Find-Control (Find-ByName $root 'TagList') 'mare' ([System.Windows.Automation.ControlType]::ListItem)
+$tagItem.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+Start-Sleep -Seconds 1
+Wait-ForText $root '#mare' 5 | Out-Null
+Select-Photos $root 1
+Start-Sleep -Milliseconds 800
+Save-Screen '25-tag-filter-dark'
+Invoke-Element (Find-Control $root 'Afișează toate pozele din bibliotecă' $button)
+Start-Sleep -Milliseconds 600
+Assert-Alive $proc
+
 # Dialog custom (Redenumire batch afișează „În curând" până în Faza 5)
 Invoke-Element (Find-Control $root 'Redenumire batch' ([System.Windows.Automation.ControlType]::Button))
 Save-Screen '07-dialog-dark'

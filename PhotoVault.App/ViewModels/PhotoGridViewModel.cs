@@ -16,10 +16,11 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
 {
     private List<PhotoItemViewModel> _all = [];
     private Dictionary<long, PhotoItemViewModel> _byId = [];
-    private string? _folderFilter;
+    private Func<PhotoItemViewModel, bool>? _filter;
+    private IReadOnlyList<PhotoItemViewModel> _selection = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsEmpty), nameof(IsLibraryEmpty), nameof(IsFolderEmpty))]
+    [NotifyPropertyChangedFor(nameof(IsEmpty), nameof(IsLibraryEmpty), nameof(IsFolderEmpty), nameof(CountText))]
     public partial ObservableCollection<PhotoItemViewModel> Photos { get; set; } = [];
 
     /// <summary>Poza curentă (ultima selectată) — sursa panoului de detalii.</summary>
@@ -27,6 +28,15 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
     public partial PhotoItemViewModel? SelectedPhoto { get; set; }
 
     public bool IsEmpty => Photos.Count == 0;
+
+    public string CountText => Loc.Format(Photos.Count == 1 ? "Str.Grid.CountOne" : "Str.Grid.Count", Loc.Number(Photos.Count));
+
+    /// <summary>Toate pozele selectate în grid (selecție multiplă: Ctrl / Shift / Ctrl+A).</summary>
+    public IReadOnlyList<PhotoItemViewModel> SelectedPhotos => _selection;
+
+    public void UpdateSelection(IEnumerable<PhotoItemViewModel> selected) => _selection = selected.ToList();
+
+    public PhotoItemViewModel? Find(long id) => _byId.GetValueOrDefault(id);
 
     /// <summary>Nicio poză indexată deloc → mesajul de bun venit.</summary>
     public bool IsLibraryEmpty => _all.Count == 0;
@@ -42,12 +52,22 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
         ApplyFilter();
     }
 
-    /// <summary>Filtrează după folder (inclusiv subfolderele); null = toate pozele.</summary>
-    public void SetFolderFilter(string? folderPath)
+    /// <summary>Filtrul contextului curent (folder / album / tag); null = toate pozele.</summary>
+    public void SetFilter(Func<PhotoItemViewModel, bool>? filter)
     {
-        _folderFilter = folderPath is null ? null : folderPath.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+        _filter = filter;
         ApplyFilter();
     }
+
+    /// <summary>Filtru pentru un folder, inclusiv subfolderele lui.</summary>
+    public static Func<PhotoItemViewModel, bool> FolderFilter(string folderPath)
+    {
+        var prefix = folderPath.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+        return p => p.FullPath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>Filtru după o mulțime de Id-uri (album, tag).</summary>
+    public static Func<PhotoItemViewModel, bool> IdFilter(IReadOnlySet<long> ids) => p => ids.Contains(p.Id);
 
     /// <summary>O miniatură tocmai a fost generată în fundal → cardul ei se actualizează.</summary>
     public void ApplyThumbnail(ThumbnailResult result)
@@ -72,9 +92,7 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
 
     private void ApplyFilter()
     {
-        var filtered = _folderFilter is null
-            ? _all
-            : _all.Where(p => p.FullPath.StartsWith(_folderFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        var filtered = _filter is null ? _all : _all.Where(_filter).ToList();
         Photos = new ObservableCollection<PhotoItemViewModel>(filtered);
         if (SelectedPhoto is not null && !Photos.Contains(SelectedPhoto)) SelectedPhoto = null;
     }

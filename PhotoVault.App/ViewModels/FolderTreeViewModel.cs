@@ -44,11 +44,22 @@ public partial class FolderTreeViewModel : ObservableObject
 
     public bool IsShowingAll => SelectedFolder is null;
 
-    partial void OnSelectedFolderChanged(FolderNodeViewModel? value) => _grid.SetFolderFilter(value?.FullPath);
+    /// <summary>Selecția din arbore s-a schimbat (null = nicio selecție).</summary>
+    public event Action<FolderNodeViewModel?>? SelectedFolderChanged;
 
-    /// <summary>Click pe titlul „Bibliotecă": renunță la filtru, afișează toate pozele.</summary>
+    /// <summary>Indexul a fost reîncărcat (după adăugare / re-scanare / eliminare de folder).</summary>
+    public event Action? LibraryReloaded;
+
+    /// <summary>Click pe titlul „Bibliotecă".</summary>
+    public event Action? ShowAllRequested;
+
+    partial void OnSelectedFolderChanged(FolderNodeViewModel? value) => SelectedFolderChanged?.Invoke(value);
+
     [RelayCommand]
-    private void ShowAll()
+    private void ShowAll() => ShowAllRequested?.Invoke();
+
+    /// <summary>Deselectează arborele fără a schimba contextul (ex. la deschiderea unui album).</summary>
+    public void ClearSelection()
     {
         if (SelectedFolder is not null) SelectedFolder.IsSelected = false;
         SelectedFolder = null;
@@ -163,6 +174,7 @@ public partial class FolderTreeViewModel : ObservableObject
             string.Equals(f.FullPath, selectedPath, StringComparison.OrdinalIgnoreCase));
         if (reselect is not null) reselect.IsSelected = true;
         SelectedFolder = reselect;
+        LibraryReloaded?.Invoke();
     }
 
     private async void StartThumbnails()

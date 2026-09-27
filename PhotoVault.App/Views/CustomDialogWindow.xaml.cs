@@ -31,6 +31,22 @@ public partial class CustomDialogWindow : Window
 
     public DialogResultKind Result { get; private set; } = DialogResultKind.None;
 
+    /// <summary>Textul introdus (doar în modul Prompt).</summary>
+    public string InputText => InputBox.Text.Trim();
+
+    /// <summary>Transformă dialogul într-un Prompt cu câmp text (OK activ doar pentru text negol).</summary>
+    public void EnableInput(string initialText, string placeholder)
+    {
+        InputBox.Visibility = Visibility.Visible;
+        InputBox.Text = initialText;
+        Controls.InputHelper.SetPlaceholder(InputBox, placeholder);
+        InputBox.SelectAll();
+        OnInputChanged(InputBox, null!);
+    }
+
+    private void OnInputChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) =>
+        PrimaryButton.IsEnabled = InputBox.Visibility != Visibility.Visible || InputText.Length > 0;
+
     /// <summary>
     /// Poziționează dialogul peste zona client a ferestrei părinte (overlay).
     /// Fără părinte: fereastră compactă, centrată pe ecran, fără overlay.
@@ -103,7 +119,10 @@ public partial class CustomDialogWindow : Window
         Card.BeginAnimation(OpacityProperty, new DoubleAnimation(1, AnimationDuration));
         var scaleY = new DoubleAnimation(1, AnimationDuration) { EasingFunction = ease };
         // Focus după animație: altfel conturul de focus e poziționat pe cardul încă scalat.
-        scaleY.Completed += (_, _) => PrimaryButton.Focus();
+        scaleY.Completed += (_, _) =>
+        {
+            if (InputBox.Visibility == Visibility.Visible) InputBox.Focus(); else PrimaryButton.Focus();
+        };
         CardScale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1, AnimationDuration) { EasingFunction = ease });
         CardScale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleY);
     }

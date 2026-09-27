@@ -109,14 +109,14 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Button Style="{StaticResource Button.Bare}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                                Command="{Binding Library.ShowAllCommand}"
+                                Command="{Binding ShowAllPhotosCommand}"
                                 ToolTip="{DynamicResource Str.Library.ShowAll}" AutomationProperties.Name="{DynamicResource Str.Library.ShowAll}">
                             <Border x:Name="LibraryHeader" CornerRadius="{DynamicResource Radius.Small}" Padding="4,5">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Setter Property="Background" Value="Transparent" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Library.IsShowingAll}" Value="True">
+                                            <DataTrigger Binding="{Binding Context}" Value="AllPhotos">
                                                 <Setter Property="Background" Value="{DynamicResource Brush.Accent.Subtle}" />
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -195,44 +195,119 @@
                         </TreeView>
                     </Grid>
 
-                    <StackPanel Grid.Row="2" Margin="4,0,4,0">
-                        <Border Style="{StaticResource Divider.Horizontal}" Margin="0,12" />
+                    <StackPanel Grid.Row="2" Margin="0,0,4,0">
+                        <Border Style="{StaticResource Divider.Horizontal}" Margin="4,12,0,10" />
 
-                        <!-- Albume (Faza 3) -->
-                        <Grid Height="30">
+                        <!-- Albume: click pe titlu = grid de carduri; click pe un album = pozele lui -->
+                        <Grid Height="34">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Style="{StaticResource Text.SectionIcon}" Text="{DynamicResource Icon.Album}" />
-                            <TextBlock Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"
-                                       Style="{StaticResource Text.SectionHeader}" Text="{DynamicResource Str.Albums}" />
-                            <Button Grid.Column="2" Style="{StaticResource Button.Icon.Small}"
-                                    Content="{DynamicResource Icon.Add}" ToolTip="{DynamicResource Str.Albums.Add}"
-                                    AutomationProperties.Name="{DynamicResource Str.Albums.Add}" />
+                            <Button Style="{StaticResource Button.Bare}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                    Command="{Binding ShowAlbumsCommand}"
+                                    ToolTip="{DynamicResource Str.Albums.ShowAll}" AutomationProperties.Name="{DynamicResource Str.Albums.ShowAll}">
+                                <Border CornerRadius="{DynamicResource Radius.Small}" Padding="4,5">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsAlbumsView}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource Brush.Accent.Subtle}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource Text.SectionIcon}" Text="{DynamicResource Icon.Album}" />
+                                        <TextBlock Margin="10,0,0,0" VerticalAlignment="Center"
+                                                   Style="{StaticResource Text.SectionHeader}" Text="{DynamicResource Str.Albums}" />
+                                    </StackPanel>
+                                </Border>
+                            </Button>
+                            <Button Grid.Column="1" Margin="6,0,0,0" Style="{StaticResource Button.Icon.Small}"
+                                    Content="{DynamicResource Icon.Add}" Command="{Binding Albums.CreateAlbumCommand}"
+                                    ToolTip="{DynamicResource Str.Albums.Add}" AutomationProperties.Name="{DynamicResource Str.Albums.Add}" />
                         </Grid>
-                        <TextBlock Margin="26,6,0,4" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
-                                   Text="{DynamicResource Str.Albums.Empty}" />
+                        <TextBlock Margin="30,4,0,4" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                   Text="{DynamicResource Str.Albums.Empty}"
+                                   Visibility="{Binding Albums.HasAlbums, Converter={StaticResource InverseBoolToVisibility}}" />
+                        <ListBox MaxHeight="150" Margin="0,4,0,0" ItemsSource="{Binding Albums.Albums}"
+                                 SelectedItem="{Binding Albums.ActiveAlbum, Mode=TwoWay}"
+                                 ItemContainerStyle="{StaticResource Library.FolderItem}"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto" AutomationProperties.Name="AlbumList">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Background="Transparent" AutomationProperties.Name="{Binding Name}">
+                                        <Grid.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="{DynamicResource Str.Albums.Rename}" Command="{Binding RenameCommand}" />
+                                                <Separator />
+                                                <MenuItem Header="{DynamicResource Str.Albums.Delete}" Icon="{DynamicResource Icon.Delete}"
+                                                          Command="{Binding DeleteCommand}" />
+                                            </ContextMenu>
+                                        </Grid.ContextMenu>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource Text.Icon}" FontSize="14"
+                                                   Foreground="{DynamicResource Brush.Text.Secondary}" Text="{DynamicResource Icon.Album}" />
+                                        <TextBlock Grid.Column="1" Margin="10,0,8,0" Style="{StaticResource Text.Body}" Text="{Binding Name}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource Text.Caption}" Text="{Binding PhotoCountText}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
-                        <Border Style="{StaticResource Divider.Horizontal}" Margin="0,12" />
+                        <Border Style="{StaticResource Divider.Horizontal}" Margin="4,10,0,10" />
 
-                        <!-- Tag-uri (Faza 3) -->
-                        <Grid Height="30">
+                        <!-- Tag-uri: click pe un tag = pozele care îl au -->
+                        <Grid Height="34">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Style="{StaticResource Text.SectionIcon}" Text="{DynamicResource Icon.Tag}" />
+                            <TextBlock Margin="4,0,0,0" Style="{StaticResource Text.SectionIcon}" Text="{DynamicResource Icon.Tag}" />
                             <TextBlock Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"
                                        Style="{StaticResource Text.SectionHeader}" Text="{DynamicResource Str.Tags}" />
                             <Button Grid.Column="2" Style="{StaticResource Button.Icon.Small}"
-                                    Content="{DynamicResource Icon.Add}" ToolTip="{DynamicResource Str.Tags.Add}"
-                                    AutomationProperties.Name="{DynamicResource Str.Tags.Add}" />
+                                    Content="{DynamicResource Icon.Add}" Command="{Binding Tags.CreateTagCommand}"
+                                    ToolTip="{DynamicResource Str.Tags.Add}" AutomationProperties.Name="{DynamicResource Str.Tags.Add}" />
                         </Grid>
-                        <TextBlock Margin="26,6,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
-                                   Text="{DynamicResource Str.Tags.Empty}" />
+                        <TextBlock Margin="30,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                   Text="{DynamicResource Str.Tags.Empty}"
+                                   Visibility="{Binding Tags.HasTags, Converter={StaticResource InverseBoolToVisibility}}" />
+                        <ListBox MaxHeight="150" Margin="0,4,0,0" ItemsSource="{Binding Tags.Tags}"
+                                 SelectedItem="{Binding Tags.ActiveTag, Mode=TwoWay}"
+                                 ItemContainerStyle="{StaticResource Library.FolderItem}"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto" AutomationProperties.Name="TagList">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Background="Transparent" AutomationProperties.Name="{Binding Name}">
+                                        <Grid.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="{DynamicResource Str.Tags.Rename}" Command="{Binding RenameCommand}" />
+                                                <Separator />
+                                                <MenuItem Header="{DynamicResource Str.Tags.Delete}" Icon="{DynamicResource Icon.Delete}"
+                                                          Command="{Binding DeleteCommand}" />
+                                            </ContextMenu>
+                                        </Grid.ContextMenu>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Style="{StaticResource Text.Icon}" FontSize="14"
+                                                   Foreground="{DynamicResource Brush.Text.Secondary}" Text="{DynamicResource Icon.Tag}" />
+                                        <TextBlock Grid.Column="1" Margin="10,0,8,0" Style="{StaticResource Text.Body}" Text="{Binding Name}" />
+                                        <TextBlock Grid.Column="2" Style="{StaticResource Text.Caption}" Text="{Binding PhotoCountText}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </StackPanel>
                 </Grid>
             </ContentControl>
@@ -242,11 +317,33 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
+                    <!-- Bara de context: ce se afișează (toate pozele / folder / albume / album / tag) + număr -->
+                    <Grid Margin="2,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Din interiorul unui album: înapoi la grid-ul de albume -->
+                        <Button Style="{StaticResource Button.Icon.Small}" Margin="-4,0,6,0" Content="{DynamicResource Icon.Back}"
+                                Command="{Binding ShowAlbumsCommand}"
+                                ToolTip="{DynamicResource Str.Albums.Back}" AutomationProperties.Name="{DynamicResource Str.Albums.Back}"
+                                Visibility="{Binding IsAlbumContext, Converter={StaticResource BoolToVisibility}}" />
+                        <TextBlock Grid.Column="1" Style="{StaticResource Text.SectionIcon}" Text="{Binding ContextIcon}" />
+                        <TextBlock Grid.Column="2" Margin="10,0,12,0" VerticalAlignment="Center" Style="{StaticResource Text.SectionHeader}"
+                                   FontSize="16" Text="{Binding ContextTitle}" AutomationProperties.AutomationId="ContextTitle" />
+                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Text.Secondary}"
+                                   Text="{Binding Grid.CountText}"
+                                   Visibility="{Binding IsPhotosView, Converter={StaticResource BoolToVisibility}}" />
+                    </Grid>
+
                     <!-- Căutare + sortare (funcționale în Faza 4) -->
-                    <Grid>
+                    <Grid Grid.Row="1" Visibility="{Binding IsPhotosView, Converter={StaticResource BoolToVisibility}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" MinWidth="120" />
                             <ColumnDefinition Width="12" />
@@ -261,9 +358,13 @@
                         </ComboBox>
                     </Grid>
 
+                    <!-- ============ Poze ============ -->
+                    <Grid Grid.Row="2" Visibility="{Binding IsPhotosView, Converter={StaticResource BoolToVisibility}}">
                     <!-- Grid miniaturi: virtualizat (doar rândurile vizibile au containere) -->
-                    <ListBox x:Name="PhotoList" Grid.Row="1" Margin="-6,8,-10,-8" ItemsSource="{Binding Grid.Photos}"
+                    <ListBox x:Name="PhotoList" Margin="-6,8,-10,-8" ItemsSource="{Binding Grid.Photos}"
                              PreviewMouseLeftButtonDown="OnPhotoListMouseDown"
+                             SelectionChanged="OnPhotoSelectionChanged"
+                             ContextMenuOpening="OnPhotoContextMenuOpening"
                              SelectionMode="Extended"
                              SelectedItem="{Binding Grid.SelectedPhoto, Mode=TwoWay}"
                              ItemContainerStyle="{StaticResource PhotoCard.Container}"
@@ -273,6 +374,10 @@
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                              AutomationProperties.Name="PhotoGrid"
                              Visibility="{Binding Grid.IsEmpty, Converter={StaticResource InverseBoolToVisibility}}">
+                        <ListBox.ContextMenu>
+                            <!-- Construit la deschidere (listele de albume / tag-uri sunt dinamice) -->
+                            <ContextMenu />
+                        </ListBox.ContextMenu>
                         <ListBox.InputBindings>
                             <!-- Enter → lightbox (dublu-click: OnPhotoListMouseDown) -->
                             <KeyBinding Key="Enter" Command="{Binding Grid.OpenCommand}" />
@@ -285,7 +390,7 @@
                     </ListBox>
 
                     <!-- Folder fără poze -->
-                    <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"
                                 Visibility="{Binding Grid.IsFolderEmpty, Converter={StaticResource BoolToVisibility}}">
                         <TextBlock Style="{StaticResource Text.Icon}" FontSize="30"
                                    Foreground="{DynamicResource Brush.Text.Tertiary}" Text="{DynamicResource Icon.Folder}" />
@@ -294,7 +399,7 @@
                     </StackPanel>
 
                     <!-- Bibliotecă goală -->
-                    <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"
                                 Visibility="{Binding Grid.IsLibraryEmpty, Converter={StaticResource BoolToVisibility}}">
                         <Border Width="84" Height="84" CornerRadius="42" HorizontalAlignment="Center"
                                 Background="{DynamicResource Brush.Accent.Subtle}">
@@ -307,14 +412,65 @@
                                    MaxWidth="360" Style="{StaticResource Text.Secondary}"
                                    Text="{DynamicResource Str.Grid.Empty.Subtitle}" />
                     </StackPanel>
+                    </Grid>
+
+                    <!-- ============ Albume: grid de carduri (§5.7) ============ -->
+                    <Grid Grid.Row="1" Grid.RowSpan="2" Visibility="{Binding IsAlbumsView, Converter={StaticResource BoolToVisibility}}">
+                        <ListBox x:Name="AlbumCards" Margin="-6,0,-10,-8" ItemsSource="{Binding Albums.Albums}"
+                                 SelectedItem="{Binding Albums.SelectedAlbum, Mode=TwoWay}"
+                                 PreviewMouseLeftButtonDown="OnAlbumCardsMouseDown"
+                                 VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                 ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 AutomationProperties.Name="AlbumGrid"
+                                 Visibility="{Binding Albums.HasAlbums, Converter={StaticResource BoolToVisibility}}">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ctl:VirtualizingWrapPanel ItemMinWidth="190" ImageAspectRatio="1.333" ItemFooterHeight="62" Spacing="16" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding Albums.SelectedAlbum.OpenCommand}" />
+                            </ListBox.InputBindings>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource AlbumCard.Container}">
+                                    <Setter Property="ContextMenu">
+                                        <Setter.Value>
+                                            <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                <MenuItem Header="{DynamicResource Str.Albums.Open}" Command="{Binding OpenCommand}" />
+                                                <MenuItem Header="{DynamicResource Str.Albums.Rename}" Command="{Binding RenameCommand}" />
+                                                <Separator />
+                                                <MenuItem Header="{DynamicResource Str.Albums.Delete}" Icon="{DynamicResource Icon.Delete}"
+                                                          Command="{Binding DeleteCommand}" />
+                                            </ContextMenu>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+
+                        <!-- Niciun album -->
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"
+                                    Visibility="{Binding Albums.HasAlbums, Converter={StaticResource InverseBoolToVisibility}}">
+                            <Border Width="84" Height="84" CornerRadius="42" HorizontalAlignment="Center"
+                                    Background="{DynamicResource Brush.Accent.Subtle}">
+                                <TextBlock Style="{StaticResource Text.Icon}" FontSize="34"
+                                           Foreground="{DynamicResource Brush.Accent}" Text="{DynamicResource Icon.Album}" />
+                            </Border>
+                            <TextBlock Margin="0,18,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.SectionHeader}"
+                                       FontSize="17" Text="{DynamicResource Str.Albums.EmptyTitle}" />
+                            <TextBlock Margin="0,6,0,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
+                                       MaxWidth="380" Style="{StaticResource Text.Secondary}" TextTrimming="None"
+                                       Text="{DynamicResource Str.Albums.EmptyHint}" />
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </ContentControl>
 
-            <!-- Panou dreapta: detalii element selectat (§5.6) -->
+            <!-- Panou dreapta: detalii element selectat (§5.6) — nimic / poză / album -->
             <ContentControl Grid.Column="4" Style="{StaticResource Card.Panel}" Padding="0">
                 <Grid>
                     <!-- Nicio selecție -->
-                    <Grid Margin="18,16" Visibility="{Binding Details.HasPhoto, Converter={StaticResource InverseBoolToVisibility}}">
+                    <Grid Margin="18,16" Visibility="{Binding DetailsMode, Converter={StaticResource EnumToVisibility}, ConverterParameter=None}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -332,7 +488,7 @@
 
                     <!-- Poza selectată -->
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                                  Visibility="{Binding Details.HasPhoto, Converter={StaticResource BoolToVisibility}}">
+                                  Visibility="{Binding DetailsMode, Converter={StaticResource EnumToVisibility}, ConverterParameter=Photo}">
                         <StackPanel Margin="18,16,14,16">
                             <TextBlock Style="{StaticResource Text.SectionHeader}" FontSize="16" TextWrapping="Wrap" TextTrimming="None"
                                        Text="{Binding Details.Photo.FileName}" />
@@ -357,11 +513,77 @@
 
                             <Border Style="{StaticResource Divider.Horizontal}" Margin="0,14" />
 
-                            <!-- Tag-uri: atribuirea și editarea vin în Faza 3 -->
-                            <TextBlock Style="{StaticResource Text.SectionHeader}" Text="{DynamicResource Str.Tags}" />
-                            <TextBlock Margin="0,8,0,0" Style="{StaticResource Text.Caption}" Text="{DynamicResource Str.Details.NoTags}" />
+                            <!-- Tag-uri: etichete cu „×"; „+" deschide lista de tag-uri existente + „Tag nou…" -->
+                            <Grid>
+                                <TextBlock VerticalAlignment="Center" Style="{StaticResource Text.SectionHeader}" Text="{DynamicResource Str.Tags}" />
+                                <Button x:Name="AddTagButton" HorizontalAlignment="Right" Style="{StaticResource Button.Icon.Small}"
+                                        Content="{DynamicResource Icon.Add}" Click="OnAddTagClick"
+                                        ToolTip="{DynamicResource Str.Details.AddTag}" AutomationProperties.Name="{DynamicResource Str.Details.AddTag}" />
+                            </Grid>
+                            <TextBlock Margin="0,8,0,0" Style="{StaticResource Text.Caption}" Text="{DynamicResource Str.Details.NoTags}"
+                                       Visibility="{Binding Details.HasTags, Converter={StaticResource InverseBoolToVisibility}}" />
+                            <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding Details.Tags}" Focusable="False">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,0,8,8" Padding="10,3,4,3" CornerRadius="{DynamicResource Radius.Small}"
+                                                BorderThickness="1" BorderBrush="{DynamicResource Brush.Accent}"
+                                                Background="{DynamicResource Brush.Accent.Subtle}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock VerticalAlignment="Center" FontSize="12.5" Text="{Binding Name}" />
+                                                <Button Style="{StaticResource TagChip.RemoveButton}" Content="{DynamicResource Icon.Close}"
+                                                        Command="{Binding DataContext.Details.RemoveTagCommand, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
+                                                        CommandParameter="{Binding}"
+                                                        ToolTip="{DynamicResource Str.Details.RemoveTag}"
+                                                        AutomationProperties.Name="{DynamicResource Str.Details.RemoveTag}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </ScrollViewer>
+
+                    <!-- Albumul selectat (click pe card): nume, dată, număr de poze — fără a-l deschide -->
+                    <StackPanel Margin="18,16,14,16"
+                                Visibility="{Binding DetailsMode, Converter={StaticResource EnumToVisibility}, ConverterParameter=Album}">
+                        <Border Height="150" CornerRadius="{DynamicResource Radius.Control}" Background="{DynamicResource Brush.Surface}">
+                            <Grid>
+                                <TextBlock Style="{StaticResource Text.Icon}" FontSize="34"
+                                           Foreground="{DynamicResource Brush.Text.Tertiary}" Text="{DynamicResource Icon.Album}" />
+                                <Border CornerRadius="{DynamicResource Radius.Control}">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{Binding Albums.SelectedAlbum.Cover}" Stretch="UniformToFill" />
+                                    </Border.Background>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <TextBlock Margin="0,14,0,0" Style="{StaticResource Text.SectionHeader}" FontSize="16" TextWrapping="Wrap"
+                                   TextTrimming="None" Text="{Binding Albums.SelectedAlbum.Name}" />
+                        <Border Style="{StaticResource Divider.Horizontal}" Margin="0,14,0,10" />
+                        <Grid Margin="0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="104" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Secondary}" FontSize="12.5" Text="{DynamicResource Str.Details.Created}" />
+                            <TextBlock Grid.Column="1" FontSize="12.5" Text="{Binding Albums.SelectedAlbum.DateText}" />
+                        </Grid>
+                        <Grid Margin="0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="104" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Secondary}" FontSize="12.5" Text="{DynamicResource Str.Details.PhotoCount}" />
+                            <TextBlock Grid.Column="1" FontSize="12.5" Text="{Binding Albums.SelectedAlbum.PhotoCountText}" />
+                        </Grid>
+                        <Button Margin="0,18,0,0" HorizontalAlignment="Left" Style="{StaticResource Button.Primary}"
+                                Content="{DynamicResource Str.Albums.Open}" Command="{Binding Albums.SelectedAlbum.OpenCommand}" />
+                    </StackPanel>
                 </Grid>
             </ContentControl>
         </Grid>

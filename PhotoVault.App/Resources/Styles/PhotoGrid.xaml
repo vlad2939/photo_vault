@@ -119,4 +119,88 @@
         </Setter>
     </Style>
 
+    <!--
+        Card de album (§5.7): copertă, nume, dată creare, număr de poze.
+        Același limbaj vizual ca în cardurile foto; click = detalii, dublu-click = deschide albumul.
+    -->
+    <Style x:Key="AlbumCard.Container" TargetType="ListBoxItem">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding Name}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Grid x:Name="Root" RenderTransformOrigin="0.5,0.5" Background="Transparent">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="RootScale" />
+                        </Grid.RenderTransform>
+                        <Border CornerRadius="12" Background="{DynamicResource Brush.Card.Background}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="14" ShadowDepth="2" Direction="270"
+                                                  Color="{DynamicResource Color.Shadow}" Opacity="{DynamicResource Shadow.Opacity}" />
+                            </Border.Effect>
+                        </Border>
+                        <Border x:Name="Card" CornerRadius="12" BorderThickness="1"
+                                Background="{DynamicResource Brush.Card.Background}" BorderBrush="{DynamicResource Brush.Panel.Border}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="62" />
+                                </Grid.RowDefinitions>
+                                <Border CornerRadius="11,11,0,0" Background="{DynamicResource Brush.Surface}">
+                                    <TextBlock Style="{DynamicResource Text.Icon}" FontSize="34"
+                                               Foreground="{DynamicResource Brush.Text.Tertiary}" Text="{DynamicResource Icon.Album}" />
+                                </Border>
+                                <Border CornerRadius="11,11,0,0">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{Binding Cover}" Stretch="UniformToFill" />
+                                    </Border.Background>
+                                </Border>
+                                <StackPanel Grid.Row="1" Margin="14,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{DynamicResource Text.Body}" FontWeight="SemiBold" FontSize="14" Text="{Binding Name}" />
+                                    <Grid Margin="0,4,0,0">
+                                        <TextBlock Style="{DynamicResource Text.Caption}" Text="{Binding DateText}" />
+                                        <TextBlock HorizontalAlignment="Right" Style="{DynamicResource Text.Caption}" Text="{Binding PhotoCountLabel}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <Border x:Name="HoverLayer" CornerRadius="12" Background="{DynamicResource Brush.Hover}" Opacity="0" IsHitTestVisible="False" />
+                        <Border x:Name="SelectionRing" CornerRadius="12" BorderThickness="2" BorderBrush="{DynamicResource Brush.Accent}"
+                                Visibility="Collapsed" IsHitTestVisible="False" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource Brush.Control.Border.Hover}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="RootScale" Storyboard.TargetProperty="ScaleX" To="1.02" Duration="0:0:0.15" />
+                                        <DoubleAnimation Storyboard.TargetName="RootScale" Storyboard.TargetProperty="ScaleY" To="1.02" Duration="0:0:0.15" />
+                                        <DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="RootScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.15" />
+                                        <DoubleAnimation Storyboard.TargetName="RootScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.15" />
+                                        <DoubleAnimation Storyboard.TargetName="HoverLayer" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="SelectionRing" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
 </ResourceDictionary>
