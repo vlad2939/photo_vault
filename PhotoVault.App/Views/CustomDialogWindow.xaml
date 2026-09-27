@@ -40,6 +40,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -62,7 +63,11 @@
                                    Foreground="{DynamicResource Brush.Text.Secondary}" />
                     </ScrollViewer>
 
-                    <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,22,0,0"
+                    <!-- Câmp text (doar pentru Prompt: nume album / tag) -->
+                    <TextBox x:Name="InputBox" Grid.Row="2" Grid.Column="1" Margin="0,14,0,0" Visibility="Collapsed"
+                             MaxLength="120" TextChanged="OnInputChanged" />
+
+                    <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="0,22,0,0"
                                 Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button x:Name="SecondaryButton" Style="{StaticResource Button.Secondary}"
                                 Margin="0,0,10,0" Click="OnSecondaryClick" />

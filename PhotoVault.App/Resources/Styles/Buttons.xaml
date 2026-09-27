@@ -186,6 +186,14 @@
         <Setter Property="FontSize" Value="13" />
     </Style>
 
+    <!-- „×" din etichetele de tag (panoul de detalii) -->
+    <Style x:Key="TagChip.RemoveButton" TargetType="ButtonBase" BasedOn="{StaticResource Button.Icon}">
+        <Setter Property="Width" Value="18" />
+        <Setter Property="Height" Value="18" />
+        <Setter Property="FontSize" Value="9" />
+        <Setter Property="Margin" Value="6,0,0,0" />
+    </Style>
+
     <!-- Buton fără chrome, cu scale ușor la hover (logo-ul din bara secundară) -->
     <Style x:Key="Button.Bare" TargetType="ButtonBase">
         <Setter Property="OverridesDefaultStyle" Value="True" />

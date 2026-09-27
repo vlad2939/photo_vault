@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhotoVault.App.Utils;
@@ -6,67 +7,326 @@ using PhotoVault.Core.Services;
 
 namespace PhotoVault.App.ViewModels;
 
+/// <summary>Ce afișează zona centrală.</summary>
+public enum BrowseContext
+{
+    AllPhotos,
+    Folder,
+    /// <summary>Grid-ul de carduri de albume (§5.7).</summary>
+    Albums,
+    Album,
+    Tag
+}
+
+/// <summary>Ce afișează panoul de detalii (§5.6).</summary>
+public enum DetailsMode
+{
+    None,
+    Photo,
+    Album
+}
+
 /// <summary>
-/// ViewModel-ul ferestrei principale: bara secundară (§5.3) și footer-ul (§5.5).
-/// Faza 0: doar comutarea temei este funcțională; celelalte butoane afișează
-/// un mesaj informativ până la implementarea modulelor lor.
+/// ViewModel-ul ferestrei principale: compune panourile (Bibliotecă, albume, tag-uri, grid, detalii,
+/// footer), coordonează contextul de navigare și acțiunile pe pozele selectate (albume, tag-uri).
 /// </summary>
 public partial class MainViewModel : ObservableObject
 {
     private readonly ISettingsService _settings;
     private readonly IThemeService _theme;
     private readonly IDialogService _dialogs;
+    private readonly IWindowService _windows;
+    private readonly IAlbumService _albumService;
+    private readonly ITagService _tagService;
+    private readonly CancellationTokenSource _shutdown = new();
+    private bool _navigating;
 
-    public MainViewModel(ISettingsService settings, IThemeService theme, IDialogService dialogs)
+    public MainViewModel(ISettingsService settings, IThemeService theme, IDialogService dialogs, IWindowService windows,
+        IPhotoIndexService index, IThumbnailService thumbnails, IMetadataService metadata, IAlbumService albumService,
+        ITagService tagService, IFolderPicker folderPicker)
     {
         _settings = settings;
         _theme = theme;
         _dialogs = dialogs;
+        _windows = windows;
+        _albumService = albumService;
+        _tagService = tagService;
         IsDarkTheme = theme.CurrentTheme == AppTheme.Dark;
+
+        Status = new StatusBarViewModel();
+        Grid = new PhotoGridViewModel(thumbnails, windows);
+        Details = new PhotoDetailsViewModel(metadata, tagService);
+        Library = new FolderTreeViewModel(index, dialogs, folderPicker, Status, Grid, _shutdown.Token);
+        Albums = new AlbumViewModel(albumService, thumbnails, dialogs);
+        Tags = new TagViewModel(tagService, dialogs);
+
+        Grid.PropertyChanged += OnGridPropertyChanged;
+        Albums.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(AlbumViewModel.SelectedAlbum)) OnPropertyChanged(nameof(DetailsMode));
+        };
+        Library.SelectedFolderChanged += OnFolderSelected;
+        Library.ShowAllRequested += ShowAllPhotos;
+        Library.LibraryReloaded += OnLibraryReloaded;
+        Albums.OpenRequested += OpenAlbum;
+        Albums.AlbumChanged += OnAlbumChanged;
+        Tags.FilterRequested += ShowTag;
+        Tags.TagChanged += OnTagChanged;
+        Details.TagsModified += OnTagsAssignmentChanged;
     }
 
-    /// <summary>Tema curentă; comută iconița butonului (lună = dark, soare = light).</summary>
+    public StatusBarViewModel Status { get; }
+    public PhotoGridViewModel Grid { get; }
+    public PhotoDetailsViewModel Details { get; }
+    public FolderTreeViewModel Library { get; }
+    public AlbumViewModel Albums { get; }
+    public TagViewModel Tags { get; }
+
     [ObservableProperty]
     public partial bool IsDarkTheme { get; set; }
 
-    // ---- Footer: zona de stare / progres (populată din Faza 1, la indexare) ----
+    // ------------------------------------------------------------------ Context de navigare
 
     [ObservableProperty]
-    public partial string? StatusText { get; set; }
+    [NotifyPropertyChangedFor(nameof(IsAlbumsView), nameof(IsPhotosView), nameof(IsAlbumContext), nameof(DetailsMode), nameof(ContextIcon))]
+    public partial BrowseContext Context { get; set; } = BrowseContext.AllPhotos;
 
+    /// <summary>Titlul contextului curent (bara de deasupra grid-ului).</summary>
     [ObservableProperty]
-    public partial bool IsProgressVisible { get; set; }
+    public partial string ContextTitle { get; set; } = string.Empty;
 
+    /// <summary>Albumul deschis (în contextul Album).</summary>
     [ObservableProperty]
-    public partial double ProgressValue { get; set; }
+    public partial AlbumItemViewModel? CurrentAlbum { get; set; }
 
-    [ObservableProperty]
-    public partial double ProgressMaximum { get; set; } = 100;
+    public bool IsAlbumsView => Context == BrowseContext.Albums;
+    public bool IsPhotosView => Context != BrowseContext.Albums;
+    public bool IsAlbumContext => Context == BrowseContext.Album;
 
-    [RelayCommand]
-    private void ToggleTheme()
+    public string ContextIcon => Loc.Get(Context switch
     {
-        var next = IsDarkTheme ? AppTheme.Light : AppTheme.Dark;
-        _theme.SetTheme(next);
-        _settings.SetTheme(next);
-        IsDarkTheme = next == AppTheme.Dark;
+        BrowseContext.Folder => "Icon.Folder",
+        BrowseContext.Albums or BrowseContext.Album => "Icon.Album",
+        BrowseContext.Tag => "Icon.Tag",
+        _ => "Icon.Library",
+    });
+
+    public DetailsMode DetailsMode => IsAlbumsView
+        ? Albums.SelectedAlbum is null ? DetailsMode.None : DetailsMode.Album
+        : Details.HasPhoto ? DetailsMode.Photo : DetailsMode.None;
+
+    /// <summary>Apelat după afișarea ferestrei.</summary>
+    public async Task InitializeAsync()
+    {
+        ContextTitle = Loc.Get("Str.Context.AllPhotos");
+        Albums.Reload();
+        Tags.Reload();
+        await Library.InitializeAsync();
+    }
+
+    public void Shutdown() => _shutdown.Cancel();
+
+    private void Navigate(BrowseContext context, string title, Func<PhotoItemViewModel, bool>? filter,
+        AlbumItemViewModel? album = null, bool keepTree = false, bool keepTag = false)
+    {
+        _navigating = true;
+        try
+        {
+            if (!keepTree) Library.ClearSelection();
+            if (!keepTag) Tags.ActiveTag = null;
+            Albums.ActiveAlbum = album;
+            CurrentAlbum = album;
+            Context = context;
+            ContextTitle = title;
+            if (context != BrowseContext.Albums) Grid.SetFilter(filter);
+        }
+        finally
+        {
+            _navigating = false;
+        }
     }
 
     [RelayCommand]
-    private void OpenBatchRename() => ShowComingSoon();
+    private void ShowAllPhotos() => Navigate(BrowseContext.AllPhotos, Loc.Get("Str.Context.AllPhotos"), null);
 
-    [RelayCommand]
-    private void OpenInfo() => ShowComingSoon();
-
-    [RelayCommand]
-    private void OpenSettings() => ShowComingSoon();
-
-    [RelayCommand]
-    private void OpenLogo()
+    private void OnFolderSelected(FolderNodeViewModel? node)
     {
-        // Faza 2: modal fullscreen cu logo-ul peste fundal blurat (§5.4).
+        if (_navigating) return;
+        if (node is null) ShowAllPhotos();
+        else Navigate(BrowseContext.Folder, node.Name, PhotoGridViewModel.FolderFilter(node.FullPath), keepTree: true);
     }
 
-    private void ShowComingSoon() =>
-        _dialogs.Show(Loc.Get("Str.Placeholder.Title"), Loc.Get("Str.Placeholder.Message"), DialogKind.Info);
+    /// <summary>Click pe titlul „Albume": grid-ul de carduri de albume.</summary>
+    [RelayCommand]
+    private void ShowAlbums()
+    {
+        Albums.Reload();
+        Navigate(BrowseContext.Albums, Loc.Get("Str.Albums"), null);
+    }
+
+    private void OpenAlbum(AlbumItemViewModel album)
+    {
+        if (_navigating) return;
+        var ids = _albumService.GetPhotoIds(album.Id);
+        Navigate(BrowseContext.Album, album.Name, PhotoGridViewModel.IdFilter(ids), album);
+    }
+
+    private void ShowTag(TagItemViewModel tag)
+    {
+        if (_navigating) return;
+        var ids = _tagService.GetPhotoIds(tag.Id);
+        Navigate(BrowseContext.Tag, "#" + tag.Name, PhotoGridViewModel.IdFilter(ids), keepTag: true);
+    }
+
+    /// <summary>Reaplică contextul curent (după modificări în albume / tag-uri / index).</summary>
+    private void RefreshContext()
+    {
+        switch (Context)
+        {
+            case BrowseContext.Album when CurrentAlbum is not null && Albums.Find(CurrentAlbum.Id) is { } album:
+                OpenAlbum(album);
+                break;
+            case BrowseContext.Album:
+                ShowAlbums();   // albumul deschis a fost șters
+                break;
+            case BrowseContext.Tag when Tags.ActiveTag is { } tag:
+                ShowTag(tag);
+                break;
+            case BrowseContext.Tag:
+                ShowAllPhotos();   // tag-ul a fost șters
+                break;
+        }
+    }
+
+    private void OnLibraryReloaded()
+    {
+        Albums.Reload();
+        Tags.Reload();
+        if (Context is BrowseContext.Album or BrowseContext.Tag) RefreshContext();
+    }
+
+    private void OnAlbumChanged(long albumId)
+    {
+        if (Context == BrowseContext.Album) RefreshContext();
+    }
+
+    private void OnTagChanged(long tagId)
+    {
+        Details.RefreshTags();
+        if (Context == BrowseContext.Tag) RefreshContext();
+    }
+
+    private void OnTagsAssignmentChanged()
+    {
+        Tags.Reload();
+        if (Context == BrowseContext.Tag) RefreshContext();
+    }
+
+    // ------------------------------------------------------------------ Acțiuni pe pozele selectate
+
+    private IReadOnlyList<long> SelectedIds() =>
+        Grid.SelectedPhotos.Count > 0 ? Grid.SelectedPhotos.Select(p => p.Id).ToList()
+        : Grid.SelectedPhoto is { } single ? [single.Id] : [];
+
+    /// <summary>„Adaugă la album": album existent sau null = album nou (§6.5).</summary>
+    [RelayCommand]
+    private void AddToAlbum(AlbumItemViewModel? album)
+    {
+        var ids = SelectedIds();
+        if (ids.Count == 0) return;
+        album ??= Albums.PromptCreate();
+        if (album is null) return;
+
+        var added = _albumService.AddPhotos(album.Id, ids);
+        Albums.Reload();
+        Status.ShowMessage(Loc.Format("Str.Status.AddedToAlbum", Loc.PhotoCount(added), album.Name));
+    }
+
+    /// <summary>„Elimină din album" — doar din contextul unui album deschis; pozele rămân indexate.</summary>
+    [RelayCommand]
+    private void RemoveFromAlbum()
+    {
+        if (CurrentAlbum is not { } album) return;
+        var ids = SelectedIds();
+        if (ids.Count == 0) return;
+
+        var removed = _albumService.RemovePhotos(album.Id, ids);
+        Albums.Reload();
+        RefreshContext();
+        Status.ShowMessage(Loc.Format("Str.Status.RemovedFromAlbum", Loc.PhotoCount(removed), album.Name));
+    }
+
+    [RelayCommand]
+    private void SetAlbumCover()
+    {
+        if (CurrentAlbum is not { } album || Grid.SelectedPhoto is not { } photo) return;
+        _albumService.SetCover(album.Id, photo.Id);
+        Albums.Reload();
+        Status.ShowMessage(Loc.Format("Str.Status.CoverSet", album.Name));
+    }
+
+    /// <summary>„Adaugă tag": tag existent sau null = tag nou, pe toate pozele selectate (§6.6).</summary>
+    [RelayCommand]
+    private void AddTag(TagItemViewModel? tag)
+    {
+        var ids = SelectedIds();
+        if (ids.Count == 0) return;
+        tag ??= Tags.PromptCreate();
+        if (tag is null) return;
+
+        var added = _tagService.Assign(tag.Id, ids);
+        Tags.Reload();
+        Details.RefreshTags();
+        if (Context == BrowseContext.Tag) RefreshContext();
+        Status.ShowMessage(Loc.Format("Str.Status.TagAdded", tag.Name, Loc.PhotoCount(added)));
+    }
+
+    /// <summary>Din panoul de detalii: adaugă un tag doar pozei afișate.</summary>
+    [RelayCommand]
+    private void AddTagToCurrentPhoto(TagItemViewModel? tag)
+    {
+        if (Details.Photo is not { } photo) return;
+        tag ??= Tags.PromptCreate();
+        if (tag is null) return;
+
+        _tagService.Assign(tag.Id, [photo.Id]);
+        Tags.Reload();
+        Details.RefreshTags();
+        if (Context == BrowseContext.Tag) RefreshContext();
+    }
+
+    // ------------------------------------------------------------------ Bara secundară
+
+    [RelayCommand]
+    private void ToggleTheme() => SetTheme(IsDarkTheme ? AppTheme.Light : AppTheme.Dark);
+
+    [RelayCommand]
+    private void SetTheme(AppTheme theme)
+    {
+        if ((theme == AppTheme.Dark) == IsDarkTheme) return;
+        _theme.SetTheme(theme);
+        _settings.SetTheme(theme);
+        IsDarkTheme = theme == AppTheme.Dark;
+    }
+
+    [RelayCommand]
+    private void OpenBatchRename() =>
+        // Modulul de redenumire batch se implementează în Faza 5 (§6.8)
+        _dialogs.Show(Loc.Get("Str.Placeholder.Title"), Loc.Get("Str.Placeholder.BatchRename"), DialogKind.Info);
+
+    [RelayCommand]
+    private void OpenInfo() => _windows.ShowInfo();
+
+    [RelayCommand]
+    private void OpenSettings() => _windows.ShowSettings(this);
+
+    [RelayCommand]
+    private void OpenLogo() => _windows.ShowLogo();
+
+    private async void OnGridPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(PhotoGridViewModel.SelectedPhoto)) return;
+        await Details.ShowAsync(Grid.SelectedPhoto);
+        OnPropertyChanged(nameof(DetailsMode));
+    }
 }

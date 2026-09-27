@@ -11,14 +11,26 @@ public sealed class DialogService : IDialogService
         DialogButtons buttons = DialogButtons.Ok,
         Window? owner = null)
     {
+        var dialog = new CustomDialogWindow(title, message, kind, buttons);
+        dialog.AttachTo(ResolveOwner(owner));
+        dialog.ShowDialog();
+        return dialog.Result;
+    }
+
+    public string? Prompt(string title, string message, string initialText = "", string placeholder = "", Window? owner = null)
+    {
+        var dialog = new CustomDialogWindow(title, message, DialogKind.Info, DialogButtons.OkCancel);
+        dialog.EnableInput(initialText, placeholder);
+        dialog.AttachTo(ResolveOwner(owner));
+        dialog.ShowDialog();
+        return dialog.Result == DialogResultKind.Ok && dialog.InputText.Length > 0 ? dialog.InputText : null;
+    }
+
+    private static Window? ResolveOwner(Window? owner)
+    {
         owner ??= Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
                   ?? Application.Current?.MainWindow;
         if (owner is CustomDialogWindow nested) owner = nested.Owner;   // dialog peste dialog → același părinte
-        if (owner is { IsVisible: false }) owner = null;
-
-        var dialog = new CustomDialogWindow(title, message, kind, buttons);
-        dialog.AttachTo(owner);
-        dialog.ShowDialog();
-        return dialog.Result;
+        return owner is { IsVisible: false } ? null : owner;
     }
 }

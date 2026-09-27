@@ -36,4 +36,7 @@ public interface IDialogService
         DialogKind kind = DialogKind.Info,
         DialogButtons buttons = DialogButtons.Ok,
         Window? owner = null);
+
+    /// <summary>Cere un text (ex. numele unui album); null dacă utilizatorul a anulat.</summary>
+    string? Prompt(string title, string message, string initialText = "", string placeholder = "", Window? owner = null);
 }
