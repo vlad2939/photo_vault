@@ -560,7 +560,9 @@ Find-Control $show 'Pauză' $button | Out-Null
 # Butonul „Muzică" din bara slideshow-ului: alegere MP3 (aici un fișier de test ilizibil — pe runner nu există nici
 # dispozitiv audio), deci aplicația trebuie să afișeze mesajul discret, fără eroare
 $musicFile = Join-Path ([IO.Path]::GetTempPath()) 'PhotoVaultSmoke	est-muzica.mp3'
-[IO.File]::WriteAllBytes($musicFile, [byte[]](73, 68, 51, 3, 0, 0, 0, 0, 0, 0) + (1..4096 | ForEach-Object { 0 }))
+$musicBytes = New-Object byte[] 4106          # antet ID3 fără cadre MP3 → fișier ilizibil pentru NAudio
+$musicBytes[0] = 73; $musicBytes[1] = 68; $musicBytes[2] = 51; $musicBytes[3] = 3
+[IO.File]::WriteAllBytes($musicFile, $musicBytes)
 Invoke-Element (Find-Control $show 'Adaugă muzică (MP3)' $button)
 Find-TopWindow 'Alege piese MP3 pentru slideshow' 10 | Out-Null
 Start-Sleep -Seconds 1
