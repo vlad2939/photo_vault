@@ -160,7 +160,7 @@ Wait-ForText ([System.Windows.Automation.AutomationElement]::RootElement) 'La no
 Save-Screen 'port-03-relocate-confirm'
 Invoke-Element (Find-Control ([System.Windows.Automation.AutomationElement]::RootElement) 'Actualizează locația' ([System.Windows.Automation.ControlType]::Button))
 Wait-ForText $root 'Locația folderului a fost actualizată' 15 | Out-Null
-Add-Result "Folder sursă realiniat la $movedPhotos: OK"
+Add-Result "Folder sursă realiniat la ${movedPhotos}: OK"
 Save-Screen 'port-04-relocated'
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Seconds 1

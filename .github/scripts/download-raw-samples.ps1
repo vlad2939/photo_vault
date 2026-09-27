@@ -1,4 +1,4 @@
-# Descarcă câteva fișiere RAW reale (CR2 / NEF / DNG) din surse publice, pentru validarea extragerii
+﻿# Descarcă câteva fișiere RAW reale (CR2 / NEF / DNG) din surse publice, pentru validarea extragerii
 # previzualizării (§9 Faza 8). Totul e „cel mai bun efort": o sursă indisponibilă nu oprește build-ul.
 #   Surse: raw.pixls.us (arhivă publică de mostre RAW, CC0) și câteva repo-uri GitHub cu fișiere de test.
 param(

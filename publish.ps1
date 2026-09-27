@@ -1,4 +1,4 @@
-# Publică versiunea portabilă PhotoVault (§8): un singur PhotoVault.exe self-contained (win-x64)
+﻿# Publică versiunea portabilă PhotoVault (§8): un singur PhotoVault.exe self-contained (win-x64)
 # + README.txt, în publish\PhotoVault\, plus arhiva publish\PhotoVault-<versiune>-win-x64.zip.
 # Rulare (din rădăcina repo-ului, pe Windows cu .NET 10 SDK):  .\publish.ps1
 $ErrorActionPreference = 'Stop'
