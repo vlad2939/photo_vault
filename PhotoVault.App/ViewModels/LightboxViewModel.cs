@@ -19,9 +19,10 @@ public partial class LightboxViewModel : ObservableObject
     private readonly Dictionary<long, Task<ImageSource?>> _loads = [];
     private int _version;
 
-    public LightboxViewModel(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, IMetadataService metadata,
+    public LightboxViewModel(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title, IMetadataService metadata,
         IPhotoService photoService)
     {
+        Title = title;
         _photos = photos;
         _metadata = metadata;
         _photoService = photoService;
@@ -37,6 +38,9 @@ public partial class LightboxViewModel : ObservableObject
     public PhotoItemViewModel? Current => _photos.Count > 0 ? _photos[Index] : null;
 
     public int Count => _photos.Count;
+
+    /// <summary>Contextul din care s-a deschis (folder / album / tag / toate pozele), afișat stânga sus.</summary>
+    public string Title { get; }
 
     public string CounterText => $"{Loc.Number(Index + 1)} / {Loc.Number(_photos.Count)}";
 

@@ -75,6 +75,7 @@
     <sys:String x:Key="Str.Details.Aperture">Diafragmă</sys:String>
     <sys:String x:Key="Str.Details.FocalLength">Distanță focală</sys:String>
     <sys:String x:Key="Str.Details.NoTags">Niciun tag atribuit.</sys:String>
+    <sys:String x:Key="Str.Lightbox.Title">Vizualizare pe tot ecranul</sys:String>
     <sys:String x:Key="Str.Lightbox.Back">Înapoi la galerie</sys:String>
     <sys:String x:Key="Str.Lightbox.Previous">Poza anterioară (←)</sys:String>
     <sys:String x:Key="Str.Lightbox.Next">Poza următoare (→)</sys:String>

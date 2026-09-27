@@ -6,7 +6,7 @@ namespace PhotoVault.App.Utils;
 public interface IWindowService
 {
     /// <summary>Lightbox modal; întoarce poza afișată la închidere (pentru re-selectare în grid).</summary>
-    PhotoItemViewModel? ShowLightbox(IReadOnlyList<PhotoItemViewModel> photos, int startIndex);
+    PhotoItemViewModel? ShowLightbox(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title);
 
     /// <summary>Logo-ul la dimensiune mare, peste fereastra blurată (§5.4).</summary>
     void ShowLogo();

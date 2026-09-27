@@ -22,6 +22,7 @@
                 <ResourceDictionary Source="/PhotoVault;component/Resources/Styles/Menus.xaml" />
                 <ResourceDictionary Source="/PhotoVault;component/Resources/Styles/Lists.xaml" />
                 <ResourceDictionary Source="/PhotoVault;component/Resources/Styles/PhotoGrid.xaml" />
+                <ResourceDictionary Source="/PhotoVault;component/Resources/Styles/Viewer.xaml" />
                 <ResourceDictionary Source="/PhotoVault;component/Resources/Localization/Strings.ro.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

@@ -342,6 +342,7 @@ Panou fix, poziționat în partea dreaptă a ferestrei principale (sau jos, sub 
 - Zoom manual (scroll wheel / butoane +/-) și pan (drag cu mouse) când zoom > 100%.
 - Pentru RAW: afișare din embedded preview (aceeași sursă ca thumbnail, dar la rezoluție mai mare dacă disponibilă în fișier).
 - Rotirea logică aplicată se reflectă automat în afișare (fișierul original neatins).
+- **Aspect identic cu slideshow-ul (§5.8)** *(decizie de implementare, după Faza 6)*: poza ocupă tot ecranul; stânga sus „pastila" cu logo + PhotoVault + contextul (folder / album / tag), dreapta sus numele pozei; jos bara de control rotunjită — anterioara, potrivire în ecran (butonul central, cerc conturat cu accentul), următoarea | micșorează, procent zoom, mărește, 1:1, rotire | contor | închidere. Butoane-glifă în culoarea accentului; elementele dispar împreună după 3 s fără mișcare de mouse și reapar la mișcare.
 
 ### 6.5 Albume
 
@@ -678,7 +679,7 @@ Clarificări și ajustări convenite pe parcursul dezvoltării; au prioritate fa
 |---|---|
 | Buton „Adaugă folder sursă" | **+** în antetul secțiunii Bibliotecă + lista folderelor sursă în Opțiuni (§6.2) |
 | Filtrare după folder | Folderul selectat **plus toate subfolderele** lui; click pe „Bibliotecă" = toate pozele (§6.1) |
-| Lightbox | Fereastră separată, pe tot ecranul, fundal negru (conform §6.4, nu varianta „în fereastra principală" din mockup); zoom: rotiță / + − / 0 = potrivire / 1 = 1:1, pan prin tragere; deschidere cu dublu-click sau Enter |
+| Lightbox | Fereastră separată, pe tot ecranul, fundal negru (conform §6.4, nu varianta „în fereastra principală" din mockup); zoom: rotiță / + − / 0 = potrivire / 1 = 1:1, pan prin tragere; deschidere cu dublu-click sau Enter; **același layout și design ca slideshow-ul** (pastile sus, bară de control jos, auto-hide 3 s — stiluri comune în `Resources/Styles/Viewer.xaml`) |
 | Panou de detalii | Pe lângă câmpurile din §5.6: date EXIF citite din fișier (dimensiuni, data fotografierii, cameră, obiectiv, ISO, expunere, diafragmă, distanță focală) — doar afișare |
 | Previzualizare RAW | Se folosește cea mai mare previzualizare JPEG **baseline/progressive** încorporată; datele RAW stocate ca JPEG lossless (CR2/DNG) sunt ignorate, fiind nedecodabile |
 | Albume | Nume unice + subtitlu liber pe card (§4, §5.7, §6.5) |

@@ -18,75 +18,11 @@
         Foreground="#F2F2F2">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="Slideshow.PillBackground" Color="#B3202124" />
-        <SolidColorBrush x:Key="Slideshow.PillBorder" Color="#26FFFFFF" />
-
-        <Style x:Key="Slideshow.Pill" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource Slideshow.PillBackground}" />
-            <Setter Property="BorderBrush" Value="{StaticResource Slideshow.PillBorder}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="14" />
-            <Setter Property="Padding" Value="16,10" />
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="18" ShadowDepth="2" Opacity="0.35" Color="Black" />
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Butoane din bara de control: glifă în culoarea accentului, fără fundal; cerc la hover -->
-        <Style x:Key="Slideshow.Button" TargetType="Button">
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Focusable" Value="False" />
-            <Setter Property="Width" Value="46" />
-            <Setter Property="Height" Value="46" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="FontFamily" Value="{DynamicResource Font.Icons}" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="Foreground" Value="{DynamicResource Brush.Accent}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Ellipse x:Name="Circle" Fill="Transparent" />
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Circle" Property="Fill" Value="#1FFFFFFF" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Circle" Property="Fill" Value="#33FFFFFF" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Play / Pause: cerc conturat cu accentul, ca în mockup -->
-        <Style x:Key="Slideshow.PlayButton" TargetType="Button" BasedOn="{StaticResource Slideshow.Button}">
-            <Setter Property="Width" Value="52" />
-            <Setter Property="Height" Value="52" />
-            <Setter Property="Margin" Value="14,0" />
+        <!-- Play / Pause: butonul central, cerc conturat cu accentul (ca în mockup) -->
+        <Style x:Key="Slideshow.PlayButton" TargetType="Button" BasedOn="{StaticResource Viewer.CircleButton}">
             <Setter Property="Content" Value="{DynamicResource Icon.Pause}" />
             <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Slideshow.Pause}" />
             <Setter Property="ToolTip" Value="{DynamicResource Str.Slideshow.Pause}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Ellipse x:Name="Circle" Fill="#14FFFFFF" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="2" />
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Circle" Property="Fill" Value="#2EFFFFFF" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsPlaying}" Value="False">
                     <Setter Property="Content" Value="{DynamicResource Icon.Play}" />
@@ -109,7 +45,7 @@
         <!-- ============ Elemente UI (apar / dispar împreună) ============ -->
         <Grid x:Name="Chrome">
             <!-- Stânga sus: aplicația + albumul / folderul -->
-            <Border Margin="24,22,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource Slideshow.Pill}">
+            <Border Margin="24,22,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource Viewer.Pill}">
                 <StackPanel Orientation="Horizontal">
                     <Image Width="26" Height="26" Source="pack://application:,,,/PhotoVault;component/Resources/Images/logo_128.png"
                            RenderOptions.BitmapScalingMode="HighQuality" />
@@ -124,7 +60,7 @@
             </Border>
 
             <!-- Dreapta sus: numele pozei curente -->
-            <Border Margin="0,22,24,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Slideshow.Pill}">
+            <Border Margin="0,22,24,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Viewer.Pill}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center" FontFamily="{DynamicResource Font.Icons}" FontSize="16" Foreground="#E0E0E0"
                                Text="{DynamicResource Icon.Photo}" />
@@ -134,21 +70,20 @@
             </Border>
 
             <!-- Jos: bara de control -->
-            <Border x:Name="ControlBar" Margin="0,0,0,40" HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                    Style="{StaticResource Slideshow.Pill}" CornerRadius="38" Padding="22,10">
+            <Border x:Name="ControlBar" Style="{StaticResource Viewer.ControlBar}">
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource Slideshow.Button}" Content="{DynamicResource Icon.Previous}"
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Previous}"
                             Command="{Binding PreviousCommand}"
                             ToolTip="{DynamicResource Str.Slideshow.Previous}" AutomationProperties.Name="{DynamicResource Str.Slideshow.Previous}" />
                     <Button Style="{StaticResource Slideshow.PlayButton}" Command="{Binding TogglePlayCommand}" />
-                    <Button Style="{StaticResource Slideshow.Button}" Content="{DynamicResource Icon.Next}"
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Next}"
                             Command="{Binding NextCommand}"
                             ToolTip="{DynamicResource Str.Slideshow.Next}" AutomationProperties.Name="{DynamicResource Str.Slideshow.Next}" />
-                    <Border Width="1" Height="30" Margin="24,0" Background="#33FFFFFF" />
+                    <Border Style="{StaticResource Viewer.Divider}" />
                     <TextBlock x:Name="CounterText" MinWidth="72" VerticalAlignment="Center" TextAlignment="Center" FontSize="15"
                                Foreground="#F2F2F2" Text="{Binding CounterText}" />
-                    <Border Width="1" Height="30" Margin="24,0" Background="#33FFFFFF" />
-                    <Button Style="{StaticResource Slideshow.Button}" FontSize="16" Content="{DynamicResource Icon.Close}"
+                    <Border Style="{StaticResource Viewer.Divider}" />
+                    <Button Style="{StaticResource Viewer.Button}" FontSize="16" Content="{DynamicResource Icon.Close}"
                             Command="{Binding ExitCommand}"
                             ToolTip="{DynamicResource Str.Slideshow.Exit}" AutomationProperties.Name="{DynamicResource Str.Slideshow.Exit}" />
                 </StackPanel>

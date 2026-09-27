@@ -75,6 +75,7 @@
     <sys:String x:Key="Str.Details.Aperture">Aperture</sys:String>
     <sys:String x:Key="Str.Details.FocalLength">Focal length</sys:String>
     <sys:String x:Key="Str.Details.NoTags">No tags assigned.</sys:String>
+    <sys:String x:Key="Str.Lightbox.Title">Full-screen view</sys:String>
     <sys:String x:Key="Str.Lightbox.Back">Back to gallery</sys:String>
     <sys:String x:Key="Str.Lightbox.Previous">Previous photo (←)</sys:String>
     <sys:String x:Key="Str.Lightbox.Next">Next photo (→)</sys:String>

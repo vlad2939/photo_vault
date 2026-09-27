@@ -10,9 +10,9 @@ public sealed class WindowService(IMetadataService metadata, IPhotoService photo
 {
     private static Window? Owner => Application.Current.MainWindow;
 
-    public PhotoItemViewModel? ShowLightbox(IReadOnlyList<PhotoItemViewModel> photos, int startIndex)
+    public PhotoItemViewModel? ShowLightbox(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title)
     {
-        var viewModel = new LightboxViewModel(photos, startIndex, metadata, photoService);
+        var viewModel = new LightboxViewModel(photos, startIndex, title, metadata, photoService);
         var window = new LightboxWindow { DataContext = viewModel, Owner = Owner };
         window.ShowDialog();
         return viewModel.Current;

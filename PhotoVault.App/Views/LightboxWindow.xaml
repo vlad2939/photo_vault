@@ -1,61 +1,31 @@
 <!--
-    Lightbox (§6.4): fereastră separată, pe tot ecranul, fundal negru.
-    Navigare ← / →, Esc închide, zoom cu rotița / + − / 0 (potrivire) / 1 (100%), pan prin drag.
-    Paleta e mereu închisă (independentă de tema aplicației) — resursele de temă sunt suprascrise local.
+    Vizualizare poză pe tot ecranul (§6.4), cu același aspect ca slideshow-ul (§5.8):
+    poza ocupă tot ecranul; stânga sus aplicația + contextul, dreapta sus numele pozei,
+    jos bara de control (navigare, zoom, rotire, contor, închidere). Elementele dispar după 3 s fără mouse.
+    Tastatură: ← / → navigare, + / − / 0 / 1 zoom, R rotire, Esc închide; zoom cu rotița, pan prin tragere.
 -->
 <Window x:Class="PhotoVault.App.Views.LightboxWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ctl="clr-namespace:PhotoVault.App.Controls"
-        Title="PhotoVault"
+        xmlns:vm="clr-namespace:PhotoVault.App.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:LightboxViewModel, IsDesignTimeCreatable=False}"
+        Title="{DynamicResource Str.Lightbox.Title}"
         WindowStyle="None" ResizeMode="NoResize" WindowState="Maximized"
         ShowInTaskbar="False" Background="Black" UseLayoutRounding="True"
         FontFamily="{DynamicResource Font.Text}" FontSize="{DynamicResource FontSize.Body}"
         Foreground="#F2F2F2">
 
-    <Window.Resources>
-        <SolidColorBrush x:Key="Brush.Icon" Color="#E8E8E8" />
-        <SolidColorBrush x:Key="Brush.Text.Primary" Color="#FFFFFF" />
-        <SolidColorBrush x:Key="Brush.Text.Secondary" Color="#B5B5B5" />
-        <SolidColorBrush x:Key="Brush.Hover" Color="#26FFFFFF" />
-        <SolidColorBrush x:Key="Brush.Pressed" Color="#3DFFFFFF" />
-        <SolidColorBrush x:Key="Brush.Popup.Background" Color="#262628" />
-        <SolidColorBrush x:Key="Brush.Popup.Border" Color="#3A3A3D" />
-        <SolidColorBrush x:Key="Brush.Progress.Track" Color="#33FFFFFF" />
-
-        <!-- Săgeți de navigare: cerc semi-transparent, ca în mockup -->
-        <Style x:Key="Lightbox.NavButton" TargetType="Button" BasedOn="{StaticResource Button.Icon}">
-            <Setter Property="Width" Value="52" />
-            <Setter Property="Height" Value="52" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Ellipse x:Name="Circle" Fill="#8C141414" Stroke="#33FFFFFF" StrokeThickness="1" />
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Circle" Property="Fill" Value="#CC2A2A2A" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-
-    <Grid>
+    <Grid Background="Black">
         <!-- Miniatura, afișată instant cât timp imaginea mare se decodează -->
-        <Image Source="{Binding Current.Thumbnail}" Stretch="Uniform" Margin="0,64,0,0"
+        <Image Source="{Binding Current.Thumbnail}" Stretch="Uniform"
                RenderOptions.BitmapScalingMode="HighQuality"
                Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
 
-        <ctl:ZoomPanViewer x:Name="Viewer" Margin="0,64,0,0" Source="{Binding Image}" />
+        <ctl:ZoomPanViewer x:Name="Viewer" Source="{Binding Image}" />
 
         <!-- Imagine ilizibilă -->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -65,61 +35,72 @@
                        Text="{DynamicResource Str.Lightbox.LoadFailed}" />
         </StackPanel>
 
-        <!-- Navigare -->
-        <Button Style="{StaticResource Lightbox.NavButton}" Margin="24,64,0,0" HorizontalAlignment="Left"
-                Content="{DynamicResource Icon.ChevronLeft}" Command="{Binding PreviousCommand}"
-                ToolTip="{DynamicResource Str.Lightbox.Previous}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Previous}" />
-        <Button Style="{StaticResource Lightbox.NavButton}" Margin="0,64,24,0" HorizontalAlignment="Right"
-                Content="{DynamicResource Icon.ChevronRight}" Command="{Binding NextCommand}"
-                ToolTip="{DynamicResource Str.Lightbox.Next}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Next}" />
+        <!-- Încărcare imagine mare: linie subțire sus, în culoarea accentului -->
+        <ProgressBar VerticalAlignment="Top" Height="2" IsIndeterminate="True"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
 
-        <!-- Bara de sus: înapoi | nume + contor | zoom -->
-        <Grid Height="64" VerticalAlignment="Top" Background="#0F0F10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Button Style="{StaticResource Button.Bare}" Margin="20,0,0,0" HorizontalAlignment="Left" Padding="8"
-                    Click="OnCloseClick" AutomationProperties.Name="{DynamicResource Str.Lightbox.Back}">
+        <!-- ============ Elemente UI (apar / dispar împreună) ============ -->
+        <Grid x:Name="Chrome">
+            <!-- Stânga sus: aplicația + folderul / albumul / tag-ul afișat -->
+            <Border x:Name="TitlePill" Margin="24,22,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Style="{StaticResource Viewer.Pill}">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Style="{StaticResource Text.Icon}" Foreground="#E8E8E8" Text="{DynamicResource Icon.Back}" />
-                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#E8E8E8"
-                               Text="{DynamicResource Str.Lightbox.Back}" />
+                    <Image Width="26" Height="26" Source="pack://application:,,,/PhotoVault;component/Resources/Images/logo_128.png"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Margin="10,0,0,0" Style="{StaticResource Viewer.PillText}" FontSize="15" FontWeight="SemiBold"
+                               Foreground="White" Text="PhotoVault" />
+                    <Border Width="1" Height="22" Margin="16,0" Background="{StaticResource Viewer.Divider}" />
+                    <TextBlock Style="{StaticResource Viewer.PillIcon}" Text="{DynamicResource Icon.Folder}" />
+                    <TextBlock Margin="10,0,0,0" MaxWidth="420" Style="{StaticResource Viewer.PillText}" Text="{Binding Title}" />
                 </StackPanel>
-            </Button>
+            </Border>
 
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock FontSize="15" FontWeight="SemiBold" Foreground="White" Text="{Binding Current.FileName}"
-                           MaxWidth="520" TextTrimming="CharacterEllipsis" />
-                <TextBlock Margin="16,0,0,0" FontSize="14" Foreground="#A8A8A8" VerticalAlignment="Center"
-                           Text="{Binding CounterText}" />
-            </StackPanel>
+            <!-- Dreapta sus: numele pozei curente -->
+            <Border Margin="0,22,24,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Viewer.Pill}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource Viewer.PillIcon}" Foreground="#E0E0E0" Text="{DynamicResource Icon.Photo}" />
+                    <TextBlock Margin="10,0,0,0" MaxWidth="360" Style="{StaticResource Viewer.PillText}" Text="{Binding Current.FileName}" />
+                </StackPanel>
+            </Border>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,16,0">
-                <Button Style="{StaticResource Button.Icon}" Content="{DynamicResource Icon.ZoomOut}" Click="OnZoomOutClick"
-                        ToolTip="{DynamicResource Str.Lightbox.ZoomOut}" AutomationProperties.Name="{DynamicResource Str.Lightbox.ZoomOut}" />
-                <TextBlock Width="56" TextAlignment="Center" VerticalAlignment="Center" Foreground="#C8C8C8"
-                           Text="{Binding ZoomPercent, ElementName=Viewer, StringFormat={}{0:0}%}" />
-                <Button Style="{StaticResource Button.Icon}" Content="{DynamicResource Icon.ZoomIn}" Click="OnZoomInClick"
-                        ToolTip="{DynamicResource Str.Lightbox.ZoomIn}" AutomationProperties.Name="{DynamicResource Str.Lightbox.ZoomIn}" />
-                <Border Width="1" Height="24" Margin="10,0" Background="#33FFFFFF" />
-                <Button Style="{StaticResource Button.Icon}" Content="{DynamicResource Icon.FitScreen}" Click="OnFitClick"
-                        ToolTip="{DynamicResource Str.Lightbox.Fit}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Fit}" />
-                <Button Style="{StaticResource Button.Icon}" Click="OnActualSizeClick"
-                        ToolTip="{DynamicResource Str.Lightbox.ActualSize}" AutomationProperties.Name="{DynamicResource Str.Lightbox.ActualSize}">
-                    <TextBlock FontFamily="{DynamicResource Font.Text}" FontSize="12" FontWeight="SemiBold" Text="1:1" />
-                </Button>
-                <Button Style="{StaticResource Button.Icon}" Content="{DynamicResource Icon.Rotate}" Command="{Binding RotateCommand}"
-                        ToolTip="{DynamicResource Str.Lightbox.Rotate}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Rotate}" />
-                <Border Width="1" Height="24" Margin="10,0" Background="#33FFFFFF" />
-                <Button Style="{StaticResource Button.Icon}" Content="{DynamicResource Icon.Close}" Click="OnCloseClick"
-                        ToolTip="{DynamicResource Str.Lightbox.Close}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Close}" />
-            </StackPanel>
+            <!-- Jos: bara de control -->
+            <Border x:Name="ControlBar" Style="{StaticResource Viewer.ControlBar}">
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Previous}"
+                            Command="{Binding PreviousCommand}"
+                            ToolTip="{DynamicResource Str.Lightbox.Previous}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Previous}" />
+                    <!-- Butonul central (cerc): potrivire în ecran -->
+                    <Button Style="{StaticResource Viewer.CircleButton}" Content="{DynamicResource Icon.FitScreen}" Click="OnFitClick"
+                            ToolTip="{DynamicResource Str.Lightbox.Fit}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Fit}" />
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Next}"
+                            Command="{Binding NextCommand}"
+                            ToolTip="{DynamicResource Str.Lightbox.Next}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Next}" />
 
-            <ProgressBar Grid.ColumnSpan="3" VerticalAlignment="Bottom" Height="2" IsIndeterminate="True"
-                         Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+                    <Border Style="{StaticResource Viewer.Divider}" />
+
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.ZoomOut}" Click="OnZoomOutClick"
+                            ToolTip="{DynamicResource Str.Lightbox.ZoomOut}" AutomationProperties.Name="{DynamicResource Str.Lightbox.ZoomOut}" />
+                    <TextBlock MinWidth="56" VerticalAlignment="Center" TextAlignment="Center" FontSize="14"
+                               Foreground="{StaticResource Viewer.Text}"
+                               Text="{Binding ZoomPercent, ElementName=Viewer, StringFormat={}{0:0}%}" />
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.ZoomIn}" Click="OnZoomInClick"
+                            ToolTip="{DynamicResource Str.Lightbox.ZoomIn}" AutomationProperties.Name="{DynamicResource Str.Lightbox.ZoomIn}" />
+                    <Button Style="{StaticResource Viewer.Button}" Click="OnActualSizeClick"
+                            ToolTip="{DynamicResource Str.Lightbox.ActualSize}" AutomationProperties.Name="{DynamicResource Str.Lightbox.ActualSize}">
+                        <TextBlock FontFamily="{DynamicResource Font.Text}" FontSize="13" FontWeight="SemiBold" Text="1:1" />
+                    </Button>
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Rotate}" Command="{Binding RotateCommand}"
+                            ToolTip="{DynamicResource Str.Lightbox.Rotate}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Rotate}" />
+
+                    <Border Style="{StaticResource Viewer.Divider}" />
+                    <TextBlock MinWidth="72" VerticalAlignment="Center" TextAlignment="Center" FontSize="15"
+                               Foreground="{StaticResource Viewer.Text}" Text="{Binding CounterText}" />
+                    <Border Style="{StaticResource Viewer.Divider}" />
+
+                    <Button Style="{StaticResource Viewer.Button}" FontSize="16" Content="{DynamicResource Icon.Close}" Click="OnCloseClick"
+                            ToolTip="{DynamicResource Str.Lightbox.Close}" AutomationProperties.Name="{DynamicResource Str.Lightbox.Back}" />
+                </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 </Window>

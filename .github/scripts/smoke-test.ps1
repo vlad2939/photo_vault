@@ -88,6 +88,18 @@ function Find-TopWindow([string] $name, [int] $timeoutSec = 15) {
     throw "Fereastra '$name' nu a apărut."
 }
 
+function Find-Window([string] $name, [int] $timeoutSec = 10) {
+    $cond = New-Object System.Windows.Automation.AndCondition @(
+        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, $name)),
+        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window)))
+    $deadline = (Get-Date).AddSeconds($timeoutSec)
+    while ((Get-Date) -lt $deadline) {
+        $w = [System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $cond)
+        if ($w) { return $w }
+        Start-Sleep -Milliseconds 300
+    }
+    throw "Fereastra '$name' nu a apărut."
+}
 function Wait-ForText($root, [string] $prefix, [int] $timeoutSec) {
     $deadline = (Get-Date).AddSeconds($timeoutSec)
     $textType = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Text)
@@ -228,13 +240,17 @@ Start-Sleep -Milliseconds 600
 $grid = Get-GridItems $root
 Invoke-DoubleClick $grid.Items[0]
 Start-Sleep -Seconds 2
-$lightbox = Find-TopWindow 'Înapoi la galerie' 5
+$lightbox = Find-Window 'Vizualizare pe tot ecranul' 5
+Find-Control $lightbox 'Înapoi la galerie' ([System.Windows.Automation.ControlType]::Button) | Out-Null
 Save-Screen '11-lightbox'
 [System.Windows.Forms.SendKeys]::SendWait('{RIGHT}')
 Start-Sleep -Seconds 1
 [System.Windows.Forms.SendKeys]::SendWait('{ADD}{ADD}')
 Start-Sleep -Milliseconds 800
 Save-Screen '12-lightbox-next-zoomed'
+# Fără mișcare de mouse, după 3 s elementele UI dispar (ca în slideshow)
+Start-Sleep -Seconds 4
+Save-Screen '12b-lightbox-hidden'
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Milliseconds 800
 Assert-Alive $proc
@@ -246,7 +262,7 @@ $grid.Items[2].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern
 $grid.Items[2].SetFocus()
 [System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
 Start-Sleep -Seconds 2
-Find-TopWindow 'Înapoi la galerie' 5 | Out-Null
+Find-Window 'Vizualizare pe tot ecranul' 5 | Out-Null
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Milliseconds 800
 
@@ -426,18 +442,6 @@ Save-Screen '33-rotate-dark'
 Assert-Alive $proc
 
 # ---- Faza 5: redenumire batch pe un subfolder indexat (2001 → 215 poze, printre ele DSC_0001 cu tag + album) ----
-function Find-Window([string] $name, [int] $timeoutSec = 10) {
-    $cond = New-Object System.Windows.Automation.AndCondition @(
-        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, $name)),
-        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window)))
-    $deadline = (Get-Date).AddSeconds($timeoutSec)
-    while ((Get-Date) -lt $deadline) {
-        $w = [System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $cond)
-        if ($w) { return $w }
-        Start-Sleep -Milliseconds 300
-    }
-    throw "Fereastra '$name' nu a apărut."
-}
 function Set-Pattern($window, [string] $value) {
     $box = Find-Control $window 'Pattern nume' ([System.Windows.Automation.ControlType]::Edit)
     $box.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($value)

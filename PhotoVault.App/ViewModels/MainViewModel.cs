@@ -106,6 +106,8 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     public partial string ContextTitle { get; set; } = string.Empty;
 
+    partial void OnContextTitleChanged(string value) => Grid.ContextTitle = value;
+
     /// <summary>Albumul deschis (în contextul Album).</summary>
     [ObservableProperty]
     public partial AlbumItemViewModel? CurrentAlbum { get; set; }

@@ -59,7 +59,8 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 - Panoul din stânga arată structura de foldere (ca în Windows Explorer), cu subdirectoare, plus lista de Albume și lista de Tag-uri. Subfolderele se încarcă atunci când deschizi un nivel (săgeata din stânga folderului).
 - Selectând un folder, grid-ul central afișează pozele din acel folder **și din toate subfolderele lui**. Click pe titlul **Bibliotecă** afișează din nou toate pozele.
 - Click pe o poză afișează în panoul din dreapta detaliile ei: cale completă, dimensiune, extensie și — dacă există în fișier — dimensiunile în pixeli, data fotografierii, camera, obiectivul, ISO, timpul de expunere, diafragma și distanța focală.
-- **Dublu-click** pe o poză (sau **Enter**) o deschide pe tot ecranul: ← / → pentru navigare, rotița mouse-ului sau + / − pentru zoom, tragere cu mouse-ul pentru deplasare când imaginea e mărită, 0 = potrivire în ecran, 1 = dimensiune reală, Esc = închidere.
+- **Dublu-click** pe o poză (sau **Enter**) o deschide pe tot ecranul: ← / → pentru navigare, rotița mouse-ului sau + / − pentru zoom, tragere cu mouse-ul pentru deplasare când imaginea e mărită, 0 = potrivire în ecran, 1 = dimensiune reală, R = rotire, Esc = închidere.
+- Vizualizarea pe tot ecranul arată ca slideshow-ul: sus numele folderului / albumului și al pozei, jos bara de control (navigare, zoom, rotire, contor, închidere); toate dispar după 3 secunde fără mișcare de mouse și reapar când miști mouse-ul.
 - **Căutare** (câmpul din bara de deasupra grid-ului, sau **Ctrl+F**): caută simultan în numele fișierelor, în tag-uri și în numele albumelor, în ce e afișat în acel moment (toate pozele / folderul / albumul / tag-ul selectat). Nu ține cont de majuscule sau diacritice („vacanta” găsește „Vacanță”); mai multe cuvinte = toate trebuie să apară. **Esc** golește căutarea.
 - **Sortare**: lista de lângă câmpul de căutare — după nume fișier, A → Z sau Z → A.
 

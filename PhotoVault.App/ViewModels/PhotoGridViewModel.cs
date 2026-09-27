@@ -32,6 +32,9 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
 
     public bool IsEmpty => Photos.Count == 0;
 
+    /// <summary>Titlul contextului curent (setat de MainViewModel), afișat în vizualizarea pe tot ecranul.</summary>
+    public string ContextTitle { get; set; } = string.Empty;
+
     public string CountText => Loc.PhotoCount(Photos.Count);
 
     /// <summary>Toate pozele selectate în grid (selecție multiplă: Ctrl / Shift / Ctrl+A).</summary>
@@ -126,7 +129,7 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
         var index = Photos.IndexOf(photo);
         if (index < 0) return;
 
-        var selected = windows.ShowLightbox(Photos, index);
+        var selected = windows.ShowLightbox(Photos, index, ContextTitle);
         // După închidere, poza la care s-a ajuns rămâne selectată în grid
         if (selected is not null) SelectedPhoto = selected;
     }

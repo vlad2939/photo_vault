@@ -4,26 +4,20 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
+using PhotoVault.App.Controls;
 using PhotoVault.App.ViewModels;
 
 namespace PhotoVault.App.Views;
 
 /// <summary>
 /// Animațiile slideshow-ului (§6.10): Ken Burns (ScaleTransform + TranslateTransform) pe stratul nou,
-/// fade încrucișat între straturi și auto-hide pentru elementele UI (§5.8).
+/// fade încrucișat între straturi; elementele UI se ascund automat (<see cref="ChromeAutoHide"/>, §5.8).
 /// </summary>
 public partial class SlideshowWindow : Window
 {
-    private static readonly TimeSpan ChromeHideDelay = TimeSpan.FromSeconds(3);
-    private static readonly Duration ChromeFadeOut = new(TimeSpan.FromMilliseconds(350));
-    private static readonly Duration ChromeFadeIn = new(TimeSpan.FromMilliseconds(150));
-
-    private readonly DispatcherTimer _hideTimer = new() { Interval = ChromeHideDelay };
+    private readonly ChromeAutoHide _chrome;
     private readonly Dictionary<Image, List<AnimationClock>> _motionClocks = [];
     private Image _front;
-    private Point? _lastMouse;
-    private bool _chromeVisible = true;
 
     public SlideshowWindow()
     {
@@ -35,13 +29,9 @@ public partial class SlideshowWindow : Window
             _motionClocks[layer] = [];
         }
 
-        _hideTimer.Tick += (_, _) => HideChrome();
+        _chrome = new ChromeAutoHide(this, Chrome, ControlBar);
         DataContextChanged += OnDataContextChanged;
-        Loaded += (_, _) =>
-        {
-            _hideTimer.Start();
-            ViewModel?.Start();
-        };
+        Loaded += (_, _) => ViewModel?.Start();
     }
 
     private SlideshowViewModel? ViewModel => DataContext as SlideshowViewModel;
@@ -133,45 +123,7 @@ public partial class SlideshowWindow : Window
         // Pauză: mișcarea Ken Burns îngheață pe loc (poza rămâne pe ecran); reluare din același punct
         foreach (var layer in new[] { LayerA, LayerB })
             if (vm.IsPlaying) ResumeMotion(layer); else PauseMotion(layer);
-        ShowChrome();
-    }
-
-    // ------------------------------------------------------------------ Auto-hide (§5.8)
-
-    protected override void OnMouseMove(MouseEventArgs e)
-    {
-        base.OnMouseMove(e);
-        // WPF trimite MouseMove și când conținutul se schimbă sub cursor → contează doar mișcarea reală
-        var position = e.GetPosition(this);
-        if (_lastMouse is { } last && Math.Abs(last.X - position.X) < 2 && Math.Abs(last.Y - position.Y) < 2) return;
-        _lastMouse = position;
-        ShowChrome();
-    }
-
-    private void ShowChrome()
-    {
-        _hideTimer.Stop();
-        _hideTimer.Start();
-        Cursor = null;
-        if (_chromeVisible) return;
-        _chromeVisible = true;
-        Chrome.IsHitTestVisible = true;
-        Chrome.BeginAnimation(OpacityProperty, new DoubleAnimation(1, ChromeFadeIn));
-    }
-
-    private void HideChrome()
-    {
-        _hideTimer.Stop();
-        // Cât timp mouse-ul stă pe bara de control, ea rămâne vizibilă
-        if (ControlBar.IsMouseOver)
-        {
-            _hideTimer.Start();
-            return;
-        }
-        _chromeVisible = false;
-        Chrome.IsHitTestVisible = false;
-        Chrome.BeginAnimation(OpacityProperty, new DoubleAnimation(0, ChromeFadeOut));
-        Cursor = Cursors.None;
+        _chrome.Show();
     }
 
     // ------------------------------------------------------------------ Tastatură
@@ -184,8 +136,8 @@ public partial class SlideshowWindow : Window
         {
             case Key.Escape: Close(); break;
             case Key.Space: vm?.TogglePlayCommand.Execute(null); break;
-            case Key.Right or Key.PageDown: vm?.NextCommand.Execute(null); ShowChrome(); break;
-            case Key.Left or Key.PageUp: vm?.PreviousCommand.Execute(null); ShowChrome(); break;
+            case Key.Right or Key.PageDown: vm?.NextCommand.Execute(null); _chrome.Show(); break;
+            case Key.Left or Key.PageUp: vm?.PreviousCommand.Execute(null); _chrome.Show(); break;
             default: return;
         }
         e.Handled = true;
@@ -193,7 +145,6 @@ public partial class SlideshowWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
-        _hideTimer.Stop();
         StopMotion(LayerA);
         StopMotion(LayerB);
         ViewModel?.Dispose();
