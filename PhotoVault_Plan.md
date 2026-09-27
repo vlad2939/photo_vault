@@ -172,7 +172,8 @@ CREATE INDEX idx_photos_sourcefolder ON Photos(SourceFolderId);
 -- Albume (manuale)
 CREATE TABLE Albums (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Name TEXT NOT NULL,
+    Name TEXT NOT NULL,                 -- unic la nivel de aplicație (fără diferență de majuscule), vezi §6.5
+    Subtitle TEXT,                      -- subtitlu liber scris de utilizator, ex. „10–15.08.2021" (adăugat prin migrarea 003)
     DateCreated TEXT NOT NULL,
     CoverPhotoId INTEGER,               -- poză copertă, opțional
     FOREIGN KEY (CoverPhotoId) REFERENCES Photos(Id) ON DELETE SET NULL
@@ -213,6 +214,8 @@ CREATE TABLE AppSettings (
 -- "SlideshowFadeMs", "SlideshowPanIntensity", "SlideshowZoomIntensity",
 -- "SlideshowPlaylistPaths" (JSON array)
 ```
+
+**Notă privind evoluția schemei**: schema e aplicată prin scripturi de migrare numerotate, incluse în assembly (`PhotoVault.Data/Migrations/NNN_*.sql`), iar versiunea curentă e ținută în `PRAGMA user_version`; o bază de date existentă se actualizează automat la pornire. Migrări aplicate până acum: `001_InitialSchema` (schema de mai sus), `002_RetryFailedThumbnails` (reîncercarea miniaturilor RAW eșuate), `003_AlbumSubtitle` (coloana `Albums.Subtitle`). Convenție: `Photos.ThumbnailPath` = `NULL` → miniatură negenerată încă; `''` (text gol) → fișier ilizibil (se afișează iconița de rezervă, nu se reîncearcă la fiecare pornire, dar se reîncearcă la re-scanarea folderului).
 
 **Notă privind eliminarea automată din index**: la fiecare re-scanare manuală a unui `SourceFolder`, aplicația verifică existența fizică a fiecărui fișier din `Photos`; dacă lipsește, rândul este șters direct (cu efect de cascadă asupra `AlbumPhotos` și `PhotoTags`), fără prompt de confirmare.
 
@@ -289,9 +292,9 @@ Panou fix, poziționat în partea dreaptă a ferestrei principale (sau jos, sub 
 - **Secțiunea Albume** (în main area, când e selectată din panoul stâng): afișare sub formă de **grid de carduri**, fiecare card conținând:
   - Fotografie copertă (prima poză adăugată sau una setată manual ca „copertă" — vezi `CoverPhotoId` deja prezent în schema DB).
   - Nume album.
-  - Dată creare.
-  - (opțional afișabil pe card: număr total de poze din album).
-- **Click pe card album** → panoul lateral de detalii (§5.6) afișează: nume album, dată creare, număr de poze, eventual dată ultimei modificări — fără a deschide automat conținutul albumului (deschiderea propriu-zisă a albumului, cu toate pozele în grid, rămâne acțiune separată, ex. dublu-click pe card).
+  - **Subtitlu** scris de utilizator la crearea / editarea albumului (ex. „10–15.08.2021") — *nu* data creării, care e irelevantă pe card pentru poze vechi.
+  - Număr total de poze din album.
+- **Click pe card album** → panoul lateral de detalii (§5.6) afișează: copertă, nume album, subtitlu, dată creare, număr de poze, butoanele „Deschide albumul" / „Editează" — fără a deschide automat conținutul albumului (deschiderea propriu-zisă a albumului, cu toate pozele în grid, rămâne acțiune separată, ex. dublu-click pe card).
 - **Bară de progres la indexare**: vizibilă în timpul scanării unui folder nou adăugat (sau re-scanare), afișată **în footer, aliniată în partea stângă** (vezi §5.5 actualizat), afișând progres (ex. "Indexare: 1.240 / 5.000 poze"), fără a bloca restul interfeței (indexarea rulează pe fundal, utilizatorul poate continua să navigheze). Alte mesaje scurte de stare ale aplicației (ex. confirmări discrete, status curent) folosesc aceeași zonă din footer.
 
 ### 5.8 Slideshow — bară de control auto-hide
@@ -311,12 +314,14 @@ Panou fix, poziționat în partea dreaptă a ferestrei principale (sau jos, sub 
 - **Panou stâng**: `TreeView` cu structura de foldere (ca Windows Explorer), plus secțiune separată "Albume" (listă simplă) și "Tag-uri" (listă simplă).
 - **Panou central**: `ItemsControl`/`ListView` cu `VirtualizingStackPanel` (esențial pentru performanță la 50.000 poze — randare doar a elementelor vizibile), afișând thumbnail-uri.
 - **Panou jos/dreapta**: detalii poză selectată — nume fișier, cale completă, dimensiune, extensie, tag-uri asociate, cu opțiune de editare tag-uri direct din panou.
-- Selectarea unui folder în arbore filtrează grid-ul; selectarea unui album/tag similar.
+- Selectarea unui folder în arbore filtrează grid-ul la pozele din acel folder **și din toate subfolderele lui**; click pe titlul „Bibliotecă" afișează din nou toate pozele. Selectarea unui album/tag similar.
+- Deasupra grid-ului, o bară de context arată ce se afișează (Toate pozele / folder / album / #tag) și numărul de poze; dintr-un album deschis, săgeata ← revine la grid-ul de albume.
 - Click dreapta pe poză (sau selecție multiplă): meniu contextual — "Adaugă la album", "Rotește 90°", "Elimină din album" (dacă contextul e un album deschis), "Adaugă tag".
 
 ### 6.2 Import și gestionare foldere sursă
 
-- Utilizatorul adaugă un folder via dialog standard `FolderBrowserDialog` (sau echivalent WPF modern).
+- Utilizatorul adaugă un folder via dialogul nativ Windows de selecție folder (`OpenFolderDialog`, .NET 8+), din butonul **+** din antetul secțiunii Bibliotecă sau din fereastra Opțiuni (lista folderelor sursă, cu Re-scanează / Elimină).
+- Nu se poate adăuga un folder deja adăugat, un subfolder al unui folder sursă existent sau un folder care conține un folder sursă existent (aplicația explică motivul).
 - La adăugare: scanare recursivă (inclusiv subfoldere) după extensii cunoscute (`.jpg`, `.jpeg`, `.png`, `.cr2`, `.nef`, `.dng`), inserare în `Photos`, generare thumbnail asincronă (queue de background, nu blochează UI).
 - Fără verificare de duplicate (per cerință) — dacă aceeași poză există fizic în două foldere sursă diferite, va apărea de două ori în index (comportament acceptat).
 - Buton explicit "Re-scanează" per folder sursă (nu automat la pornire) — detectează poze noi adăugate manual pe disc și elimină cele lipsă.
@@ -342,7 +347,10 @@ Panou fix, poziționat în partea dreaptă a ferestrei principale (sau jos, sub 
 
 *(Vezi §5.6 pentru afișarea sub formă de carduri în main area și comportamentul panoului lateral de detalii la click.)*
 
-- Creare album nou (nume + dată creare automată).
+- Creare album nou: **nume** (obligatoriu) + **subtitlu** (opțional, text liber) + dată creare automată.
+- **Numele albumelor sunt unice** (comparație fără diferență de majuscule, inclusiv la diacritice). La creare sau editare, un nume deja folosit afișează un avertisment cu opțiunile „Modifică numele" (formularul se redeschide cu textul introdus) sau „Renunță".
+- Editare album (nume + subtitlu) din meniul contextual al albumului sau din panoul de detalii.
+- Copertă: implicit prima poză adăugată; poate fi setată manual („Setează ca copertă a albumului", din interiorul albumului). Dacă poza-copertă e eliminată din album, coperta revine la cea implicită.
 - Adăugare poze în album: selecție multiplă în grid → "Adaugă la album" → alegere album existent sau creare unul nou pe loc.
 - Fluxul tipic: import folder întreg → selectare toate pozele → adăugare completă la album → deschidere album → eliminare individuală a pozelor nedorite (mult mai eficient decât selecție manuală poză cu poză).
 - Eliminare din album: șterge doar rândul din `AlbumPhotos`; poza rămâne indexată și vizibilă în arborele de foldere / alte albume.
@@ -353,6 +361,9 @@ Panou fix, poziționat în partea dreaptă a ferestrei principale (sau jos, sub 
 - Creare tag-uri custom (nume liber).
 - Atribuire tag(uri) unei poze sau unei selecții multiple simultan.
 - Filtrare grid după tag selectat din panoul lateral.
+- Numele tag-urilor sunt unice (fără diferență de majuscule, inclusiv diacritice); „tag nou" cu un nume existent refolosește tag-ul existent.
+- Tag-urile pozei selectate apar în panoul de detalii ca etichete (× elimină, + adaugă).
+- **Badge pe miniatură**: pozele care au cel puțin un tag sunt marcate în grid cu o iconiță de tag în colțul din stânga sus al miniaturii.
 - Ștergere tag: elimină din `PhotoTags` pentru toate pozele, șterge din `Tags`.
 
 ### 6.7 Sortare și căutare
@@ -651,7 +662,28 @@ Aceste patru funcționalități **nu fac parte din scope-ul ferm** stabilit în 
 - [x] Setări generale: **culoare accent** (6 buline predefinite selectabile) + **selector limbă** (Română/Engleză)
 - [x] Cerință livrare: **toate fișierele verificate să compileze fără erori**
 - [x] Cerință livrare: **README.md** detaliat, separat de acest document tehnic
+- [x] Albume: **nume unice** (avertisment la duplicat) + **subtitlu liber** afișat pe card (data creării doar în panoul de detalii)
+- [x] Tag-uri: **badge** pe miniaturile pozelor cu tag-uri
 - [ ] *(post-MVP, opțional, §12)* Backup automat DB, health-check foldere, flag Favorite, zoom grid
+
+---
+
+## 15. Decizii stabilite în timpul implementării (Fazele 0–3)
+
+Clarificări și ajustări convenite pe parcursul dezvoltării; au prioritate față de formulările inițiale din secțiunile anterioare acolo unde diferă (secțiunile relevante au fost deja actualizate).
+
+| Subiect | Decizie |
+|---|---|
+| Buton „Adaugă folder sursă" | **+** în antetul secțiunii Bibliotecă + lista folderelor sursă în Opțiuni (§6.2) |
+| Filtrare după folder | Folderul selectat **plus toate subfolderele** lui; click pe „Bibliotecă" = toate pozele (§6.1) |
+| Lightbox | Fereastră separată, pe tot ecranul, fundal negru (conform §6.4, nu varianta „în fereastra principală" din mockup); zoom: rotiță / + − / 0 = potrivire / 1 = 1:1, pan prin tragere; deschidere cu dublu-click sau Enter |
+| Panou de detalii | Pe lângă câmpurile din §5.6: date EXIF citite din fișier (dimensiuni, data fotografierii, cameră, obiectiv, ISO, expunere, diafragmă, distanță focală) — doar afișare |
+| Previzualizare RAW | Se folosește cea mai mare previzualizare JPEG **baseline/progressive** încorporată; datele RAW stocate ca JPEG lossless (CR2/DNG) sunt ignorate, fiind nedecodabile |
+| Albume | Nume unice + subtitlu liber pe card (§4, §5.7, §6.5) |
+| Tag-uri | Badge pe miniaturile pozelor cu tag-uri (§6.6) |
+| ImageSharp | Versiunea 3.1.x (4.x cere cheie de licență la build) |
+| Structura proiectului | Pe lângă §3.3: `PhotoVault.Core/Abstractions/` (interfețele repository-urilor, ca serviciile din Core să nu depindă de Data), `PhotoVault.App/Utils/` (teme, DWM, dialoguri, localizare), `PhotoVault.App/Resources/Localization/` (texte RO/EN) |
+| Verificare pe Windows | Workflow GitHub Actions (`.github/workflows/windows-build.yml`): build, teste unitare, smoke test UI cu capturi de ecran și versiune portabilă descărcabilă, la fiecare push |
 
 ---
 
