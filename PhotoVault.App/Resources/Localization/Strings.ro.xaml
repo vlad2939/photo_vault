@@ -98,7 +98,6 @@
     <sys:String x:Key="Str.Settings.Appearance">Aspect</sys:String>
     <sys:String x:Key="Str.Settings.ThemeDark">Temă întunecată</sys:String>
     <sys:String x:Key="Str.Settings.ThemeLight">Temă luminoasă</sys:String>
-    <sys:String x:Key="Str.Settings.MoreSoon">Culoarea de accent și limba interfeței vor apărea aici în faza următoare.</sys:String>
     <sys:String x:Key="Str.Context.AllPhotos">Toate pozele</sys:String>
     <sys:String x:Key="Str.Albums.ShowAll">Afișează toate albumele</sys:String>
     <sys:String x:Key="Str.Albums.Back">Înapoi la albume</sys:String>
@@ -204,6 +203,9 @@
     <sys:String x:Key="Str.Rename.Done">Fișiere redenumite: {0}.</sys:String>
     <sys:String x:Key="Str.Rename.DoneIndexed">Biblioteca a fost actualizată: {0}.</sys:String>
     <sys:String x:Key="Str.Rename.Failed" xml:space="preserve">Redenumirea nu a fost aplicată. Fișierele au rămas cu numele inițiale.&#x0a;&#x0a;{0}</sys:String>
+    <sys:String x:Key="Str.Rename.Failure.SourceMissing">Fișierul „{0}” nu mai există în folder.</sys:String>
+    <sys:String x:Key="Str.Rename.Failure.TargetExists">Între timp a apărut în folder un fișier numit „{0}”.</sys:String>
+    <sys:String x:Key="Str.Rename.Failure.Conflicts">Lista conține conflicte.</sys:String>
 
     <!-- Slideshow (§5.8, §6.10) -->
     <sys:String x:Key="Str.Slideshow.Title">Slideshow</sys:String>
@@ -230,5 +232,24 @@
     <sys:String x:Key="Str.Settings.MusicRemove">Elimină din playlist</sys:String>
     <sys:String x:Key="Str.Settings.MusicMissing">fișier negăsit</sys:String>
     <sys:String x:Key="Str.Settings.Volume">Volum</sys:String>
+
+    <!-- Opțiuni → General, re-scanare globală (Faza 7) -->
+    <sys:String x:Key="Str.Settings.General">General</sys:String>
+    <sys:String x:Key="Str.Settings.Accent">Culoare de accent</sys:String>
+    <sys:String x:Key="Str.Settings.Language">Limba interfeței</sys:String>
+    <sys:String x:Key="Str.Settings.LanguageTitle">Limba interfeței</sys:String>
+    <sys:String x:Key="Str.Settings.LanguageRestart">Limba aleasă se aplică după repornirea aplicației. Repornești acum?</sys:String>
+    <sys:String x:Key="Str.Settings.RestartNow">Repornește acum</sys:String>
+    <sys:String x:Key="Str.Settings.RestartLater">Mai târziu</sys:String>
+    <sys:String x:Key="Str.Settings.LanguagePending">Repornește aplicația pentru a aplica limba selectată.</sys:String>
+    <sys:String x:Key="Str.Accent.Orange">Portocaliu</sys:String>
+    <sys:String x:Key="Str.Accent.Blue">Albastru</sys:String>
+    <sys:String x:Key="Str.Accent.Green">Verde</sys:String>
+    <sys:String x:Key="Str.Accent.Red">Roșu</sys:String>
+    <sys:String x:Key="Str.Accent.Purple">Mov</sys:String>
+    <sys:String x:Key="Str.Accent.Teal">Turcoaz</sys:String>
+    <sys:String x:Key="Str.Library.RescanAll">Re-scanează toate</sys:String>
+    <sys:String x:Key="Str.Library.RescanAllTooltip">Caută poze noi în toate folderele sursă și elimină din index pozele șterse sau mutate</sys:String>
+    <sys:String x:Key="Str.Library.UnavailableMany" xml:space="preserve">Următoarele foldere nu sunt accesibile acum (ex. disc extern deconectat) și au fost sărite; pozele lor au rămas în bibliotecă:&#x0a;&#x0a;{0}</sys:String>
 
 </ResourceDictionary>

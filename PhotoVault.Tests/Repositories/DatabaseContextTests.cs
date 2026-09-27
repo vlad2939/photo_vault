@@ -16,8 +16,10 @@ public class DatabaseContextTests
         var indexes = connection.Query<string>("SELECT name FROM sqlite_master WHERE type = 'index'").ToHashSet();
         Assert.Contains("idx_photos_filename", indexes);
         Assert.Contains("idx_photos_sourcefolder", indexes);
+        Assert.Contains("idx_albumphotos_photo", indexes);
+        Assert.Contains("idx_phototags_tag", indexes);
 
-        Assert.Equal(3, db.Context.GetSchemaVersion());
+        Assert.Equal(4, db.Context.GetSchemaVersion());
     }
 
     [Fact]
@@ -26,7 +28,7 @@ public class DatabaseContextTests
         using var db = new TestDatabase();
         db.Context.Initialize();
         db.Context.Initialize();
-        Assert.Equal(3, db.Context.GetSchemaVersion());
+        Assert.Equal(4, db.Context.GetSchemaVersion());
     }
 
     [Fact]

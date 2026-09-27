@@ -128,16 +128,16 @@ public sealed class PhotoRepository(DatabaseContext db) : IPhotoRepository
     public IReadOnlyDictionary<long, string> GetSearchKeywords()
     {
         using var connection = db.OpenConnection();
-        return connection.Query<(long Id, string? Tags, string? Albums)>(
+        // Un singur pas prin legături (nu câte o sub-interogare per poză): rapid și la zeci de mii de poze
+        return connection.Query<(long Id, string Keywords)>(
                 """
-                SELECT p.Id,
-                       (SELECT group_concat(t.Name, ' ') FROM PhotoTags pt JOIN Tags t ON t.Id = pt.TagId WHERE pt.PhotoId = p.Id),
-                       (SELECT group_concat(a.Name, ' ') FROM AlbumPhotos ap JOIN Albums a ON a.Id = ap.AlbumId WHERE ap.PhotoId = p.Id)
-                FROM Photos p
-                WHERE EXISTS (SELECT 1 FROM PhotoTags pt WHERE pt.PhotoId = p.Id)
-                   OR EXISTS (SELECT 1 FROM AlbumPhotos ap WHERE ap.PhotoId = p.Id)
+                SELECT PhotoId, group_concat(Name, ' ')
+                FROM (SELECT pt.PhotoId, t.Name FROM PhotoTags pt JOIN Tags t ON t.Id = pt.TagId
+                      UNION ALL
+                      SELECT ap.PhotoId, a.Name FROM AlbumPhotos ap JOIN Albums a ON a.Id = ap.AlbumId)
+                GROUP BY PhotoId
                 """)
-            .ToDictionary(r => r.Id, r => $"{r.Tags} {r.Albums}".Trim());
+            .ToDictionary(r => r.Id, r => r.Keywords);
     }
 
     public void ResetFailedThumbnails(long sourceFolderId)

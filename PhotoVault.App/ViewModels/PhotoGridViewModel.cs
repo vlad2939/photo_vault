@@ -78,7 +78,8 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
     /// <summary>Textele de tag-uri / albume ale fiecărei poze (reîmprospătate după orice modificare).</summary>
     public void SetSearchKeywords(IReadOnlyDictionary<long, string> keywords)
     {
-        _keywords = keywords;
+        // Normalizate o singură dată (fără diacritice, litere mici) → filtrarea la fiecare tastă e doar comparație ordinală
+        _keywords = keywords.ToDictionary(kv => kv.Key, kv => SearchText.Normalize(kv.Value));
         if (IsSearching) ApplyFilter();
     }
 
@@ -138,7 +139,7 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
     {
         IEnumerable<PhotoItemViewModel> filtered = _filter is null ? _all : _all.Where(_filter);
         if (IsSearching)
-            filtered = filtered.Where(p => SearchText.Matches(_searchTerms, p.FileName, _keywords.GetValueOrDefault(p.Id)));
+            filtered = filtered.Where(p => SearchText.MatchesNormalized(_searchTerms, p.SearchName, _keywords.GetValueOrDefault(p.Id)));
         // _all vine din DB deja sortat ascendent după nume → descendent = ordinea inversă
         if (SortDescending) filtered = filtered.Reverse();
         Photos = new ObservableCollection<PhotoItemViewModel>(filtered);

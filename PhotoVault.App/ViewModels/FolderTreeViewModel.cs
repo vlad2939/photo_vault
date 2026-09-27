@@ -118,6 +118,39 @@ public partial class FolderTreeViewModel : ObservableObject
         });
     }
 
+    /// <summary>
+    /// Re-scanează toate folderele sursă: poze noi adăugate, poze șterse / mutate eliminate din index (§6.2).
+    /// Folderele indisponibile (ex. disc extern deconectat) sunt sărite, fără a le atinge pozele.
+    /// </summary>
+    [RelayCommand]
+    private async Task RescanAll()
+    {
+        if (Folders.Count == 0) return;
+        var folders = Folders.ToList();
+        await RunScanAsync(async progress =>
+        {
+            int added = 0, removed = 0;
+            var unavailable = new List<string>();
+            foreach (var folder in folders)
+            {
+                try
+                {
+                    var result = await _index.RescanAsync(folder.Id, progress, _shutdown);
+                    added += result.Added;
+                    removed += result.Removed;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    unavailable.Add(folder.FolderPath);
+                }
+            }
+            if (unavailable.Count > 0)
+                _dialogs.Show(Loc.Get("Str.Library.UnavailableTitle"),
+                    Loc.Format("Str.Library.UnavailableMany", string.Join("\n", unavailable)), DialogKind.Warning);
+            return Loc.Format("Str.Status.RescanDone", Loc.Number(added), Loc.Number(removed));
+        });
+    }
+
     public async Task RemoveAsync(SourceFolderViewModel folder)
     {
         var answer = _dialogs.Show(Loc.Get("Str.Library.RemoveTitle"),

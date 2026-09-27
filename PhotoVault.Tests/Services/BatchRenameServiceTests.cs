@@ -163,7 +163,7 @@ public sealed class BatchRenameServiceTests : IDisposable
     {
         Touch("a.jpg");
         Touch("b.jpg");
-        Assert.Throws<InvalidOperationException>(() => _service.Apply(_folder, Plan("same")));
+        Assert.Equal(RenameFailure.PlanHasConflicts, Assert.Throws<BatchRenameException>(() => _service.Apply(_folder, Plan("same"))).Failure);
         Assert.True(File.Exists(Path.Combine(_folder, "a.jpg")));
     }
 
@@ -174,7 +174,7 @@ public sealed class BatchRenameServiceTests : IDisposable
         var plan = Plan("nou");
         File.WriteAllBytes(Path.Combine(_folder, "nou.jpg"), [7]);   // apărut între previzualizare și aplicare
 
-        Assert.Throws<InvalidOperationException>(() => _service.Apply(_folder, plan));
+        Assert.Equal(RenameFailure.TargetExists, Assert.Throws<BatchRenameException>(() => _service.Apply(_folder, plan)).Failure);
         Assert.True(File.Exists(Path.Combine(_folder, "a.jpg")));
         Assert.Equal([7], File.ReadAllBytes(Path.Combine(_folder, "nou.jpg")));
     }

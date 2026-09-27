@@ -39,3 +39,23 @@ public sealed record RenamePlanItem(RenameSource Source, string NewName, RenameS
 }
 
 public sealed record RenameResult(int Renamed, int IndexUpdated);
+
+public enum RenameFailure
+{
+    /// <summary>Planul conține conflicte (nu ar fi trebuit să ajungă la aplicare).</summary>
+    PlanHasConflicts,
+
+    /// <summary>Un fișier din lot a dispărut între previzualizare și aplicare.</summary>
+    SourceMissing,
+
+    /// <summary>A apărut între timp un fișier cu unul dintre numele țintă.</summary>
+    TargetExists
+}
+
+/// <summary>Redenumirea a fost refuzată înainte de a atinge vreun fișier; UI-ul afișează motivul localizat.</summary>
+public sealed class BatchRenameException(RenameFailure failure, string? fileName = null)
+    : InvalidOperationException($"{failure}: {fileName}")
+{
+    public RenameFailure Failure { get; } = failure;
+    public string? FileName { get; } = fileName;
+}

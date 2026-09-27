@@ -26,6 +26,9 @@ public partial class PhotoItemViewModel : ObservableObject
     public long Id => _photo.Id;
     public long SourceFolderId => _photo.SourceFolderId;
     public string FileName => _photo.FileName;
+
+    /// <summary>Numele fișierului normalizat pentru căutare (calculat la prima căutare, apoi păstrat).</summary>
+    public string SearchName => field ??= Core.Utils.SearchText.Normalize(_photo.FileName);
     public string FullPath => _photo.FullPath;
     public string Extension => _photo.Extension;
     public long? FileSizeBytes => _photo.FileSizeBytes;

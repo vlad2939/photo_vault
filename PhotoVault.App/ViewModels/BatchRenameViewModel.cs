@@ -176,7 +176,18 @@ public partial class BatchRenameViewModel : ObservableObject
             if (result.IndexUpdated > 0) done += "\n\n" + Loc.Format("Str.Rename.DoneIndexed", Loc.PhotoCount(result.IndexUpdated));
             _dialogs.Show(Loc.Get("Str.Rename.Title"), done, DialogKind.Success);
         }
-        catch (Exception ex) when (ex is InvalidOperationException or IOException or UnauthorizedAccessException)
+        catch (BatchRenameException ex)
+        {
+            // Refuz înainte de orice mutare (discul s-a schimbat după previzualizare) — nu e o eroare a aplicației
+            var reason = ex.Failure switch
+            {
+                RenameFailure.SourceMissing => Loc.Format("Str.Rename.Failure.SourceMissing", ex.FileName),
+                RenameFailure.TargetExists => Loc.Format("Str.Rename.Failure.TargetExists", ex.FileName),
+                _ => Loc.Get("Str.Rename.Failure.Conflicts"),
+            };
+            _dialogs.Show(Loc.Get("Str.Rename.Title"), Loc.Format("Str.Rename.Failed", reason), DialogKind.Warning);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             ErrorLog.Write(ex, "BatchRename");
             _dialogs.Show(Loc.Get("Str.Rename.Title"), Loc.Format("Str.Rename.Failed", ex.Message), DialogKind.Error);

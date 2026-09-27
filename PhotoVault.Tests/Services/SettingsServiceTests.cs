@@ -71,4 +71,25 @@ public class SettingsServiceTests
         Assert.Equal(15, settings.SlideshowDurationSec);
         Assert.Empty(settings.SlideshowPlaylistPaths);
     }
+
+    [Fact]
+    public void AccentAndLanguage_PersistImmediately_InvalidIgnored()
+    {
+        using var db = new TestDatabase();
+        var repository = new AppSettingsRepository(db.Context);
+        var service = new SettingsService(repository);
+        service.Load();
+
+        service.SetAccentColor("#2d7ff9");
+        service.SetAccentColor("albastru");   // invalid → ignorat
+        service.SetLanguage("en");
+
+        var reloaded = new SettingsService(repository).Load();
+        Assert.Equal("#2D7FF9", reloaded.AccentColor);
+        Assert.Equal("en", reloaded.Language);
+        Assert.Contains(reloaded.AccentColor, AppSettings.AccentPresets);
+
+        service.SetLanguage("fr");            // necunoscută → română
+        Assert.Equal("ro", new SettingsService(repository).Load().Language);
+    }
 }

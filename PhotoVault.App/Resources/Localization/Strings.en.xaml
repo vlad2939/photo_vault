@@ -98,7 +98,6 @@
     <sys:String x:Key="Str.Settings.Appearance">Appearance</sys:String>
     <sys:String x:Key="Str.Settings.ThemeDark">Dark theme</sys:String>
     <sys:String x:Key="Str.Settings.ThemeLight">Light theme</sys:String>
-    <sys:String x:Key="Str.Settings.MoreSoon">Accent color and interface language will appear here in the next phase.</sys:String>
     <sys:String x:Key="Str.Context.AllPhotos">All photos</sys:String>
     <sys:String x:Key="Str.Albums.ShowAll">Show all albums</sys:String>
     <sys:String x:Key="Str.Albums.Back">Back to albums</sys:String>
@@ -204,6 +203,9 @@
     <sys:String x:Key="Str.Rename.Done">Files renamed: {0}.</sys:String>
     <sys:String x:Key="Str.Rename.DoneIndexed">The library was updated: {0}.</sys:String>
     <sys:String x:Key="Str.Rename.Failed" xml:space="preserve">The rename was not applied. The files kept their original names.&#x0a;&#x0a;{0}</sys:String>
+    <sys:String x:Key="Str.Rename.Failure.SourceMissing">The file “{0}” no longer exists in the folder.</sys:String>
+    <sys:String x:Key="Str.Rename.Failure.TargetExists">A file named “{0}” has appeared in the folder in the meantime.</sys:String>
+    <sys:String x:Key="Str.Rename.Failure.Conflicts">The list contains conflicts.</sys:String>
 
     <!-- Slideshow (§5.8, §6.10) -->
     <sys:String x:Key="Str.Slideshow.Title">Slideshow</sys:String>
@@ -230,5 +232,24 @@
     <sys:String x:Key="Str.Settings.MusicRemove">Remove from playlist</sys:String>
     <sys:String x:Key="Str.Settings.MusicMissing">file not found</sys:String>
     <sys:String x:Key="Str.Settings.Volume">Volume</sys:String>
+
+    <!-- Opțiuni → General, re-scanare globală (Faza 7) -->
+    <sys:String x:Key="Str.Settings.General">General</sys:String>
+    <sys:String x:Key="Str.Settings.Accent">Accent color</sys:String>
+    <sys:String x:Key="Str.Settings.Language">Interface language</sys:String>
+    <sys:String x:Key="Str.Settings.LanguageTitle">Interface language</sys:String>
+    <sys:String x:Key="Str.Settings.LanguageRestart">The selected language is applied after restarting the application. Restart now?</sys:String>
+    <sys:String x:Key="Str.Settings.RestartNow">Restart now</sys:String>
+    <sys:String x:Key="Str.Settings.RestartLater">Later</sys:String>
+    <sys:String x:Key="Str.Settings.LanguagePending">Restart the application to apply the selected language.</sys:String>
+    <sys:String x:Key="Str.Accent.Orange">Orange</sys:String>
+    <sys:String x:Key="Str.Accent.Blue">Blue</sys:String>
+    <sys:String x:Key="Str.Accent.Green">Green</sys:String>
+    <sys:String x:Key="Str.Accent.Red">Red</sys:String>
+    <sys:String x:Key="Str.Accent.Purple">Purple</sys:String>
+    <sys:String x:Key="Str.Accent.Teal">Teal</sys:String>
+    <sys:String x:Key="Str.Library.RescanAll">Rescan all</sys:String>
+    <sys:String x:Key="Str.Library.RescanAllTooltip">Look for new photos in all source folders and remove deleted or moved photos from the index</sys:String>
+    <sys:String x:Key="Str.Library.UnavailableMany" xml:space="preserve">The following folders are not accessible right now (e.g. an external drive is disconnected) and were skipped; their photos remain in the library:&#x0a;&#x0a;{0}</sys:String>
 
 </ResourceDictionary>

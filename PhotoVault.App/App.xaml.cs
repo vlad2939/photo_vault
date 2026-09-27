@@ -64,7 +64,7 @@ public partial class App : Application
             DataContext = new MainViewModel(settings, ThemeManager.Instance, _dialogs, windows,
                 index, thumbnails, metadata,
                 new AlbumService(new AlbumRepository(database)), new TagService(new TagRepository(database)),
-                photoService, folderPicker, new FilePicker())
+                photoService, folderPicker, new FilePicker(), new AppLifetime())
         };
         MainWindow = mainWindow;
         mainWindow.Show();

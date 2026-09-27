@@ -46,7 +46,7 @@ public partial class MainViewModel : ObservableObject
 
     public MainViewModel(ISettingsService settings, IThemeService theme, IDialogService dialogs, IWindowService windows,
         IPhotoIndexService index, IThumbnailService thumbnails, IMetadataService metadata, IAlbumService albumService,
-        ITagService tagService, IPhotoService photoService, IFolderPicker folderPicker, IFilePicker filePicker)
+        ITagService tagService, IPhotoService photoService, IFolderPicker folderPicker, IFilePicker filePicker, IAppLifetime lifetime)
     {
         _settings = settings;
         _theme = theme;
@@ -64,6 +64,7 @@ public partial class MainViewModel : ObservableObject
         Albums = new AlbumViewModel(albumService, thumbnails, dialogs);
         Tags = new TagViewModel(tagService, dialogs);
         SlideshowSettings = new SlideshowSettingsViewModel(settings, filePicker);
+        General = new GeneralSettingsViewModel(settings, theme, dialogs, lifetime);
 
         Grid.PropertyChanged += OnGridPropertyChanged;
         _searchDebounce.Tick += (_, _) =>
@@ -92,6 +93,7 @@ public partial class MainViewModel : ObservableObject
     public AlbumViewModel Albums { get; }
     public TagViewModel Tags { get; }
     public SlideshowSettingsViewModel SlideshowSettings { get; }
+    public GeneralSettingsViewModel General { get; }
 
     [ObservableProperty]
     public partial bool IsDarkTheme { get; set; }

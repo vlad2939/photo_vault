@@ -2,7 +2,7 @@
 
 Aplicație portabilă pentru organizarea și vizualizarea albumelor foto personale.
 
-**Stadiu dezvoltare:** Faza 6 finalizată (slideshow Ken Burns + muzică) · **Ultima actualizare:** septembrie 2026
+**Stadiu dezvoltare:** Faza 7 finalizată (setări generale, gestiune index, performanță) · **Ultima actualizare:** septembrie 2026
 
 ---
 
@@ -51,6 +51,7 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 - Folderele adăugate rămân în listă permanent — data viitoare când pornești aplicația, nu trebuie să le re-adaugi.
 - Dacă adaugi poze noi într-un folder deja indexat, fă **click dreapta pe folder → Re-scanează** ca aplicația să le detecteze. Pozele care între timp au fost șterse sau mutate de pe disc sunt eliminate automat din index.
 - Dacă folderul nu e accesibil la re-scanare (ex. disc extern deconectat), indexul **nu** este golit — reconectează discul și re-scanează.
+- **Opțiuni → Foldere sursă → Re-scanează toate** verifică dintr-o dată toate folderele: adaugă pozele noi și elimină din index pozele șterse / mutate. Folderele indisponibile în acel moment sunt sărite (și anunțate), fără să li se atingă pozele.
 - **Click dreapta pe folder → Elimină din bibliotecă** scoate folderul și pozele lui din index (fișierele de pe disc nu sunt atinse).
 - Aplicația **nu verifică duplicate** — dacă aceeași poză există fizic în două foldere diferite adăugate, va apărea de două ori.
 
@@ -112,7 +113,9 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 ### Temă, culoare accent și limbă
 
 - Butonul **Temă** din bara secundară comută instant între aspect Dark și Light.
-- Din **Opțiuni** → secțiunea General, poți alege o culoare de accent (6 variante predefinite) și limba interfeței (Română sau Engleză — schimbarea limbii poate necesita repornirea aplicației).
+- Din **Opțiuni** → secțiunea **General** alegi tema, culoarea de accent și limba interfeței.
+- **Culoarea de accent** — 6 buline (portocaliu, albastru, verde, roșu, mov, turcoaz); se aplică imediat în toată aplicația (butoane, selecție, slidere, bara slideshow-ului), adaptată temei Dark / Light.
+- **Limba** — Română sau English; se aplică după repornire. Aplicația te întreabă dacă vrei să repornească imediat („Repornește acum" / „Mai târziu").
 
 ### Rotire poze
 

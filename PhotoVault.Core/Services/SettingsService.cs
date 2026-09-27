@@ -62,6 +62,19 @@ public sealed class SettingsService(IAppSettingsRepository repository) : ISettin
         repository.Set(AppSettingKeys.Theme, theme == AppTheme.Light ? "light" : "dark");
     }
 
+    public void SetAccentColor(string hex)
+    {
+        if (!IsHexColor(hex)) return;
+        Current.AccentColor = hex.ToUpperInvariant();
+        repository.Set(AppSettingKeys.AccentColor, Current.AccentColor);
+    }
+
+    public void SetLanguage(string language)
+    {
+        Current.Language = language == "en" ? "en" : "ro";
+        repository.Set(AppSettingKeys.Language, Current.Language);
+    }
+
     private static bool IsHexColor(string? value) =>
         value is { Length: 7 } && value[0] == '#' &&
         int.TryParse(value.AsSpan(1), NumberStyles.HexNumber, Inv, out _);

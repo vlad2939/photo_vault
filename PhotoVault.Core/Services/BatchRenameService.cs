@@ -67,7 +67,7 @@ public sealed class BatchRenameService(IPhotoRepository photos) : IBatchRenameSe
     public RenameResult Apply(string folderPath, IReadOnlyList<RenamePlanItem> plan)
     {
         if (plan.Any(p => p.IsConflict))
-            throw new InvalidOperationException("Planul de redenumire conține conflicte.");
+            throw new BatchRenameException(RenameFailure.PlanHasConflicts);
 
         var moves = plan.Where(p => p.Status == RenameStatus.Ok)
             .Select(p => (From: p.Source.FullPath, To: Path.Combine(folderPath, p.NewName), Temp: Path.Combine(folderPath, TempPrefix + Guid.NewGuid().ToString("N"))))
@@ -79,9 +79,9 @@ public sealed class BatchRenameService(IPhotoRepository photos) : IBatchRenameSe
         foreach (var move in moves)
         {
             if (!File.Exists(move.From))
-                throw new InvalidOperationException($"Fișierul nu mai există: {Path.GetFileName(move.From)}");
+                throw new BatchRenameException(RenameFailure.SourceMissing, Path.GetFileName(move.From));
             if (File.Exists(move.To) && !sources.Contains(move.To))
-                throw new InvalidOperationException($"Există deja un fișier cu numele: {Path.GetFileName(move.To)}");
+                throw new BatchRenameException(RenameFailure.TargetExists, Path.GetFileName(move.To));
         }
 
         // Două etape (nume temporar → nume final): permite schimburi de nume (A→B, B→A) și redenumiri doar ca majuscule

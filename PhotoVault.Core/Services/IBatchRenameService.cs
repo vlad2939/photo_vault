@@ -17,7 +17,7 @@ public interface IBatchRenameService
     int CountIndexed(string folderPath);
 
     /// <summary>
-    /// Redenumește fizic rândurile <see cref="RenameStatus.Ok"/>; refuză (InvalidOperationException) dacă planul are conflicte
+    /// Redenumește fizic rândurile <see cref="RenameStatus.Ok"/>; refuză (<see cref="BatchRenameException"/>) dacă planul are conflicte
     /// sau discul s-a schimbat între timp. Pozele deja indexate își păstrează albumele, tag-urile și rotirea.
     /// </summary>
     RenameResult Apply(string folderPath, IReadOnlyList<RenamePlanItem> plan);
