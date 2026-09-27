@@ -56,6 +56,49 @@ public sealed class PhotoIndexService(
         return (FolderValidation.Ok, null);
     }
 
+    public (FolderValidation Result, string? ConflictingFolder) ValidateRelocation(long sourceFolderId, string newFolderPath)
+    {
+        if (!Directory.Exists(newFolderPath)) return (FolderValidation.NotFound, null);
+
+        var candidate = WithTrailingSeparator(Path.GetFullPath(newFolderPath));
+        foreach (var existing in folders.GetAll().Where(f => f.Id != sourceFolderId))
+        {
+            var current = WithTrailingSeparator(Path.GetFullPath(existing.FolderPath));
+            if (string.Equals(candidate, current, StringComparison.OrdinalIgnoreCase))
+                return (FolderValidation.AlreadyAdded, existing.FolderPath);
+            if (candidate.StartsWith(current, StringComparison.OrdinalIgnoreCase))
+                return (FolderValidation.InsideExisting, existing.FolderPath);
+            if (current.StartsWith(candidate, StringComparison.OrdinalIgnoreCase))
+                return (FolderValidation.ContainsExisting, existing.FolderPath);
+        }
+        return (FolderValidation.Ok, null);
+    }
+
+    public Task<RelocationPreview> PreviewRelocationAsync(long sourceFolderId, string newFolderPath) => Task.Run(() =>
+    {
+        var folder = folders.GetById(sourceFolderId) ?? throw new InvalidOperationException($"Folder sursă inexistent: {sourceFolderId}");
+        var oldRoot = WithTrailingSeparator(folder.FolderPath);
+        var newRoot = WithTrailingSeparator(Path.GetFullPath(newFolderPath));
+        var indexed = photos.GetBySourceFolder(sourceFolderId);
+        var found = indexed.Count(p => p.FullPath.StartsWith(oldRoot, StringComparison.OrdinalIgnoreCase)
+                                       && File.Exists(newRoot + p.FullPath[oldRoot.Length..]));
+        return new RelocationPreview(indexed.Count, found);
+    });
+
+    public async Task RelocateSourceFolderAsync(long sourceFolderId, string newFolderPath)
+    {
+        // Nu în paralel cu o scanare a aceluiași index
+        await _scanLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            await Task.Run(() => folders.Relocate(sourceFolderId, Path.GetFullPath(newFolderPath))).ConfigureAwait(false);
+        }
+        finally
+        {
+            _scanLock.Release();
+        }
+    }
+
     public async Task<(SourceFolder Folder, ScanResult Result)> AddSourceFolderAsync(string folderPath,
         IProgress<IndexProgress>? progress, CancellationToken cancellationToken)
     {

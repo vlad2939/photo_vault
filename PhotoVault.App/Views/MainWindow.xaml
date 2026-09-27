@@ -150,6 +150,8 @@
                                              DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                                     <MenuItem Header="{DynamicResource Str.Library.Rescan}" Icon="{DynamicResource Icon.Refresh}"
                                               Command="{Binding RescanCommand}" />
+                                    <MenuItem Header="{DynamicResource Str.Library.Relocate}" Icon="{DynamicResource Icon.Relocate}"
+                                              Command="{Binding RelocateCommand}" />
                                     <Separator />
                                     <MenuItem Header="{DynamicResource Str.Library.Remove}" Icon="{DynamicResource Icon.Delete}"
                                               Command="{Binding RemoveCommand}" />
@@ -177,7 +179,7 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Style="{StaticResource Text.Icon}" FontSize="15"
+                                        <TextBlock x:Name="FolderIcon" Style="{StaticResource Text.Icon}" FontSize="15"
                                                    Foreground="{DynamicResource Brush.Accent}" Text="{DynamicResource Icon.Folder}" />
                                         <TextBlock Grid.Column="1" Margin="8,0,8,0" VerticalAlignment="Center"
                                                    Style="{StaticResource Text.Body}" Text="{Binding Name}" />
@@ -188,6 +190,12 @@
                                         <DataTrigger Binding="{Binding IsRoot}" Value="True">
                                             <Setter TargetName="Count" Property="Visibility" Value="Visible" />
                                             <Setter TargetName="Count" Property="Text" Value="{Binding PhotoCountText}" />
+                                        </DataTrigger>
+                                        <!-- Folder sursă inaccesibil (disc deconectat / altă cale): avertizare, pozele rămân în bibliotecă -->
+                                        <DataTrigger Binding="{Binding IsAvailable}" Value="False">
+                                            <Setter TargetName="FolderIcon" Property="Text" Value="{DynamicResource Icon.Warning}" />
+                                            <Setter TargetName="FolderIcon" Property="Foreground" Value="{DynamicResource Brush.Status.Warning}" />
+                                            <Setter TargetName="FolderIcon" Property="ToolTip" Value="{DynamicResource Str.Library.UnavailableHint}" />
                                         </DataTrigger>
                                     </HierarchicalDataTemplate.Triggers>
                                 </HierarchicalDataTemplate>

@@ -2,7 +2,7 @@
 
 Aplicație portabilă pentru organizarea și vizualizarea albumelor foto personale.
 
-**Stadiu dezvoltare:** Faza 7 finalizată (setări generale, gestiune index, performanță) · **Ultima actualizare:** septembrie 2026
+**Versiune:** 1.0.0 — toate fazele de dezvoltare (0–8) finalizate · **Ultima actualizare:** septembrie 2026
 
 ---
 
@@ -21,7 +21,11 @@ Principii de funcționare:
 ## Cerințe de sistem
 
 - Windows 11
-- Spațiu liber pe disc: [de completat — dimensiune reală după publish, estimat 100-200 MB pentru aplicație + spațiu suplimentar pentru cache-ul de thumbnail-uri, proporțional cu numărul de poze indexate]
+- Spațiu liber pe disc:
+  - aplicația: ~80 MB (un singur `PhotoVault.exe`);
+  - biblioteca (`data/`): crește cu numărul de poze indexate — măsurat: ~3,5 MB la 1.000 de poze (miniaturi + bază de date), adică ~190 MB la 50.000 de poze;
+  - la prima pornire, Windows mai despachetează ~20 MB de componente interne ale aplicației în folderul temporar al utilizatorului (vezi „Limitări cunoscute").
+- Memorie: ~200–350 MB la o bibliotecă de 50.000 de poze.
 - Nicio altă dependență necesară — aplicația include tot ce-i trebuie ca să ruleze (nu necesită .NET instalat separat)
 
 ---
@@ -33,6 +37,7 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 1. Copiază folderul `PhotoVault` (întreg, cu tot conținutul) oriunde vrei pe calculator — Desktop, o partiție separată, un stick USB.
 2. Deschide folderul și rulează `PhotoVault.exe`.
 3. La prima pornire, aplicația creează automat subfolderul `data/` (bază de date + cache thumbnail-uri) — nu este nevoie de nicio configurare inițială.
+   - Dacă Windows afișează „Windows protected your PC" (SmartScreen), apasă **More info → Run anyway**: executabilul nu este semnat digital, dar nu se instalează nimic.
 4. Adaugă primul folder cu poze (vezi secțiunea "Import de poze" mai jos) și poți începe să organizezi.
 
 **Important:** dacă muți folderul `PhotoVault` pe alt calculator sau altă locație, folderele sursă indexate anterior (poza ta de pe alt disc/alt PC) pot deveni inaccesibile dacă nu sunt și ele mutate/disponibile la aceeași cale. Vezi secțiunea "Portabilitate" mai jos.
@@ -126,14 +131,23 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 
 | Tastă | Acțiune |
 |---|---|
-| `Esc` | Închide lightbox / slideshow / modal logo |
-| `←` / `→` | Navigare poză anterioară/următoare (lightbox, slideshow) |
-| `R` | Rotire poză 90° |
-| `F5` | Pornește slideshow-ul cu pozele afișate |
-| `Space` | Pauză / redare slideshow |
-| `Ctrl+F` | Focus pe câmpul de căutare |
+Aceeași listă apare și în aplicație, în modalul **Informații** (iconița „i" din bara de sus).
 
-[de completat — lista finală de shortcut-uri, pe măsură ce sunt implementate; identică cu lista din modalul "Info" al aplicației]
+| Tastă | Acțiune |
+|---|---|
+| `Enter` / dublu-click | Deschide poza selectată pe tot ecranul |
+| `Esc` | Închide vizualizarea pe tot ecranul / slideshow-ul / modalul logo / modalul Informații; în câmpul de căutare îl golește |
+| `←` / `→` | Poza anterioară / următoare (pe tot ecranul, slideshow) |
+| `Home` / `End` | Prima / ultima poză (pe tot ecranul) |
+| `+` / `−` / rotița mouse-ului | Mărește / micșorează (pe tot ecranul) |
+| `0` | Potrivire în ecran |
+| `1` | Dimensiune reală (1:1) |
+| `R` | Rotește poza cu 90° (în grid — și pentru mai multe poze selectate — sau pe tot ecranul) |
+| `Ctrl+A` | Selectează toate pozele din grid |
+| `Ctrl` / `Shift` + click | Selecție multiplă în grid |
+| `Ctrl+F` | Focus pe câmpul de căutare |
+| `F5` | Pornește slideshow-ul cu pozele afișate |
+| `Space` | Pauză / redare (slideshow) |
 
 ---
 
@@ -145,9 +159,12 @@ PhotoVault/
 ├── data/
 │   ├── photovault.db     ← baza de date: albume, tag-uri, index poze, setări
 │   └── thumbnails/       ← cache cu miniaturi generate automat
-├── logs/                 ← jurnal de erori (dacă apar probleme)
-└── README.txt
+├── logs/                 ← apare doar dacă a apărut o eroare (detalii tehnice, utile la depanare)
+└── README.txt            ← instrucțiuni scurte (pornire, mutare pe alt calculator)
 ```
+
+- `data/thumbnails/` e împărțit în subfoldere (`ab/`, `cd/`...) ca Windows să rămână rapid și la zeci de mii de miniaturi. Dacă ștergi doar acest folder, miniaturile se regenerează automat la pornire (durează), fără pierderi de organizare.
+- `data/photovault.db` conține **tot**: folderele sursă, albumele, tag-urile, rotirile și setările. Pentru o copie de siguranță, închide aplicația și copiază folderul `data/`.
 
 **Nu șterge și nu edita manual** fișierele din `data/` — acolo e stocată toată organizarea ta (albume, tag-uri, rotații, setări). Ștergerea lor înseamnă pierderea acestei organizări (pozele originale de pe disc rămân neafectate, dar trebuie reindexate de la zero).
 
@@ -159,6 +176,11 @@ PhotoVault/
 - Nu există funcții de editare a imaginii (culoare, expunere, crop) — singura modificare posibilă este rotirea logică din 90 în 90 de grade.
 - Nu se verifică duplicate la import — aceeași poză, adăugată din două foldere diferite, va apărea de două ori.
 - Sortarea și căutarea sunt intenționat simple (după nume fișier; căutare după nume/tag/album) — nu există filtre combinate avansate sau sortare după dată EXIF.
+- Previzualizarea fișierelor RAW folosește imaginea JPEG încorporată de cameră (nu se decodează datele RAW): calitatea și dimensiunea ei depind de modelul camerei; un fișier RAW fără previzualizare JPEG încorporată apare cu iconița de rezervă.
+- Schimbarea limbii interfeței se aplică după repornirea aplicației (aplicația oferă repornirea imediată).
+- Re-scanarea folderelor este manuală (butonul Re-scanează / Re-scanează toate) — aplicația nu urmărește în timp real modificările de pe disc.
+- Executabilul unic conține și câteva componente native (Windows / SQLite) pe care .NET le despachetează la prima pornire în folderul temporar al utilizatorului (`%TEMP%\.net\PhotoVault\`, ~20 MB). Datele tale rămân exclusiv în folderul aplicației; folderul temporar poate fi șters oricând (se recreează la pornire).
+- Executabilul nu este semnat digital, deci SmartScreen poate cere confirmare la prima rulare pe un calculator nou.
 
 ---
 
@@ -166,14 +188,23 @@ PhotoVault/
 
 1. Copiază folderul `PhotoVault` complet (inclusiv `data/`) la noua locație.
 2. Rulează `PhotoVault.exe` de acolo — nu necesită nimic instalat pe noul calculator.
-3. **Atenție la folderele sursă**: aplicația reține căile complete către folderele cu poze (ex. `D:\Poze\Vacanta2024`). Dacă acele foldere nu sunt disponibile la exact aceeași cale pe noul calculator (alta literă de disc, alt drive extern), pozele din ele vor apărea ca lipsă. Poți realinia manual calea către noua locație a folderului sursă din interfața aplicației [de completat — pașii exacți, odată implementată funcția de realiniere].
+3. **Atenție la folderele sursă**: aplicația reține căile complete către folderele cu poze (ex. `D:\Poze\Vacanta2024`). Dacă un folder nu e disponibil la exact aceeași cale pe noul calculator (altă literă de disc, alt drive extern), în Bibliotecă apare o **iconiță de avertizare** în locul iconiței de folder, iar în Opțiuni un mesaj sub folderul respectiv. Pozele lui **rămân** în bibliotecă (cu albume, tag-uri, rotiri) — nimic nu se șterge automat.
+   - Dacă doar ai conectat discul extern mai târziu, repornește aplicația sau re-scanează folderul.
+   - Dacă folderul are acum altă cale: **click dreapta pe folder → Schimbă locația...** (sau butonul cu aceeași funcție din **Opțiuni → Foldere sursă**), alege noua locație, iar aplicația îți arată câte poze a regăsit acolo (ex. „30 din 30 de poze"). Confirmă cu **Actualizează locația** — căile sunt actualizate, iar albumele, tag-urile, rotirile și miniaturile se păstrează.
+   - Dacă nicio poză nu se regăsește la locația aleasă, aplicația te avertizează înainte (probabil ai ales alt folder).
 4. Dacă intenția e ca și pozele originale să fie portabile (nu doar aplicația), acestea trebuie copiate separat, păstrând ideal aceeași structură relativă de foldere.
 
 ---
 
 ## Pentru dezvoltator (context tehnic)
 
-Acest README este destinat utilizatorului final al aplicației. Pentru detalii de arhitectură, schema bazei de date, stack tehnologic și decizii de design, consultă documentul tehnic complet: `PhotoVault_Plan.md`.
+Acest README este destinat utilizatorului final al aplicației. Pentru detalii de arhitectură, schema bazei de date, stack tehnologic și decizii de design, consultă documentul tehnic complet: `PhotoVault_Plan.md` (secțiunea §15 conține deciziile luate pe parcursul implementării).
+
+- **Stack:** C# / WPF, .NET 10, MVVM (CommunityToolkit.Mvvm), SQLite (Microsoft.Data.Sqlite + Dapper), MetadataExtractor, SixLabors.ImageSharp, NAudio.
+- **Soluția:** `PhotoVault.App` (WPF), `PhotoVault.Core` (modele, servicii, logică), `PhotoVault.Data` (SQLite, migrări în `Migrations/NNN_*.sql`), `PhotoVault.Tests` (xUnit).
+- **Build și teste:** `dotnet build PhotoVault.sln` · `dotnet test PhotoVault.Tests --filter "Category!=RealRaw"`.
+- **Versiunea portabilă:** `.\publish.ps1` (Windows, .NET 10 SDK) → `publish\PhotoVault\` (`PhotoVault.exe` self-contained, single-file + `README.txt`) și arhiva `publish\PhotoVault-<versiune>-win-x64.zip`. Echivalent: `dotnet publish PhotoVault.App -p:PublishProfile=Portabil`. Trimming-ul nu e folosit (nu e suportat de WPF).
+- **Verificare automată pe Windows** (`.github/workflows/windows-build.yml`, la fiecare push): build, teste unitare, test pe fișiere RAW reale descărcate din surse publice, smoke test UI cu capturi de ecran (toate fazele), publicare portabilă, test de portabilitate (pornire fără .NET de pe un „stick", mutare pe „alt calculator" + realiniere foldere sursă). La cerere (sau cu „[perf]" în mesajul commit-ului): test de performanță pe 50.000 de poze.
 
 ---
 

@@ -163,6 +163,10 @@
                                                 <TextBlock Style="{StaticResource Text.Body}" FontWeight="SemiBold" Text="{Binding DisplayName}" />
                                                 <TextBlock Margin="0,2,0,0" Style="{StaticResource Text.Caption}" Text="{Binding FolderPath}"
                                                            ToolTip="{Binding FolderPath}" />
+                                                <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" TextTrimming="None"
+                                                           Foreground="{DynamicResource Brush.Status.Warning}"
+                                                           Text="{DynamicResource Str.Library.UnavailableHint}"
+                                                           Visibility="{Binding IsAvailable, Converter={StaticResource InverseBoolToVisibility}}" />
                                             </StackPanel>
                                             <TextBlock Grid.Column="2" Margin="0,0,12,0" VerticalAlignment="Center"
                                                        Style="{StaticResource Text.Secondary}" Text="{Binding PhotoCountText}" />
@@ -171,6 +175,10 @@
                                                         Content="{DynamicResource Icon.Refresh}" Command="{Binding RescanCommand}"
                                                         ToolTip="{DynamicResource Str.Library.Rescan}"
                                                         AutomationProperties.Name="{DynamicResource Str.Library.Rescan}" />
+                                                <Button Style="{StaticResource Button.Icon.Small}" Width="34" Height="34" Margin="4,0,0,0"
+                                                        Content="{DynamicResource Icon.Relocate}" Command="{Binding RelocateCommand}"
+                                                        ToolTip="{DynamicResource Str.Library.Relocate}"
+                                                        AutomationProperties.Name="{DynamicResource Str.Library.Relocate}" />
                                                 <Button Style="{StaticResource Button.Icon.Small}" Width="34" Height="34" Margin="4,0,0,0"
                                                         Content="{DynamicResource Icon.Delete}" Command="{Binding RemoveCommand}"
                                                         ToolTip="{DynamicResource Str.Library.Remove}"

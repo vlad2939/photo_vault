@@ -26,6 +26,18 @@ public interface IPhotoIndexService
 
     (FolderValidation Result, string? ConflictingFolder) ValidateNewFolder(string folderPath);
 
+    /// <summary>Validarea noii locații a unui folder sursă existent (el însuși e ignorat la verificarea suprapunerilor).</summary>
+    (FolderValidation Result, string? ConflictingFolder) ValidateRelocation(long sourceFolderId, string newFolderPath);
+
+    /// <summary>Câte dintre pozele folderului există la noua locație (aceeași cale relativă) — previzualizare, fără modificări.</summary>
+    Task<RelocationPreview> PreviewRelocationAsync(long sourceFolderId, string newFolderPath);
+
+    /// <summary>
+    /// Schimbă locația folderului sursă (ex. altă literă de disc, alt calculator), păstrând albumele, tag-urile și rotirile.
+    /// Pozele care nu se regăsesc la noua locație rămân în index până la următoarea re-scanare.
+    /// </summary>
+    Task RelocateSourceFolderAsync(long sourceFolderId, string newFolderPath);
+
     /// <summary>Adaugă folderul și îl scanează recursiv (fără miniaturi — vezi <see cref="EnsureThumbnailsAsync"/>).</summary>
     Task<(SourceFolder Folder, ScanResult Result)> AddSourceFolderAsync(string folderPath,
         IProgress<IndexProgress>? progress, CancellationToken cancellationToken);

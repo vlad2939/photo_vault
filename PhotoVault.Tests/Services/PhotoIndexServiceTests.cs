@@ -180,6 +180,62 @@ public sealed class PhotoIndexServiceTests : IDisposable
     }
 
     /// <summary>IProgress sincron (Progress&lt;T&gt; raportează asincron pe thread pool).</summary>
+    [Fact]
+    public async Task RelocateSourceFolder_KeepsIdsTagsAndThumbnails()
+    {
+        var (folder, _) = await _service.AddSourceFolderAsync(_photos, null, CancellationToken.None);
+        await _service.EnsureThumbnailsAsync(null, null, CancellationToken.None);
+        var before = _service.GetAllPhotos().ToDictionary(p => p.FileName);
+        var tags = new TagService(new TagRepository(_db.Context));
+        var tag = tags.GetOrCreate("mare");
+        tags.Assign(tag.Id, [before["c.JPEG"].Id]);
+
+        // Folderul „mutat" pe alt disc (aici: copiat în altă locație, cu aceeași structură)
+        var moved = Path.Combine(_root, "AltDisc", "Poze");
+        CopyDirectory(_photos, moved);
+        File.Delete(Path.Combine(moved, "b.jpg"));   // o poză lipsește la noua locație
+
+        Assert.Equal(FolderValidation.NotFound, _service.ValidateRelocation(folder.Id, Path.Combine(_root, "nu-exista")).Result);
+        Assert.Equal(FolderValidation.Ok, _service.ValidateRelocation(folder.Id, moved).Result);
+        Assert.Equal(new RelocationPreview(5, 4), await _service.PreviewRelocationAsync(folder.Id, moved));
+
+        await _service.RelocateSourceFolderAsync(folder.Id, moved);
+
+        Assert.Equal(moved, _service.GetSourceFolders().Single().FolderPath);
+        var after = _service.GetAllPhotos().ToDictionary(p => p.FileName);
+        Assert.Equal(Path.Combine(moved, "2024", "Iulie", "c.JPEG"), after["c.JPEG"].FullPath);
+        Assert.All(after.Values, p => Assert.Equal(before[p.FileName].Id, p.Id));
+        Assert.All(after.Values, p => Assert.Equal(before[p.FileName].ThumbnailPath, p.ThumbnailPath));
+        Assert.Equal([before["c.JPEG"].Id], tags.GetPhotoIds(tag.Id));
+
+        // Re-scanarea de după elimină doar poza care chiar lipsește
+        var rescan = await _service.RescanAsync(folder.Id, null, CancellationToken.None);
+        Assert.Equal((0, 1), (rescan.Added, rescan.Removed));
+    }
+
+    [Fact]
+    public async Task RelocateSourceFolder_IntoOwnSubfolder_DoesNotCollide()
+    {
+        var (folder, _) = await _service.AddSourceFolderAsync(_photos, null, CancellationToken.None);
+        var sub = Path.Combine(_photos, "2024");
+
+        await _service.RelocateSourceFolderAsync(folder.Id, sub);
+
+        var paths = _service.GetAllPhotos().Select(p => p.FullPath).ToList();
+        Assert.Contains(Path.Combine(sub, "2024", "d.cr2"), paths);
+        Assert.Contains(Path.Combine(sub, "b.jpg"), paths);
+        Assert.Equal(5, paths.Distinct().Count());
+    }
+
+    private static void CopyDirectory(string source, string destination)
+    {
+        foreach (var dir in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
+            Directory.CreateDirectory(dir.Replace(source, destination));
+        Directory.CreateDirectory(destination);
+        foreach (var file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
+            File.Copy(file, file.Replace(source, destination));
+    }
+
     private sealed class SyncProgress<T>(Action<T> handler) : IProgress<T>
     {
         private readonly Lock _gate = new();
