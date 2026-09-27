@@ -25,6 +25,9 @@ public sealed class AppSettings
 
     public List<string> SlideshowPlaylistPaths { get; set; } = [];
 
+    /// <summary>Volumul muzicii din slideshow, 0–100.</summary>
+    public int SlideshowVolume { get; set; } = 70;
+
     public const string DefaultAccentColor = "#F2821A";
 }
 
@@ -39,4 +42,5 @@ public static class AppSettingKeys
     public const string SlideshowPanIntensity = "SlideshowPanIntensity";
     public const string SlideshowZoomIntensity = "SlideshowZoomIntensity";
     public const string SlideshowPlaylistPaths = "SlideshowPlaylistPaths";
+    public const string SlideshowVolume = "SlideshowVolume";
 }

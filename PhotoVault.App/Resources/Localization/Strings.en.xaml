@@ -88,16 +88,16 @@
     <sys:String x:Key="Str.Info.Version">Version {0}</sys:String>
     <sys:String x:Key="Str.Info.Author">Author: vlad39</sys:String>
     <sys:String x:Key="Str.Info.HowTo">How to use it</sys:String>
-    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).|Select one or more photos (Ctrl / Shift + click, Ctrl+A), then right-click → Add to album / Add tag. Click the “Albums” title to see albums as a grid of cards; double-click opens an album.|The selected photo's tags appear in the right panel: “+” adds, “×” removes. Click a tag on the left to see all photos that have it.|The search field (Ctrl+F) filters the displayed photos by file name, tags and albums; the name sort order is changed from the list next to it. R rotates the selected photo by 90° (the original file is not modified).|Batch rename (first icon in the top bar): choose a folder on disk, type a pattern (e.g. Greece_{counter:000}) and see the new names before applying. Photos already in the library keep their albums, tags and rotation.</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).|Select one or more photos (Ctrl / Shift + click, Ctrl+A), then right-click → Add to album / Add tag. Click the “Albums” title to see albums as a grid of cards; double-click opens an album.|The selected photo's tags appear in the right panel: “+” adds, “×” removes. Click a tag on the left to see all photos that have it.|The search field (Ctrl+F) filters the displayed photos by file name, tags and albums; the name sort order is changed from the list next to it. R rotates the selected photo by 90° (the original file is not modified).|Batch rename (first icon in the top bar): choose a folder on disk, type a pattern (e.g. Greece_{counter:000}) and see the new names before applying. Photos already in the library keep their albums, tags and rotation.|Slideshow (the button above the photo list, or F5): starts with the displayed photos, from the selected one. Space = pause / play, ← / → = navigate, Esc = exit. Duration, fade, effect intensity and music (looping MP3s) are set in Options.</sys:String>
     <sys:String x:Key="Str.Info.Shortcuts">Keyboard shortcuts</sys:String>
-    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid|Ctrl / Shift + click=Multiple selection in the grid|R=Rotate the photo 90° (grid or full screen)|Ctrl+F=Focus the search field|Esc (in search)=Clear the search</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid|Ctrl / Shift + click=Multiple selection in the grid|R=Rotate the photo 90° (grid or full screen)|Ctrl+F=Focus the search field|Esc (in search)=Clear the search|F5=Start the slideshow|Space=Pause / play (slideshow)|Esc=Exit the slideshow</sys:String>
     <sys:String x:Key="Str.Settings.Title">Options</sys:String>
     <sys:String x:Key="Str.Settings.SourceFolders">Source folders</sys:String>
     <sys:String x:Key="Str.Settings.SourceFoldersHint">Folders on disk indexed by PhotoVault. Rescanning detects new photos and removes deleted ones from the index; removing a folder never touches files on disk.</sys:String>
     <sys:String x:Key="Str.Settings.Appearance">Appearance</sys:String>
     <sys:String x:Key="Str.Settings.ThemeDark">Dark theme</sys:String>
     <sys:String x:Key="Str.Settings.ThemeLight">Light theme</sys:String>
-    <sys:String x:Key="Str.Settings.MoreSoon">Slideshow settings, accent color and interface language will appear here in upcoming phases.</sys:String>
+    <sys:String x:Key="Str.Settings.MoreSoon">Accent color and interface language will appear here in the next phase.</sys:String>
     <sys:String x:Key="Str.Context.AllPhotos">All photos</sys:String>
     <sys:String x:Key="Str.Albums.ShowAll">Show all albums</sys:String>
     <sys:String x:Key="Str.Albums.Back">Back to albums</sys:String>
@@ -203,5 +203,31 @@
     <sys:String x:Key="Str.Rename.Done">Files renamed: {0}.</sys:String>
     <sys:String x:Key="Str.Rename.DoneIndexed">The library was updated: {0}.</sys:String>
     <sys:String x:Key="Str.Rename.Failed" xml:space="preserve">The rename was not applied. The files kept their original names.&#x0a;&#x0a;{0}</sys:String>
+
+    <!-- Slideshow (§5.8, §6.10) -->
+    <sys:String x:Key="Str.Slideshow.Title">Slideshow</sys:String>
+    <sys:String x:Key="Str.Slideshow.Start">Slideshow</sys:String>
+    <sys:String x:Key="Str.Slideshow.StartTooltip">Start a slideshow with the displayed photos (F5)</sys:String>
+    <sys:String x:Key="Str.Slideshow.StartHere">Start slideshow from here</sys:String>
+    <sys:String x:Key="Str.Slideshow.Play">Play</sys:String>
+    <sys:String x:Key="Str.Slideshow.Pause">Pause</sys:String>
+    <sys:String x:Key="Str.Slideshow.Previous">Previous photo</sys:String>
+    <sys:String x:Key="Str.Slideshow.Next">Next photo</sys:String>
+    <sys:String x:Key="Str.Slideshow.Exit">Exit slideshow</sys:String>
+    <sys:String x:Key="Str.Settings.Slideshow">Slideshow</sys:String>
+    <sys:String x:Key="Str.Settings.SlideshowHint">Each photo slowly zooms in or out and drifts in a random direction (Ken Burns effect), fading into the next one.</sys:String>
+    <sys:String x:Key="Str.Settings.Duration">Photo duration</sys:String>
+    <sys:String x:Key="Str.Settings.Fade">Fade duration</sys:String>
+    <sys:String x:Key="Str.Settings.Pan">Pan intensity</sys:String>
+    <sys:String x:Key="Str.Settings.Zoom">Zoom intensity</sys:String>
+    <sys:String x:Key="Str.Settings.Music">Music</sys:String>
+    <sys:String x:Key="Str.Settings.MusicHint">MP3 tracks play in order, looping for the whole slideshow.</sys:String>
+    <sys:String x:Key="Str.Settings.MusicEmpty">No tracks added — the slideshow runs without music.</sys:String>
+    <sys:String x:Key="Str.Settings.MusicAdd">Add MP3...</sys:String>
+    <sys:String x:Key="Str.Settings.MusicPick">Choose MP3 tracks for the slideshow</sys:String>
+    <sys:String x:Key="Str.Settings.MusicFilter">MP3 files</sys:String>
+    <sys:String x:Key="Str.Settings.MusicRemove">Remove from playlist</sys:String>
+    <sys:String x:Key="Str.Settings.MusicMissing">file not found</sys:String>
+    <sys:String x:Key="Str.Settings.Volume">Volume</sys:String>
 
 </ResourceDictionary>

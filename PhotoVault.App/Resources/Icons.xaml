@@ -10,6 +10,13 @@
     <FontFamily x:Key="Font.Icons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
     <sys:String x:Key="Icon.Rename">&#xE8AC;</sys:String>
+    <sys:String x:Key="Icon.Play">&#xE768;</sys:String>
+    <sys:String x:Key="Icon.Pause">&#xE769;</sys:String>
+    <sys:String x:Key="Icon.Previous">&#xE892;</sys:String>
+    <sys:String x:Key="Icon.Next">&#xE893;</sys:String>
+    <sys:String x:Key="Icon.Slideshow">&#xE786;</sys:String>
+    <sys:String x:Key="Icon.Music">&#xE8D6;</sys:String>
+    <sys:String x:Key="Icon.Volume">&#xE767;</sys:String>
     <sys:String x:Key="Icon.Info">&#xE946;</sys:String>
     <sys:String x:Key="Icon.Settings">&#xE713;</sys:String>
     <sys:String x:Key="Icon.Moon">&#xE708;</sys:String>

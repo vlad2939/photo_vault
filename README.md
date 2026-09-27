@@ -2,7 +2,7 @@
 
 Aplicație portabilă pentru organizarea și vizualizarea albumelor foto personale.
 
-**Stadiu dezvoltare:** Faza 5 finalizată (redenumire batch) · **Ultima actualizare:** septembrie 2026
+**Stadiu dezvoltare:** Faza 6 finalizată (slideshow Ken Burns + muzică) · **Ultima actualizare:** septembrie 2026
 
 ---
 
@@ -101,11 +101,12 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 
 ### Slideshow
 
-- Pornește un slideshow din orice folder/album deschis.
-- Fiecare poză are un efect lent de zoom (in sau out, aleator) și deplasare (pan, direcție aleatorie), cu tranziție fade către poza următoare.
-- Poți adăuga una sau mai multe piese MP3 din calculatorul tău — se redau în buclă până la finalul slideshow-ului.
-- Bara de control (Play/Pause, Next/Previous, contor poze, Exit) și numele pozei/albumului dispar automat după 3 secunde de inactivitate a mouse-ului și reapar imediat la mișcarea mouse-ului — pentru o vizionare curată, fără elemente pe ecran.
-- Parametrii (durată afișare, durată fade, intensitate zoom/pan) se configurează din **Opțiuni**.
+- Pornește un slideshow din orice folder/album deschis: butonul **Slideshow** de deasupra listei de poze, tasta **F5** sau click dreapta pe o poză → „Pornește slideshow de aici”.
+- Rulează cu pozele afișate în acel moment (inclusiv filtrul de căutare și sortarea), începând cu poza selectată; după ultima poză se încheie singur și revii în galerie, cu ultima poză vizionată selectată.
+- Fiecare poză are un efect lent de zoom (in sau out, aleator) și deplasare (pan, una din 4 diagonale, aleator), cu tranziție fade către poza următoare.
+- Poți adăuga una sau mai multe piese MP3 din calculatorul tău (Opțiuni → Slideshow → Muzică) — se redau în ordine, în buclă, până la finalul slideshow-ului. Piesele mutate sau șterse de pe disc sunt sărite; pe un calculator fără ieșire audio slideshow-ul rulează fără muzică.
+- Bara de control (Pauză/Redă, Anterioara/Următoarea, contor poze, Ieșire) și numele pozei/albumului dispar automat după 3 secunde de inactivitate a mouse-ului și reapar imediat la mișcarea mouse-ului — pentru o vizionare curată, fără elemente pe ecran. Pauza oprește și mișcarea pozei, și muzica.
+- Parametrii (durată afișare 3–15 s, durată fade 0,5–3 s, intensitate pan 5–25%, intensitate zoom 1,05–1,30×, volum) se configurează din **Opțiuni** și se salvează imediat.
 
 ### Temă, culoare accent și limbă
 
@@ -122,9 +123,10 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 | Tastă | Acțiune |
 |---|---|
 | `Esc` | Închide lightbox / slideshow / modal logo |
-| `←` / `→` | Navigare poză anterioară/următoare |
+| `←` / `→` | Navigare poză anterioară/următoare (lightbox, slideshow) |
 | `R` | Rotire poză 90° |
-| `Space` | Play/Pause slideshow |
+| `F5` | Pornește slideshow-ul cu pozele afișate |
+| `Space` | Pauză / redare slideshow |
 | `Ctrl+F` | Focus pe câmpul de căutare |
 
 [de completat — lista finală de shortcut-uri, pe măsură ce sunt implementate; identică cu lista din modalul "Info" al aplicației]

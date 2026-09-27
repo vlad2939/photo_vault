@@ -88,16 +88,16 @@
     <sys:String x:Key="Str.Info.Version">Versiunea {0}</sys:String>
     <sys:String x:Key="Str.Info.Author">Autor: vlad39</sys:String>
     <sys:String x:Key="Str.Info.HowTo">Cum se folosește</sys:String>
-    <sys:String x:Key="Str.Info.HowToText">Adaugă un folder cu poze cu butonul + din secțiunea Bibliotecă; aplicația îl indexează, cu tot cu subfolderele, fără să modifice sau să copieze fișierele.|Selectează un folder din arbore pentru a vedea doar pozele lui (inclusiv subfolderele); click pe titlul „Bibliotecă” afișează din nou toate pozele.|Dublu-click pe o poză (sau Enter) o deschide pe tot ecranul; zoom cu rotița mouse-ului, deplasare prin tragere.|Click dreapta pe un folder sursă: Re-scanează (poze noi / șterse) sau Elimină din bibliotecă.|Folderele sursă și tema se gestionează și din Opțiuni (iconița roată).|Selectează una sau mai multe poze (Ctrl / Shift + click, Ctrl+A), apoi click dreapta → Adaugă la album / Adaugă tag. Click pe titlul „Albume” afișează albumele ca grid de carduri; dublu-click deschide un album.|Tag-urile pozei selectate apar în panoul din dreapta: „+” adaugă, „×” elimină. Click pe un tag din stânga afișează toate pozele care îl au.|Câmpul de căutare (Ctrl+F) filtrează pozele afișate după numele fișierului, tag-uri și albume; sortarea după nume se schimbă din lista de lângă el. R rotește poza selectată cu 90° (fișierul original nu este modificat).|Redenumire batch (prima iconiță din bara de sus): alegi un folder de pe disc, scrii un pattern (ex. Vacanta_Grecia_{counter:000}) și vezi numele noi înainte de aplicare. Pozele deja aflate în bibliotecă își păstrează albumele, tag-urile și rotirea.</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Adaugă un folder cu poze cu butonul + din secțiunea Bibliotecă; aplicația îl indexează, cu tot cu subfolderele, fără să modifice sau să copieze fișierele.|Selectează un folder din arbore pentru a vedea doar pozele lui (inclusiv subfolderele); click pe titlul „Bibliotecă” afișează din nou toate pozele.|Dublu-click pe o poză (sau Enter) o deschide pe tot ecranul; zoom cu rotița mouse-ului, deplasare prin tragere.|Click dreapta pe un folder sursă: Re-scanează (poze noi / șterse) sau Elimină din bibliotecă.|Folderele sursă și tema se gestionează și din Opțiuni (iconița roată).|Selectează una sau mai multe poze (Ctrl / Shift + click, Ctrl+A), apoi click dreapta → Adaugă la album / Adaugă tag. Click pe titlul „Albume” afișează albumele ca grid de carduri; dublu-click deschide un album.|Tag-urile pozei selectate apar în panoul din dreapta: „+” adaugă, „×” elimină. Click pe un tag din stânga afișează toate pozele care îl au.|Câmpul de căutare (Ctrl+F) filtrează pozele afișate după numele fișierului, tag-uri și albume; sortarea după nume se schimbă din lista de lângă el. R rotește poza selectată cu 90° (fișierul original nu este modificat).|Redenumire batch (prima iconiță din bara de sus): alegi un folder de pe disc, scrii un pattern (ex. Vacanta_Grecia_{counter:000}) și vezi numele noi înainte de aplicare. Pozele deja aflate în bibliotecă își păstrează albumele, tag-urile și rotirea.|Slideshow (butonul din dreapta sus a listei de poze sau F5): pornește cu pozele afișate, de la poza selectată. Space = pauză / redare, ← / → = navigare, Esc = ieșire. Durata, fade-ul, intensitatea efectului și muzica (MP3 în buclă) se setează în Opțiuni.</sys:String>
     <sys:String x:Key="Str.Info.Shortcuts">Scurtături de tastatură</sys:String>
-    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Deschide poza selectată pe tot ecranul|Esc=Închide vizualizarea pe tot ecranul / modalul logo / acest modal|← / →=Poza anterioară / următoare (pe tot ecranul)|Home / End=Prima / ultima poză (pe tot ecranul)|+ / −=Mărește / micșorează (pe tot ecranul)|0=Potrivire în ecran|1=Dimensiune reală (1:1)|Ctrl+A=Selectează toate pozele din grid|Ctrl / Shift + click=Selecție multiplă în grid|R=Rotește poza cu 90° (grid sau pe tot ecranul)|Ctrl+F=Focus pe câmpul de căutare|Esc (în căutare)=Golește căutarea</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Deschide poza selectată pe tot ecranul|Esc=Închide vizualizarea pe tot ecranul / modalul logo / acest modal|← / →=Poza anterioară / următoare (pe tot ecranul)|Home / End=Prima / ultima poză (pe tot ecranul)|+ / −=Mărește / micșorează (pe tot ecranul)|0=Potrivire în ecran|1=Dimensiune reală (1:1)|Ctrl+A=Selectează toate pozele din grid|Ctrl / Shift + click=Selecție multiplă în grid|R=Rotește poza cu 90° (grid sau pe tot ecranul)|Ctrl+F=Focus pe câmpul de căutare|Esc (în căutare)=Golește căutarea|F5=Pornește slideshow-ul|Space=Pauză / redare (slideshow)|Esc=Ieși din slideshow</sys:String>
     <sys:String x:Key="Str.Settings.Title">Opțiuni</sys:String>
     <sys:String x:Key="Str.Settings.SourceFolders">Foldere sursă</sys:String>
     <sys:String x:Key="Str.Settings.SourceFoldersHint">Folderele de pe disc indexate de PhotoVault. Re-scanarea detectează pozele noi și le elimină din index pe cele șterse; eliminarea unui folder nu atinge fișierele de pe disc.</sys:String>
     <sys:String x:Key="Str.Settings.Appearance">Aspect</sys:String>
     <sys:String x:Key="Str.Settings.ThemeDark">Temă întunecată</sys:String>
     <sys:String x:Key="Str.Settings.ThemeLight">Temă luminoasă</sys:String>
-    <sys:String x:Key="Str.Settings.MoreSoon">Setările pentru slideshow, culoarea de accent și limba interfeței vor apărea aici în fazele următoare.</sys:String>
+    <sys:String x:Key="Str.Settings.MoreSoon">Culoarea de accent și limba interfeței vor apărea aici în faza următoare.</sys:String>
     <sys:String x:Key="Str.Context.AllPhotos">Toate pozele</sys:String>
     <sys:String x:Key="Str.Albums.ShowAll">Afișează toate albumele</sys:String>
     <sys:String x:Key="Str.Albums.Back">Înapoi la albume</sys:String>
@@ -203,5 +203,31 @@
     <sys:String x:Key="Str.Rename.Done">Fișiere redenumite: {0}.</sys:String>
     <sys:String x:Key="Str.Rename.DoneIndexed">Biblioteca a fost actualizată: {0}.</sys:String>
     <sys:String x:Key="Str.Rename.Failed" xml:space="preserve">Redenumirea nu a fost aplicată. Fișierele au rămas cu numele inițiale.&#x0a;&#x0a;{0}</sys:String>
+
+    <!-- Slideshow (§5.8, §6.10) -->
+    <sys:String x:Key="Str.Slideshow.Title">Slideshow</sys:String>
+    <sys:String x:Key="Str.Slideshow.Start">Slideshow</sys:String>
+    <sys:String x:Key="Str.Slideshow.StartTooltip">Pornește slideshow-ul cu pozele afișate (F5)</sys:String>
+    <sys:String x:Key="Str.Slideshow.StartHere">Pornește slideshow de aici</sys:String>
+    <sys:String x:Key="Str.Slideshow.Play">Redă</sys:String>
+    <sys:String x:Key="Str.Slideshow.Pause">Pauză</sys:String>
+    <sys:String x:Key="Str.Slideshow.Previous">Poza anterioară</sys:String>
+    <sys:String x:Key="Str.Slideshow.Next">Poza următoare</sys:String>
+    <sys:String x:Key="Str.Slideshow.Exit">Ieși din slideshow</sys:String>
+    <sys:String x:Key="Str.Settings.Slideshow">Slideshow</sys:String>
+    <sys:String x:Key="Str.Settings.SlideshowHint">Fiecare poză se apropie sau se depărtează lent și alunecă într-o direcție aleasă la întâmplare (efect Ken Burns), cu trecere fade spre următoarea.</sys:String>
+    <sys:String x:Key="Str.Settings.Duration">Durată afișare poză</sys:String>
+    <sys:String x:Key="Str.Settings.Fade">Durată fade</sys:String>
+    <sys:String x:Key="Str.Settings.Pan">Intensitate pan</sys:String>
+    <sys:String x:Key="Str.Settings.Zoom">Intensitate zoom</sys:String>
+    <sys:String x:Key="Str.Settings.Music">Muzică</sys:String>
+    <sys:String x:Key="Str.Settings.MusicHint">Piesele MP3 se redau în ordine, în buclă, pe toată durata slideshow-ului.</sys:String>
+    <sys:String x:Key="Str.Settings.MusicEmpty">Nicio piesă adăugată — slideshow-ul rulează fără muzică.</sys:String>
+    <sys:String x:Key="Str.Settings.MusicAdd">Adaugă MP3...</sys:String>
+    <sys:String x:Key="Str.Settings.MusicPick">Alege piese MP3 pentru slideshow</sys:String>
+    <sys:String x:Key="Str.Settings.MusicFilter">Fișiere MP3</sys:String>
+    <sys:String x:Key="Str.Settings.MusicRemove">Elimină din playlist</sys:String>
+    <sys:String x:Key="Str.Settings.MusicMissing">fișier negăsit</sys:String>
+    <sys:String x:Key="Str.Settings.Volume">Volum</sys:String>
 
 </ResourceDictionary>

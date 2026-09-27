@@ -348,6 +348,8 @@
                             <ColumnDefinition Width="*" MinWidth="120" />
                             <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="SearchBox"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
@@ -363,6 +365,17 @@
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameAsc}" />
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameDesc}" />
                         </ComboBox>
+                        <!-- Slideshow cu pozele afișate (§6.10) -->
+                        <Button Grid.Column="4" Style="{StaticResource Button.Primary}" Command="{Binding StartSlideshowCommand}"
+                                ToolTip="{DynamicResource Str.Slideshow.StartTooltip}"
+                                AutomationProperties.Name="{DynamicResource Str.Slideshow.Start}"
+                                IsEnabled="{Binding Grid.IsEmpty, Converter={StaticResource InverseBoolean}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="{DynamicResource Font.Icons}" FontSize="12" VerticalAlignment="Center"
+                                           Text="{DynamicResource Icon.Play}" />
+                                <TextBlock Margin="8,0,0,0" Text="{DynamicResource Str.Slideshow.Start}" />
+                            </StackPanel>
+                        </Button>
                     </Grid>
 
                     <!-- ============ Poze ============ -->

@@ -511,6 +511,58 @@ Wait-ForText $root '1.500 de poze' 5 | Out-Null
 Write-Host "Index actualizat după redenumire: tag-urile s-au păstrat."
 Assert-Alive $proc
 
+# ---- Faza 6: slideshow (Ken Burns + fade, bară de control auto-hide) + panoul de setări ----
+function Get-Counter($window) {
+    $textType = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Text)
+    foreach ($t in $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $textType)) {
+        if ($t.Current.Name -match '^[\d\.]+ / 1\.500$') { return $t.Current.Name }
+    }
+    throw "Contorul slideshow-ului nu a fost găsit."
+}
+
+Invoke-Element (Find-Control $root 'Slideshow' $button)
+$show = Find-Window 'Slideshow'
+Start-Sleep -Seconds 2
+Assert-Alive $proc
+$counter1 = Get-Counter $show
+Write-Host "Slideshow pornit: $counter1"
+Save-Screen '50-slideshow-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{RIGHT}')
+Start-Sleep -Seconds 2
+$counter2 = Get-Counter $show
+Write-Host "După →: $counter2"
+if ($counter2 -eq $counter1) { throw "Navigarea în slideshow nu funcționează." }
+[System.Windows.Forms.SendKeys]::SendWait(' ')
+Find-Control $show 'Redă' $button | Out-Null        # Space = pauză → butonul devine „Redă"
+Save-Screen '51-slideshow-paused-dark'
+[System.Windows.Forms.SendKeys]::SendWait(' ')
+Find-Control $show 'Pauză' $button | Out-Null
+# Fără mișcare de mouse, după 3 s bara și informațiile de sus dispar
+Start-Sleep -Seconds 5
+Save-Screen '52-slideshow-hidden-dark'
+Assert-Alive $proc
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Seconds 1
+$slideCond = New-Object System.Windows.Automation.AndCondition @(
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, 'Slideshow')),
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window)))
+if ([System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $slideCond)) {
+    throw "Esc nu a închis slideshow-ul."
+}
+Assert-Alive $proc
+
+# Setări slideshow: secțiunea din Opțiuni (derulată până la ea)
+Invoke-Element (Find-Control $root 'Opțiuni' $button)
+$settingsWindow = Find-Window 'Opțiuni'
+Find-Control $settingsWindow 'Durată afișare poză' ([System.Windows.Automation.ControlType]::Slider) | Out-Null
+$scrollCond = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::IsScrollPatternAvailableProperty, $true)
+$scroller = $settingsWindow.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $scrollCond)
+if ($scroller) { $scroller.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern).SetScrollPercent(-1, 60) }
+Save-Screen '53-settings-slideshow-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Milliseconds 500
+Assert-Alive $proc
+
 # Comutare pe tema luminoasă
 Invoke-Element (Find-ByName $root 'Comută pe tema luminoasă')
 Save-Screen '08-grid-light'

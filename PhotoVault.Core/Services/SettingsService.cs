@@ -37,6 +37,7 @@ public sealed class SettingsService(IAppSettingsRepository repository) : ISettin
             SlideshowPanIntensity = Double(AppSettingKeys.SlideshowPanIntensity, defaults.SlideshowPanIntensity, 5, 25),
             SlideshowZoomIntensity = Double(AppSettingKeys.SlideshowZoomIntensity, defaults.SlideshowZoomIntensity, 1.05, 1.30),
             SlideshowPlaylistPaths = ParsePlaylist(Raw(AppSettingKeys.SlideshowPlaylistPaths)),
+            SlideshowVolume = (int)Double(AppSettingKeys.SlideshowVolume, defaults.SlideshowVolume, 0, 100),
         };
         return Current;
     }
@@ -52,6 +53,7 @@ public sealed class SettingsService(IAppSettingsRepository repository) : ISettin
         repository.Set(AppSettingKeys.SlideshowPanIntensity, s.SlideshowPanIntensity.ToString(Inv));
         repository.Set(AppSettingKeys.SlideshowZoomIntensity, s.SlideshowZoomIntensity.ToString(Inv));
         repository.Set(AppSettingKeys.SlideshowPlaylistPaths, JsonSerializer.Serialize(s.SlideshowPlaylistPaths));
+        repository.Set(AppSettingKeys.SlideshowVolume, s.SlideshowVolume.ToString(Inv));
     }
 
     public void SetTheme(AppTheme theme)

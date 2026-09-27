@@ -1,6 +1,6 @@
 <!--
-    Opțiuni / Setări. Faza 2: gestiunea folderelor sursă și tema.
-    Secțiunile pentru slideshow (Faza 6), culoare de accent și limbă (Faza 7) se adaugă aici.
+    Opțiuni / Setări: foldere sursă, slideshow (durate, intensități, muzică), temă.
+    Culoarea de accent și limba (Faza 7) se adaugă aici.
 -->
 <ctl:ThemedWindow x:Class="PhotoVault.App.Views.SettingsWindow"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -92,6 +92,127 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                    </StackPanel>
+                </ContentControl>
+
+                <!-- ============ Slideshow (§6.10) ============ -->
+                <ContentControl Margin="0,14,0,0" Style="{StaticResource Card.Panel}" Padding="20,18">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource Text.SectionIcon}" Text="{DynamicResource Icon.Slideshow}" />
+                            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Style="{StaticResource Text.SectionHeader}"
+                                       Text="{DynamicResource Str.Settings.Slideshow}" />
+                        </StackPanel>
+                        <TextBlock Margin="0,10,0,0" Style="{StaticResource Text.Secondary}" TextWrapping="Wrap" TextTrimming="None"
+                                   Text="{DynamicResource Str.Settings.SlideshowHint}" />
+
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="60" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="{DynamicResource Str.Settings.Duration}" />
+                            <Slider Grid.Row="0" Grid.Column="1" Margin="16,8" Minimum="3" Maximum="15" TickFrequency="0.5"
+                                    IsSnapToTickEnabled="True" Value="{Binding SlideshowSettings.DurationSec}"
+                                    AutomationProperties.Name="{DynamicResource Str.Settings.Duration}" />
+                            <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right"
+                                       Style="{StaticResource Text.Secondary}" Text="{Binding SlideshowSettings.DurationText}" />
+                            <TextBlock Grid.Row="1" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="{DynamicResource Str.Settings.Fade}" />
+                            <Slider Grid.Row="1" Grid.Column="1" Margin="16,8" Minimum="0.5" Maximum="3" TickFrequency="0.1"
+                                    IsSnapToTickEnabled="True" Value="{Binding SlideshowSettings.FadeSec}"
+                                    AutomationProperties.Name="{DynamicResource Str.Settings.Fade}" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right"
+                                       Style="{StaticResource Text.Secondary}" Text="{Binding SlideshowSettings.FadeText}" />
+                            <TextBlock Grid.Row="2" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="{DynamicResource Str.Settings.Pan}" />
+                            <Slider Grid.Row="2" Grid.Column="1" Margin="16,8" Minimum="5" Maximum="25" TickFrequency="1"
+                                    IsSnapToTickEnabled="True" Value="{Binding SlideshowSettings.PanPercent}"
+                                    AutomationProperties.Name="{DynamicResource Str.Settings.Pan}" />
+                            <TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right"
+                                       Style="{StaticResource Text.Secondary}" Text="{Binding SlideshowSettings.PanText}" />
+                            <TextBlock Grid.Row="3" VerticalAlignment="Center" Style="{StaticResource Text.Body}" Text="{DynamicResource Str.Settings.Zoom}" />
+                            <Slider Grid.Row="3" Grid.Column="1" Margin="16,8" Minimum="1.05" Maximum="1.3" TickFrequency="0.01"
+                                    IsSnapToTickEnabled="True" Value="{Binding SlideshowSettings.ZoomFactor}"
+                                    AutomationProperties.Name="{DynamicResource Str.Settings.Zoom}" />
+                            <TextBlock Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right"
+                                       Style="{StaticResource Text.Secondary}" Text="{Binding SlideshowSettings.ZoomText}" />
+                        </Grid>
+
+                        <Border Margin="0,14,0,14" Style="{StaticResource Divider.Horizontal}" />
+
+                        <!-- Muzică: playlist MP3 în buclă + volum -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.SectionIcon}" FontSize="16" Text="{DynamicResource Icon.Music}" />
+                            <TextBlock Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center" Style="{StaticResource Text.Body}"
+                                       FontWeight="SemiBold" Text="{DynamicResource Str.Settings.Music}" />
+                            <Button Grid.Column="2" Style="{StaticResource Button.Secondary}" Command="{Binding SlideshowSettings.AddTracksCommand}"
+                                    AutomationProperties.Name="{DynamicResource Str.Settings.MusicAdd}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontFamily="{DynamicResource Font.Icons}" FontSize="12" VerticalAlignment="Center"
+                                               Text="{DynamicResource Icon.Add}" />
+                                    <TextBlock Margin="8,0,0,0" Text="{DynamicResource Str.Settings.MusicAdd}" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        <TextBlock Margin="0,8,0,0" Style="{StaticResource Text.Secondary}" TextWrapping="Wrap" TextTrimming="None"
+                                   Text="{DynamicResource Str.Settings.MusicHint}" />
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource Text.Caption}" Text="{DynamicResource Str.Settings.MusicEmpty}"
+                                   Visibility="{Binding SlideshowSettings.HasTracks, Converter={StaticResource InverseBoolToVisibility}}" />
+                        <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding SlideshowSettings.Tracks}" Focusable="False">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,3" Padding="12,6" CornerRadius="{DynamicResource Radius.Control}"
+                                            Background="{DynamicResource Brush.Surface}"
+                                            BorderBrush="{DynamicResource Brush.Control.Border}" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Style="{StaticResource Text.Icon}" FontSize="14"
+                                                       Foreground="{DynamicResource Brush.Accent}" Text="{DynamicResource Icon.Music}" />
+                                            <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource Text.Body}" Text="{Binding Name}" ToolTip="{Binding Path}" />
+                                                <TextBlock Style="{StaticResource Text.Caption}" Foreground="{DynamicResource Brush.Status.Error}"
+                                                           Text="{DynamicResource Str.Settings.MusicMissing}"
+                                                           Visibility="{Binding Exists, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            </StackPanel>
+                                            <Button Grid.Column="2" Style="{StaticResource Button.Icon.Small}" Width="30" Height="30"
+                                                    Content="{DynamicResource Icon.Close}" Command="{Binding RemoveCommand}"
+                                                    ToolTip="{DynamicResource Str.Settings.MusicRemove}"
+                                                    AutomationProperties.Name="{DynamicResource Str.Settings.MusicRemove}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="60" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource Text.Icon}" FontSize="14" Text="{DynamicResource Icon.Volume}" />
+                                <TextBlock Margin="8,0,0,0" Style="{StaticResource Text.Body}" Text="{DynamicResource Str.Settings.Volume}" />
+                            </StackPanel>
+                            <Slider Grid.Column="1" Margin="16,8" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True"
+                                    Value="{Binding SlideshowSettings.Volume}" AutomationProperties.Name="{DynamicResource Str.Settings.Volume}" />
+                            <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" Style="{StaticResource Text.Secondary}"
+                                       Text="{Binding SlideshowSettings.VolumeText}" />
+                        </Grid>
                     </StackPanel>
                 </ContentControl>
 

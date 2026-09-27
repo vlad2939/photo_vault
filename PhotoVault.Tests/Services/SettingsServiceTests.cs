@@ -43,6 +43,7 @@ public class SettingsServiceTests
         service.Current.SlideshowDurationSec = 9.5;
         service.Current.SlideshowZoomIntensity = 1.2;
         service.Current.SlideshowPlaylistPaths = [@"C:\Muzica\a.mp3", @"D:\b.mp3"];
+        service.Current.SlideshowVolume = 35;
         service.Save();
 
         var reloaded = new SettingsService(repository).Load();
@@ -52,6 +53,7 @@ public class SettingsServiceTests
         Assert.Equal(9.5, reloaded.SlideshowDurationSec);
         Assert.Equal(1.2, reloaded.SlideshowZoomIntensity);
         Assert.Equal([@"C:\Muzica\a.mp3", @"D:\b.mp3"], reloaded.SlideshowPlaylistPaths);
+        Assert.Equal(35, reloaded.SlideshowVolume);
     }
 
     [Fact]

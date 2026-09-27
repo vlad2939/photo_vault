@@ -77,6 +77,9 @@ public partial class MainWindow : ThemedWindow
         var rotate = MenuItem("Str.Photo.Rotate", vm.RotateCommand, null, "Icon.Rotate");
         rotate.InputGestureText = "R";
         menu.Items.Add(rotate);
+        var slideshow = MenuItem("Str.Slideshow.StartHere", vm.StartSlideshowCommand, vm.Grid.SelectedPhoto, "Icon.Slideshow");
+        slideshow.InputGestureText = "F5";
+        menu.Items.Add(slideshow);
         menu.Items.Add(new Separator());
 
         var albumMenu = MenuItem("Str.Photo.AddToAlbum", null, null, "Icon.Album");
@@ -142,6 +145,11 @@ public partial class MainWindow : ThemedWindow
         {
             SearchBox.Focus();
             SearchBox.SelectAll();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.F5 && Keyboard.Modifiers == ModifierKeys.None && ViewModel is { } vm)
+        {
+            vm.StartSlideshowCommand.Execute(null);
             e.Handled = true;
         }
     }

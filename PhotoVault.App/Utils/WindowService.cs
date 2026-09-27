@@ -6,7 +6,7 @@ using PhotoVault.Core.Services;
 namespace PhotoVault.App.Utils;
 
 public sealed class WindowService(IMetadataService metadata, IPhotoService photoService, IBatchRenameService batchRename,
-    IDialogService dialogs, IFolderPicker folderPicker) : IWindowService
+    IDialogService dialogs, IFolderPicker folderPicker, ISettingsService settings, ISlideshowService slideshow) : IWindowService
 {
     private static Window? Owner => Application.Current.MainWindow;
 
@@ -44,5 +44,15 @@ public sealed class WindowService(IMetadataService metadata, IPhotoService photo
         var window = new BatchRenameWindow { DataContext = viewModel, Owner = Owner };
         window.ShowDialog();
         return viewModel.LibraryChanged;
+    }
+
+    public PhotoItemViewModel? ShowSlideshow(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title)
+    {
+        if (photos.Count == 0) return null;
+        var viewModel = new SlideshowViewModel(photos, startIndex, title, settings.Current, metadata, slideshow,
+            new MusicPlayer(slideshow));
+        var window = new SlideshowWindow { DataContext = viewModel, Owner = Owner };
+        window.ShowDialog();
+        return viewModel.Current;
     }
 }

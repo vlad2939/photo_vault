@@ -46,7 +46,7 @@ public partial class MainViewModel : ObservableObject
 
     public MainViewModel(ISettingsService settings, IThemeService theme, IDialogService dialogs, IWindowService windows,
         IPhotoIndexService index, IThumbnailService thumbnails, IMetadataService metadata, IAlbumService albumService,
-        ITagService tagService, IPhotoService photoService, IFolderPicker folderPicker)
+        ITagService tagService, IPhotoService photoService, IFolderPicker folderPicker, IFilePicker filePicker)
     {
         _settings = settings;
         _theme = theme;
@@ -63,6 +63,7 @@ public partial class MainViewModel : ObservableObject
         Library = new FolderTreeViewModel(index, dialogs, folderPicker, Status, Grid, _shutdown.Token);
         Albums = new AlbumViewModel(albumService, thumbnails, dialogs);
         Tags = new TagViewModel(tagService, dialogs);
+        SlideshowSettings = new SlideshowSettingsViewModel(settings, filePicker);
 
         Grid.PropertyChanged += OnGridPropertyChanged;
         _searchDebounce.Tick += (_, _) =>
@@ -90,6 +91,7 @@ public partial class MainViewModel : ObservableObject
     public FolderTreeViewModel Library { get; }
     public AlbumViewModel Albums { get; }
     public TagViewModel Tags { get; }
+    public SlideshowSettingsViewModel SlideshowSettings { get; }
 
     [ObservableProperty]
     public partial bool IsDarkTheme { get; set; }
@@ -380,6 +382,17 @@ public partial class MainViewModel : ObservableObject
     {
         // Pozele indexate redenumite și-au păstrat Id-ul; se reîncarcă doar numele / căile afișate
         if (_windows.ShowBatchRename()) await Library.RefreshAsync();
+    }
+
+    /// <summary>Slideshow cu pozele afișate în grid (context + căutare + sortare), de la poza selectată (§6.10).</summary>
+    [RelayCommand]
+    private void StartSlideshow(PhotoItemViewModel? from)
+    {
+        if (!IsPhotosView || Grid.Photos.Count == 0) return;
+        from ??= Grid.SelectedPhoto;
+        var start = from is null ? 0 : Math.Max(0, Grid.Photos.IndexOf(from));
+        var reached = _windows.ShowSlideshow(Grid.Photos.ToList(), start, ContextTitle);
+        if (reached is not null) Grid.SelectedPhoto = reached;
     }
 
     [RelayCommand]

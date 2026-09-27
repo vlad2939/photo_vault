@@ -212,7 +212,7 @@ CREATE TABLE AppSettings (
 );
 -- Exemple de chei: "Theme" (dark/light), "SlideshowDurationSec",
 -- "SlideshowFadeMs", "SlideshowPanIntensity", "SlideshowZoomIntensity",
--- "SlideshowPlaylistPaths" (JSON array)
+-- "SlideshowPlaylistPaths" (JSON array), "SlideshowVolume" (0–100)
 ```
 
 **Notă privind evoluția schemei**: schema e aplicată prin scripturi de migrare numerotate, incluse în assembly (`PhotoVault.Data/Migrations/NNN_*.sql`), iar versiunea curentă e ținută în `PRAGMA user_version`; o bază de date existentă se actualizează automat la pornire. Migrări aplicate până acum: `001_InitialSchema` (schema de mai sus), `002_RetryFailedThumbnails` (reîncercarea miniaturilor RAW eșuate), `003_AlbumSubtitle` (coloana `Albums.Subtitle`). Convenție: `Photos.ThumbnailPath` = `NULL` → miniatură negenerată încă; `''` (text gol) → fișier ilizibil (se afișează iconița de rezervă, nu se reîncearcă la fiecare pornire, dar se reîncearcă la re-scanarea folderului).
@@ -670,7 +670,7 @@ Aceste patru funcționalități **nu fac parte din scope-ul ferm** stabilit în 
 
 ---
 
-## 15. Decizii stabilite în timpul implementării (Fazele 0–5)
+## 15. Decizii stabilite în timpul implementării (Fazele 0–6)
 
 Clarificări și ajustări convenite pe parcursul dezvoltării; au prioritate față de formulările inițiale din secțiunile anterioare acolo unde diferă (secțiunile relevante au fost deja actualizate).
 
@@ -685,6 +685,9 @@ Clarificări și ajustări convenite pe parcursul dezvoltării; au prioritate fa
 | Tag-uri | Badge pe miniaturile pozelor cu tag-uri (§6.6) |
 | Redenumire batch — index | Pozele deja indexate dintr-un folder redenumit sunt **actualizate direct în index** (cale + nume, același Id), deci își păstrează albumele, tag-urile și rotirea; nu mai e necesară re-scanarea (§6.8) |
 | Redenumire batch — execuție | Doar fișierele foto suportate aflate direct în folder (fără subfoldere); redenumire în două etape (nume temporar → nume final), cu revenire la numele inițiale dacă o mutare eșuează; numerotare după nume sau după data fișierului, cu număr de start configurabil (§6.8) |
+| Slideshow — pornire și final | Buton „Slideshow" deasupra grid-ului, F5 sau meniul contextual al pozei; rulează cu pozele afișate (context + căutare + sortare), de la poza selectată; redarea automată se încheie după ultima poză (revenire în galerie cu ultima poză selectată); navigarea manuală ← / → trece circular de la ultima la prima (§6.10) |
+| Slideshow — Ken Burns | Scara de bază = 1 + intensitatea pan (ex. 1,10 la 10%), astfel încât deplasarea nu scoate niciodată marginea imaginii în cadru; zoom in = bază → bază × intensitate zoom, zoom out = invers; pan pe una din cele 4 diagonale; mișcarea durează fade-in + afișare + fade-out; pauza îngheață mișcarea (§6.10) |
+| Slideshow — muzică | NAudio 3.x (`WaveOut`, fostul `WaveOutEvent`); volumul (0–100%, cheia `SlideshowVolume`) se setează în Opțiuni; piesele lipsă / ilizibile sunt sărite; fără dispozitiv audio → slideshow fără muzică, fără eroare (§6.10) |
 | ImageSharp | Versiunea 3.1.x (4.x cere cheie de licență la build) |
 | Structura proiectului | Pe lângă §3.3: `PhotoVault.Core/Abstractions/` (interfețele repository-urilor, ca serviciile din Core să nu depindă de Data), `PhotoVault.App/Utils/` (teme, DWM, dialoguri, localizare), `PhotoVault.App/Resources/Localization/` (texte RO/EN) |
 | Verificare pe Windows | Workflow GitHub Actions (`.github/workflows/windows-build.yml`): build, teste unitare, smoke test UI cu capturi de ecran și versiune portabilă descărcabilă, la fiecare push |

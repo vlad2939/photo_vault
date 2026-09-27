@@ -19,4 +19,7 @@ public interface IWindowService
 
     /// <summary>Utilitarul de redenumire batch (§6.8); true dacă au fost actualizate poze din bibliotecă.</summary>
     bool ShowBatchRename();
+
+    /// <summary>Slideshow pe tot ecranul (§6.10); întoarce poza la care s-a ajuns.</summary>
+    PhotoItemViewModel? ShowSlideshow(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title);
 }
