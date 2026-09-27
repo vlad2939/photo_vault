@@ -99,7 +99,7 @@ public partial class AlbumViewModel(IAlbumService albums, IThumbnailService thum
     public void DeleteAlbum(AlbumItemViewModel album)
     {
         var answer = dialogs.Show(Loc.Get("Str.Albums.DeleteTitle"),
-            Loc.Format("Str.Albums.DeleteConfirm", album.Name, Loc.Number(album.PhotoCount)),
+            Loc.Format("Str.Albums.DeleteConfirm", album.Name, Loc.PhotoCount(album.PhotoCount)),
             DialogKind.Warning, DialogButtons.YesNo);
         if (answer != DialogResultKind.Yes) return;
         albums.Delete(album.Id);

@@ -81,7 +81,7 @@ public partial class TagViewModel(ITagService tags, IDialogService dialogs) : Ob
     public void DeleteTag(TagItemViewModel tag)
     {
         var answer = dialogs.Show(Loc.Get("Str.Tags.DeleteTitle"),
-            Loc.Format("Str.Tags.DeleteConfirm", tag.Name, Loc.Number(tag.PhotoCount)),
+            Loc.Format("Str.Tags.DeleteConfirm", tag.Name, Loc.PhotoCount(tag.PhotoCount)),
             DialogKind.Warning, DialogButtons.YesNo);
         if (answer != DialogResultKind.Yes) return;
         tags.Delete(tag.Id);

@@ -63,8 +63,10 @@ public partial class MainWindow : ThemedWindow
     {
         if (ViewModel is not { } vm || PhotoList.ContextMenu is not { } menu) return;
 
-        // Click dreapta în afara unei poze → fără meniu
-        if (FindAncestor<ListBoxItem>(e.OriginalSource as DependencyObject) is null || vm.Grid.SelectedPhotos.Count == 0)
+        // Click dreapta în afara unei poze → fără meniu (din tastatură — Shift+F10 / tasta Meniu — e suficientă o selecție)
+        var fromKeyboard = e.CursorLeft < 0 && e.CursorTop < 0;
+        if (vm.Grid.SelectedPhotos.Count == 0 ||
+            (!fromKeyboard && FindAncestor<ListBoxItem>(e.OriginalSource as DependencyObject) is null))
         {
             e.Handled = true;
             return;

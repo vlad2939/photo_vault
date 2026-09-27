@@ -121,7 +121,7 @@ public partial class FolderTreeViewModel : ObservableObject
     public async Task RemoveAsync(SourceFolderViewModel folder)
     {
         var answer = _dialogs.Show(Loc.Get("Str.Library.RemoveTitle"),
-            Loc.Format("Str.Library.RemoveConfirm", folder.FolderPath, Loc.Number(folder.PhotoCount)),
+            Loc.Format("Str.Library.RemoveConfirm", folder.FolderPath, Loc.PhotoCount(folder.PhotoCount)),
             DialogKind.Warning, DialogButtons.YesNo);
         if (answer != DialogResultKind.Yes) return;
 

@@ -274,10 +274,14 @@ Assert-Alive $proc
 $menuItem = [System.Windows.Automation.ControlType]::MenuItem
 $button = [System.Windows.Automation.ControlType]::Button
 
+# Click dreapta real (mouse) pe prima poză — selecția multiplă existentă se păstrează
 function Open-PhotoContextMenu($root) {
     $g = Get-GridItems $root
-    $g.Items[0].SetFocus()
-    [System.Windows.Forms.SendKeys]::SendWait('+{F10}')
+    $pt = $g.Items[0].GetClickablePoint()
+    [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point([int]$pt.X, [int]$pt.Y)
+    Start-Sleep -Milliseconds 200
+    [Native]::mouse_event(0x0008, 0, 0, 0, [UIntPtr]::Zero)   # RIGHTDOWN
+    [Native]::mouse_event(0x0010, 0, 0, 0, [UIntPtr]::Zero)   # RIGHTUP
     Start-Sleep -Milliseconds 700
 }
 
@@ -307,7 +311,8 @@ $addToAlbum.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]:
 Start-Sleep -Milliseconds 600
 Save-Screen '21-context-menu-album-dark'
 Invoke-Element (Find-Control $desktop 'Vacanta 2024' $menuItem)
-Wait-ForText $root '4 poze adăugate' 5 | Out-Null
+$added = Wait-ForText $root 'Adăugare în albumul' 5
+if ($added -notlike '*: 4 poze') { throw "Mesaj neașteptat după adăugarea în album: $added" }
 
 # Aceeași selecție → Adaugă tag → Tag nou... → „mare"
 Open-PhotoContextMenu $root

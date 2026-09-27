@@ -239,7 +239,7 @@ public partial class MainViewModel : ObservableObject
 
         var added = _albumService.AddPhotos(album.Id, ids);
         Albums.Reload();
-        Status.ShowMessage(Loc.Format("Str.Status.AddedToAlbum", Loc.Number(added), album.Name));
+        Status.ShowMessage(Loc.Format("Str.Status.AddedToAlbum", Loc.PhotoCount(added), album.Name));
     }
 
     /// <summary>„Elimină din album" — doar din contextul unui album deschis; pozele rămân indexate.</summary>
@@ -253,7 +253,7 @@ public partial class MainViewModel : ObservableObject
         var removed = _albumService.RemovePhotos(album.Id, ids);
         Albums.Reload();
         RefreshContext();
-        Status.ShowMessage(Loc.Format("Str.Status.RemovedFromAlbum", Loc.Number(removed), album.Name));
+        Status.ShowMessage(Loc.Format("Str.Status.RemovedFromAlbum", Loc.PhotoCount(removed), album.Name));
     }
 
     [RelayCommand]
@@ -278,7 +278,7 @@ public partial class MainViewModel : ObservableObject
         Tags.Reload();
         Details.RefreshTags();
         if (Context == BrowseContext.Tag) RefreshContext();
-        Status.ShowMessage(Loc.Format("Str.Status.TagAdded", tag.Name, Loc.Number(added)));
+        Status.ShowMessage(Loc.Format("Str.Status.TagAdded", tag.Name, Loc.PhotoCount(added)));
     }
 
     /// <summary>Din panoul de detalii: adaugă un tag doar pozei afișate.</summary>

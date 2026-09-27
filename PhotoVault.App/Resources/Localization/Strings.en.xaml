@@ -53,13 +53,13 @@
     <sys:String x:Key="Str.Library.UnavailableTitle">Folder unavailable</sys:String>
     <sys:String x:Key="Str.Library.Unavailable">The folder “{0}” is not accessible right now (e.g. an external drive is disconnected). Its photos stay in the index; rescan after reconnecting.</sys:String>
     <sys:String x:Key="Str.Library.RemoveTitle">Remove the folder from the library?</sys:String>
-    <sys:String x:Key="Str.Library.RemoveConfirm">The {1} photos in “{0}” will be removed from the index, along with their album memberships and tags. Files on disk are NOT touched.</sys:String>
+    <sys:String x:Key="Str.Library.RemoveConfirm">The photos in “{0}” ({1}) will be removed from the index, along with their album memberships and tags. Files on disk are NOT touched.</sys:String>
     <sys:String x:Key="Str.Status.Scanning">Scanning folder...</sys:String>
     <sys:String x:Key="Str.Status.Indexing">Indexing: {0} / {1} photos</sys:String>
     <sys:String x:Key="Str.Status.Thumbnails">Generating thumbnails: {0} / {1}</sys:String>
     <sys:String x:Key="Str.Status.ThumbnailsDone">Thumbnails generated: {0}</sys:String>
-    <sys:String x:Key="Str.Status.IndexDone">Indexing complete: {0} new photos</sys:String>
-    <sys:String x:Key="Str.Status.RescanDone">Rescan complete: {0} new photos, {1} removed</sys:String>
+    <sys:String x:Key="Str.Status.IndexDone">Indexing complete. New photos: {0}</sys:String>
+    <sys:String x:Key="Str.Status.RescanDone">Rescan complete. New photos: {0}, removed from the index: {1}</sys:String>
     <sys:String x:Key="Str.Status.Removed">The folder “{0}” was removed from the library</sys:String>
     <sys:String x:Key="Str.Library.ShowAll">Show all photos in the library</sys:String>
     <sys:String x:Key="Str.Grid.FolderEmpty">The selected folder contains no photos.</sys:String>
@@ -112,7 +112,7 @@
     <sys:String x:Key="Str.Albums.RenameTitle">Rename album</sys:String>
     <sys:String x:Key="Str.Albums.RenameMessage">New album name:</sys:String>
     <sys:String x:Key="Str.Albums.DeleteTitle">Delete the album?</sys:String>
-    <sys:String x:Key="Str.Albums.DeleteConfirm">The album “{0}” ({1} photos) will be deleted. The photos stay in the library and on disk — only the grouping is removed.</sys:String>
+    <sys:String x:Key="Str.Albums.DeleteConfirm">The album “{0}” ({1}) will be deleted. The photos stay in the library and on disk — only the grouping is removed.</sys:String>
     <sys:String x:Key="Str.Albums.EmptyTitle">No albums yet</sys:String>
     <sys:String x:Key="Str.Albums.EmptyHint">Select photos in the grid, then right-click → Add to album. Or create an album with the + button in the left panel.</sys:String>
     <sys:String x:Key="Str.Tags.Rename">Rename...</sys:String>
@@ -125,7 +125,7 @@
     <sys:String x:Key="Str.Tags.RenameMessage">New tag name:</sys:String>
     <sys:String x:Key="Str.Tags.Duplicate">A tag named “{0}” already exists.</sys:String>
     <sys:String x:Key="Str.Tags.DeleteTitle">Delete the tag?</sys:String>
-    <sys:String x:Key="Str.Tags.DeleteConfirm">The tag “{0}” will be removed from the {1} photos that have it, then deleted. The photos are not affected.</sys:String>
+    <sys:String x:Key="Str.Tags.DeleteConfirm">The tag “{0}” (used on {1}) will be removed from all photos and deleted. The photos are not affected.</sys:String>
     <sys:String x:Key="Str.Photo.Open">Open full screen</sys:String>
     <sys:String x:Key="Str.Photo.AddToAlbum">Add to album</sys:String>
     <sys:String x:Key="Str.Photo.AddTag">Add tag</sys:String>
@@ -135,11 +135,12 @@
     <sys:String x:Key="Str.Details.RemoveTag">Remove tag</sys:String>
     <sys:String x:Key="Str.Details.Created">Created</sys:String>
     <sys:String x:Key="Str.Details.PhotoCount">Photos</sys:String>
-    <sys:String x:Key="Str.Status.AddedToAlbum">{0} photos added to the album “{1}”</sys:String>
-    <sys:String x:Key="Str.Status.RemovedFromAlbum">{0} photos removed from the album “{1}”</sys:String>
+    <sys:String x:Key="Str.Status.AddedToAlbum">Added to the album “{1}”: {0}</sys:String>
+    <sys:String x:Key="Str.Status.RemovedFromAlbum">Removed from the album “{1}”: {0}</sys:String>
     <sys:String x:Key="Str.Status.CoverSet">The cover of the album “{0}” was changed</sys:String>
-    <sys:String x:Key="Str.Status.TagAdded">Tag “{0}” added to {1} photos</sys:String>
-    <sys:String x:Key="Str.Grid.Count">{0} photos</sys:String>
-    <sys:String x:Key="Str.Grid.CountOne">1 photo</sys:String>
+    <sys:String x:Key="Str.Status.TagAdded">Tag “{0}” added to {1}</sys:String>
+    <sys:String x:Key="Str.Count.One">{0} photo</sys:String>
+    <sys:String x:Key="Str.Count.Few">{0} photos</sys:String>
+    <sys:String x:Key="Str.Count.Many">{0} photos</sys:String>
 
 </ResourceDictionary>

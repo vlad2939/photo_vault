@@ -29,7 +29,7 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
 
     public bool IsEmpty => Photos.Count == 0;
 
-    public string CountText => Loc.Format(Photos.Count == 1 ? "Str.Grid.CountOne" : "Str.Grid.Count", Loc.Number(Photos.Count));
+    public string CountText => Loc.PhotoCount(Photos.Count);
 
     /// <summary>Toate pozele selectate în grid (selecție multiplă: Ctrl / Shift / Ctrl+A).</summary>
     public IReadOnlyList<PhotoItemViewModel> SelectedPhotos => _selection;

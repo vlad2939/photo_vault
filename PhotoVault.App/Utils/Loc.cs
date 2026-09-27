@@ -39,6 +39,18 @@ public static class Loc
     public static string Format(string key, params object?[] args) =>
         string.Format(Culture, Get(key), args);
 
+    /// <summary>
+    /// „N poze" cu acordul corect: RO — 1 poză, 2–19 poze, 20+ „de poze" (inclusiv 101–119 → poze);
+    /// EN — 1 photo / N photos.
+    /// </summary>
+    public static string PhotoCount(long count)
+    {
+        var key = count == 1 ? "Str.Count.One"
+            : Culture.TwoLetterISOLanguageName == "ro" && count != 0 && (count % 100 is 0 or >= 20) ? "Str.Count.Many"
+            : "Str.Count.Few";
+        return Format(key, Number(count));
+    }
+
     /// <summary>Număr formatat cu separatorul de mii al limbii curente.</summary>
     public static string Number(long value) => value.ToString("N0", Culture);
 }

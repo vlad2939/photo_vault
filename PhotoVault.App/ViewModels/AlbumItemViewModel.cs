@@ -32,7 +32,7 @@ public partial class AlbumItemViewModel : ObservableObject
 
     public string DateText => DateCreated.ToString("dd.MM.yyyy", Loc.Culture);
     public string PhotoCountText => Loc.Number(PhotoCount);
-    public string PhotoCountLabel => Loc.Format(PhotoCount == 1 ? "Str.Grid.CountOne" : "Str.Grid.Count", Loc.Number(PhotoCount));
+    public string PhotoCountLabel => Loc.PhotoCount(PhotoCount);
 
     /// <summary>Miniatura copertei, încărcată leneș (cardurile vizibile).</summary>
     public ImageSource? Cover

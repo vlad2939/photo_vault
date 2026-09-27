@@ -53,13 +53,13 @@
     <sys:String x:Key="Str.Library.UnavailableTitle">Folder indisponibil</sys:String>
     <sys:String x:Key="Str.Library.Unavailable">Folderul „{0}” nu este accesibil acum (ex. disc extern deconectat). Pozele lui rămân în index; re-scanează după reconectare.</sys:String>
     <sys:String x:Key="Str.Library.RemoveTitle">Elimini folderul din bibliotecă?</sys:String>
-    <sys:String x:Key="Str.Library.RemoveConfirm">Cele {1} poze din „{0}” vor fi eliminate din index, împreună cu apartenența lor la albume și tag-urile. Fișierele de pe disc NU sunt atinse.</sys:String>
+    <sys:String x:Key="Str.Library.RemoveConfirm">Pozele din „{0}” ({1}) vor fi eliminate din index, împreună cu apartenența lor la albume și tag-urile. Fișierele de pe disc NU sunt atinse.</sys:String>
     <sys:String x:Key="Str.Status.Scanning">Scanare folder...</sys:String>
     <sys:String x:Key="Str.Status.Indexing">Indexare: {0} / {1} poze</sys:String>
     <sys:String x:Key="Str.Status.Thumbnails">Generare miniaturi: {0} / {1}</sys:String>
     <sys:String x:Key="Str.Status.ThumbnailsDone">Miniaturi generate: {0}</sys:String>
-    <sys:String x:Key="Str.Status.IndexDone">Indexare finalizată: {0} poze noi</sys:String>
-    <sys:String x:Key="Str.Status.RescanDone">Re-scanare finalizată: {0} poze noi, {1} eliminate</sys:String>
+    <sys:String x:Key="Str.Status.IndexDone">Indexare finalizată. Poze noi: {0}</sys:String>
+    <sys:String x:Key="Str.Status.RescanDone">Re-scanare finalizată. Poze noi: {0}, eliminate din index: {1}</sys:String>
     <sys:String x:Key="Str.Status.Removed">Folderul „{0}” a fost eliminat din bibliotecă</sys:String>
     <sys:String x:Key="Str.Library.ShowAll">Afișează toate pozele din bibliotecă</sys:String>
     <sys:String x:Key="Str.Grid.FolderEmpty">Folderul selectat nu conține poze.</sys:String>
@@ -112,7 +112,7 @@
     <sys:String x:Key="Str.Albums.RenameTitle">Redenumește albumul</sys:String>
     <sys:String x:Key="Str.Albums.RenameMessage">Noul nume al albumului:</sys:String>
     <sys:String x:Key="Str.Albums.DeleteTitle">Ștergi albumul?</sys:String>
-    <sys:String x:Key="Str.Albums.DeleteConfirm">Albumul „{0}” ({1} poze) va fi șters. Pozele rămân în bibliotecă și pe disc — se șterge doar gruparea lor.</sys:String>
+    <sys:String x:Key="Str.Albums.DeleteConfirm">Albumul „{0}” ({1}) va fi șters. Pozele rămân în bibliotecă și pe disc — se șterge doar gruparea lor.</sys:String>
     <sys:String x:Key="Str.Albums.EmptyTitle">Niciun album creat încă</sys:String>
     <sys:String x:Key="Str.Albums.EmptyHint">Selectează poze în grid, apoi click dreapta → Adaugă la album. Sau creează un album cu butonul + din panoul stâng.</sys:String>
     <sys:String x:Key="Str.Tags.Rename">Redenumește...</sys:String>
@@ -125,7 +125,7 @@
     <sys:String x:Key="Str.Tags.RenameMessage">Noul nume al tag-ului:</sys:String>
     <sys:String x:Key="Str.Tags.Duplicate">Există deja un tag numit „{0}”.</sys:String>
     <sys:String x:Key="Str.Tags.DeleteTitle">Ștergi tag-ul?</sys:String>
-    <sys:String x:Key="Str.Tags.DeleteConfirm">Tag-ul „{0}” va fi eliminat de pe cele {1} poze care îl au și șters. Pozele nu sunt afectate.</sys:String>
+    <sys:String x:Key="Str.Tags.DeleteConfirm">Tag-ul „{0}” (folosit la {1}) va fi eliminat de pe toate pozele și șters. Pozele nu sunt afectate.</sys:String>
     <sys:String x:Key="Str.Photo.Open">Deschide pe tot ecranul</sys:String>
     <sys:String x:Key="Str.Photo.AddToAlbum">Adaugă la album</sys:String>
     <sys:String x:Key="Str.Photo.AddTag">Adaugă tag</sys:String>
@@ -135,11 +135,12 @@
     <sys:String x:Key="Str.Details.RemoveTag">Elimină tag-ul</sys:String>
     <sys:String x:Key="Str.Details.Created">Data creării</sys:String>
     <sys:String x:Key="Str.Details.PhotoCount">Număr de poze</sys:String>
-    <sys:String x:Key="Str.Status.AddedToAlbum">{0} poze adăugate în albumul „{1}”</sys:String>
-    <sys:String x:Key="Str.Status.RemovedFromAlbum">{0} poze eliminate din albumul „{1}”</sys:String>
+    <sys:String x:Key="Str.Status.AddedToAlbum">Adăugare în albumul „{1}”: {0}</sys:String>
+    <sys:String x:Key="Str.Status.RemovedFromAlbum">Eliminare din albumul „{1}”: {0}</sys:String>
     <sys:String x:Key="Str.Status.CoverSet">Coperta albumului „{0}” a fost schimbată</sys:String>
-    <sys:String x:Key="Str.Status.TagAdded">Tag-ul „{0}” adăugat la {1} poze</sys:String>
-    <sys:String x:Key="Str.Grid.Count">{0} poze</sys:String>
-    <sys:String x:Key="Str.Grid.CountOne">1 poză</sys:String>
+    <sys:String x:Key="Str.Status.TagAdded">Tag-ul „{0}” adăugat la {1}</sys:String>
+    <sys:String x:Key="Str.Count.One">{0} poză</sys:String>
+    <sys:String x:Key="Str.Count.Few">{0} poze</sys:String>
+    <sys:String x:Key="Str.Count.Many">{0} de poze</sys:String>
 
 </ResourceDictionary>
