@@ -88,7 +88,7 @@
     <sys:String x:Key="Str.Info.Version">Version {0}</sys:String>
     <sys:String x:Key="Str.Info.Author">Author: vlad39</sys:String>
     <sys:String x:Key="Str.Info.HowTo">How to use it</sys:String>
-    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).|Select one or more photos (Ctrl / Shift + click, Ctrl+A), then right-click → Add to album / Add tag. Click the “Albums” title to see albums as a grid of cards; double-click opens an album.|The selected photo's tags appear in the right panel: “+” adds, “×” removes. Click a tag on the left to see all photos that have it.|The search field (Ctrl+F) filters the displayed photos by file name, tags and albums; the name sort order is changed from the list next to it. R rotates the selected photo by 90° (the original file is not modified).</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).|Select one or more photos (Ctrl / Shift + click, Ctrl+A), then right-click → Add to album / Add tag. Click the “Albums” title to see albums as a grid of cards; double-click opens an album.|The selected photo's tags appear in the right panel: “+” adds, “×” removes. Click a tag on the left to see all photos that have it.|The search field (Ctrl+F) filters the displayed photos by file name, tags and albums; the name sort order is changed from the list next to it. R rotates the selected photo by 90° (the original file is not modified).|Batch rename (first icon in the top bar): choose a folder on disk, type a pattern (e.g. Greece_{counter:000}) and see the new names before applying. Photos already in the library keep their albums, tags and rotation.</sys:String>
     <sys:String x:Key="Str.Info.Shortcuts">Keyboard shortcuts</sys:String>
     <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid|Ctrl / Shift + click=Multiple selection in the grid|R=Rotate the photo 90° (grid or full screen)|Ctrl+F=Focus the search field|Esc (in search)=Clear the search</sys:String>
     <sys:String x:Key="Str.Settings.Title">Options</sys:String>
@@ -98,7 +98,6 @@
     <sys:String x:Key="Str.Settings.ThemeDark">Dark theme</sys:String>
     <sys:String x:Key="Str.Settings.ThemeLight">Light theme</sys:String>
     <sys:String x:Key="Str.Settings.MoreSoon">Slideshow settings, accent color and interface language will appear here in upcoming phases.</sys:String>
-    <sys:String x:Key="Str.Placeholder.BatchRename">The batch rename module (with a preview of the new names) will be available in Phase 5.</sys:String>
     <sys:String x:Key="Str.Context.AllPhotos">All photos</sys:String>
     <sys:String x:Key="Str.Albums.ShowAll">Show all albums</sys:String>
     <sys:String x:Key="Str.Albums.Back">Back to albums</sys:String>
@@ -156,5 +155,53 @@
     <sys:String x:Key="Str.Search.Clear">Clear search</sys:String>
     <sys:String x:Key="Str.Photo.Rotate">Rotate 90°</sys:String>
     <sys:String x:Key="Str.Lightbox.Rotate">Rotate 90° (R)</sys:String>
+
+    <!-- Redenumire batch (§6.8) -->
+    <sys:String x:Key="Str.FileCount.One">{0} file</sys:String>
+    <sys:String x:Key="Str.FileCount.Few">{0} files</sys:String>
+    <sys:String x:Key="Str.FileCount.Many">{0} files</sys:String>
+    <sys:String x:Key="Str.Rename.Title">Batch rename</sys:String>
+    <sys:String x:Key="Str.Rename.Subtitle">Rename the photos in a folder on disk, ideally before importing it. The new names are shown in the list before anything is applied.</sys:String>
+    <sys:String x:Key="Str.Rename.Folder">Folder</sys:String>
+    <sys:String x:Key="Str.Rename.ChooseFolder">Choose folder...</sys:String>
+    <sys:String x:Key="Str.Rename.PickFolder">Choose the folder with the photos to rename</sys:String>
+    <sys:String x:Key="Str.Rename.NoFolderShort">No folder selected</sys:String>
+    <sys:String x:Key="Str.Rename.IndexedInfo">This folder is part of the library ({0}). After renaming, the photos are updated in the index automatically — albums, tags and rotation are kept.</sys:String>
+    <sys:String x:Key="Str.Rename.ReadError" xml:space="preserve">The folder cannot be read:&#x0a;{0}</sys:String>
+    <sys:String x:Key="Str.Rename.Pattern">Name pattern</sys:String>
+    <sys:String x:Key="Str.Rename.PatternPlaceholder">e.g. Greece_Holiday_{counter:000}</sys:String>
+    <sys:String x:Key="Str.Rename.Insert">Insert:</sys:String>
+    <sys:String x:Key="Str.Rename.Help">{name} = original name · {counter} or {counter:000} = sequence number (zero-padded) · {date} or {date:yyyyMMdd} = file date · the extension is kept automatically.</sys:String>
+    <sys:String x:Key="Str.Rename.CounterStart">Start at</sys:String>
+    <sys:String x:Key="Str.Rename.Order">Number by</sys:String>
+    <sys:String x:Key="Str.Rename.Order.Name">File name</sys:String>
+    <sys:String x:Key="Str.Rename.Order.Date">File date</sys:String>
+    <sys:String x:Key="Str.Rename.Column.Current">Current name</sys:String>
+    <sys:String x:Key="Str.Rename.Column.New">New name</sys:String>
+    <sys:String x:Key="Str.Rename.Column.Status">Status</sys:String>
+    <sys:String x:Key="Str.Rename.Preview">Preview</sys:String>
+    <sys:String x:Key="Str.Rename.NoFolder">Choose a folder to preview the new names.</sys:String>
+    <sys:String x:Key="Str.Rename.NoFiles">The folder contains no supported photos (JPG, PNG, CR2, NEF, DNG). Subfolders are not included.</sys:String>
+    <sys:String x:Key="Str.Rename.Error.Empty">Type a pattern for the new names.</sys:String>
+    <sys:String x:Key="Str.Rename.Error.Brace">The pattern has an unclosed or extra brace.</sys:String>
+    <sys:String x:Key="Str.Rename.Error.Token">Unknown variable: {0}. Available variables: {{name}}, {{counter}}, {{counter:000}}, {{date}}, {{date:format}}, {{ext}}.</sys:String>
+    <sys:String x:Key="Str.Rename.Error.Start">The start number must be a whole number (0 or greater).</sys:String>
+    <sys:String x:Key="Str.Rename.Summary.ToRename">{0} to rename</sys:String>
+    <sys:String x:Key="Str.Rename.Summary.Conflicts">{0} in conflict</sys:String>
+    <sys:String x:Key="Str.Rename.Summary.Unchanged">{0} unchanged</sys:String>
+    <sys:String x:Key="Str.Rename.ConflictHint">Resolve the conflicts (marked in red) by changing the pattern before applying.</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Ok">Will be renamed</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Unchanged">Unchanged</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Invalid">Invalid name</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Duplicate">Duplicate name</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Exists">Already exists</sys:String>
+    <sys:String x:Key="Str.Rename.Apply">Apply rename</sys:String>
+    <sys:String x:Key="Str.Rename.ConfirmTitle">Confirm rename</sys:String>
+    <sys:String x:Key="Str.Rename.ConfirmMessage" xml:space="preserve">{0} in the folder “{1}” will be renamed.&#x0a;This changes the names of the original files on disk.</sys:String>
+    <sys:String x:Key="Str.Rename.ConfirmIndexed">Photos already in the library will be updated automatically (albums, tags and rotation are kept).</sys:String>
+    <sys:String x:Key="Str.Rename.ConfirmYes">Rename</sys:String>
+    <sys:String x:Key="Str.Rename.Done">Files renamed: {0}.</sys:String>
+    <sys:String x:Key="Str.Rename.DoneIndexed">The library was updated: {0}.</sys:String>
+    <sys:String x:Key="Str.Rename.Failed" xml:space="preserve">The rename was not applied. The files kept their original names.&#x0a;&#x0a;{0}</sys:String>
 
 </ResourceDictionary>

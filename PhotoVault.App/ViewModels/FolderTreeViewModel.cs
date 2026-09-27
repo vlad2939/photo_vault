@@ -154,6 +154,9 @@ public partial class FolderTreeViewModel : ObservableObject
         StartThumbnails();
     }
 
+    /// <summary>Reîncarcă foldere + poze din index (ex. după o redenumire batch).</summary>
+    public Task RefreshAsync() => ReloadAsync();
+
     private async Task ReloadAsync()
     {
         var (folders, counts, photos) = await Task.Run(() =>

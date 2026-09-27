@@ -34,4 +34,13 @@ public interface IPhotoRepository
 
     /// <summary>Marchează pentru reîncercare miniaturile eșuate (ThumbnailPath = '') dintr-un folder sursă.</summary>
     void ResetFailedThumbnails(long sourceFolderId);
+
+    /// <summary>Numărul de poze indexate aflate direct în folderul dat (fără subfoldere).</summary>
+    int CountInFolder(string folderPath);
+
+    /// <summary>
+    /// Actualizează calea + numele pozelor redenumite pe disc (o tranzacție), păstrând Id-ul — deci albumele,
+    /// tag-urile și rotirea. Întoarce câte poze indexate au fost actualizate.
+    /// </summary>
+    int UpdatePaths(IReadOnlyList<(string OldPath, string NewPath)> renames);
 }

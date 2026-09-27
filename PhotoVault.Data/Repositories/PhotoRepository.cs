@@ -147,6 +147,37 @@ public sealed class PhotoRepository(DatabaseContext db) : IPhotoRepository
             new { sourceFolderId });
     }
 
+    public int CountInFolder(string folderPath)
+    {
+        var prefix = Path.TrimEndingDirectorySeparator(folderPath) + Path.DirectorySeparatorChar;
+        using var connection = db.OpenConnection();
+        var paths = connection.Query<string>("SELECT FullPath FROM Photos WHERE FullPath LIKE @pattern ESCAPE '^'",
+            new { pattern = EscapeLike(prefix) + "%" });
+        // Doar fișierele aflate direct în folder, nu în subfoldere
+        return paths.Count(p => p.Length > prefix.Length && p.IndexOf(Path.DirectorySeparatorChar, prefix.Length) < 0);
+    }
+
+    public int UpdatePaths(IReadOnlyList<(string OldPath, string NewPath)> renames)
+    {
+        if (renames.Count == 0) return 0;
+        using var connection = db.OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        // Două etape, ca pe disc: FullPath e UNIQUE, iar un schimb de nume (A→B, B→A) ar încălca temporar constrângerea
+        const string marker = "|";   // caracter imposibil într-o cale Windows
+        foreach (var (oldPath, _) in renames)
+            connection.Execute("UPDATE Photos SET FullPath = @temp WHERE FullPath = @oldPath COLLATE NOCASE",
+                new { temp = marker + oldPath, oldPath }, transaction);
+        var updated = 0;
+        foreach (var (oldPath, newPath) in renames)
+            updated += connection.Execute("UPDATE Photos SET FullPath = @newPath, FileName = @name WHERE FullPath = @temp",
+                new { newPath, name = Path.GetFileName(newPath), temp = marker + oldPath }, transaction);
+        transaction.Commit();
+        return updated;
+    }
+
+    private static string EscapeLike(string value) =>
+        value.Replace("^", "^^").Replace("%", "^%").Replace("_", "^_");
+
     private static PhotoItem Map(Row r) => new()
     {
         Id = r.Id,

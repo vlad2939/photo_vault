@@ -2,7 +2,7 @@
 
 Aplicație portabilă pentru organizarea și vizualizarea albumelor foto personale.
 
-**Stadiu dezvoltare:** Faza 4 finalizată (sortare, căutare, rotire) · **Ultima actualizare:** septembrie 2026
+**Stadiu dezvoltare:** Faza 5 finalizată (redenumire batch) · **Ultima actualizare:** septembrie 2026
 
 ---
 
@@ -85,10 +85,19 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 
 ### Redenumire batch (utilitar separat)
 
-- Buton dedicat în bara secundară (lângă Info/Opțiuni/Temă).
+- Buton dedicat în bara secundară (prima iconiță, lângă Info/Opțiuni/Temă) — deschide o fereastră separată.
 - Util **înainte** de a importa un folder în PhotoVault — de exemplu, ca să redenumești o serie de poze descărcate de pe cameră (nume gen `IMG_1234.jpg`) într-un format mai clar (`Vacanta_Grecia_001.jpg`, `Vacanta_Grecia_002.jpg`, ...).
-- Alegi folderul, definești un pattern de nume (cu variabile: nume original, numărător secvențial, dată), și **vezi un preview** al numelor rezultate înainte să confirmi.
-- Operațiunea redenumește efectiv fișierele pe disc — dacă folderul respectiv e deja indexat în PhotoVault, re-scanează-l după redenumire.
+- Alegi folderul (se iau doar pozele JPG/PNG/CR2/NEF/DNG aflate direct în el, fără subfoldere), scrii un pattern și **vezi imediat, în listă, numele rezultate** pentru fiecare fișier. Nimic nu se schimbă pe disc până nu apeși „Aplică redenumirea” și confirmi.
+- Variabile disponibile (se pot insera și cu butoanele de sub câmp):
+  - `{name}` — numele original, fără extensie
+  - `{counter}` sau `{counter:000}` — număr secvențial (cu zerouri în față după numărul de `0`); „Începe de la” alege primul număr
+  - `{date}` sau `{date:yyyyMMdd}` — data fișierului de pe disc (implicit `yyyy-MM-dd`)
+  - `{ext}` — extensia originală; extensia se păstrează oricum automat la final
+- Numerotarea poate urma **numele fișierelor** sau **data fișierelor**.
+- Exemplu: pattern `Vacanta_Grecia_{counter:000}` → `IMG_1234.JPG` devine `Vacanta_Grecia_001.JPG`.
+- Conflictele sunt marcate cu roșu și blochează aplicarea: două fișiere cu același nume nou, un fișier existent (din afara lotului) cu acel nume, sau un nume invalid în Windows (caractere `< > : " / \ | ? *`, nume rezervate precum `CON`).
+- Dacă folderul face parte din bibliotecă, fereastra te anunță; după redenumire pozele sunt **actualizate automat în index**, deci își păstrează albumele, tag-urile și rotirea (nu mai e nevoie de re-scanare).
+- Dacă o redenumire eșuează la jumătate (ex. un fișier blocat de alt program), fișierele deja mutate revin la numele inițiale.
 
 ### Slideshow
 

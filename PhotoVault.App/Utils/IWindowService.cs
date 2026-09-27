@@ -16,4 +16,7 @@ public interface IWindowService
 
     /// <summary>Fereastra de Setări / Opțiuni.</summary>
     void ShowSettings(MainViewModel viewModel);
+
+    /// <summary>Utilitarul de redenumire batch (§6.8); true dacă au fost actualizate poze din bibliotecă.</summary>
+    bool ShowBatchRename();
 }

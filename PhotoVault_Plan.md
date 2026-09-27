@@ -384,7 +384,9 @@ Fereastră dedicată, independentă de indexul principal:
   - `{ext}` — extensia originală (păstrată automat)
 - Exemplu pattern: `Vacanta_Grecia_{counter:000}` → `Vacanta_Grecia_001.jpg`, `Vacanta_Grecia_002.jpg`, ...
 - Buton "Aplică" execută redenumirea fizică pe disc (folosind `File.Move` / `File.Rename`), cu verificare de coliziuni de nume înainte de execuție.
-- Dacă folderul redenumit e deja indexat în PhotoVault, se recomandă re-scanare manuală a folderului sursă respectiv după redenumire (paths-urile vechi vor fi detectate ca lipsă și eliminate, cele noi vor fi reindexate) — comunicat clar în UI printr-un mesaj informativ.
+- Dacă folderul redenumit e deja indexat în PhotoVault, fereastra afișează un mesaj informativ, iar după redenumire pozele respective sunt **actualizate automat în index** (cale + nume, același Id) — albumele, tag-urile și rotirea se păstrează, fără re-scanare. *(Decizie de implementare, Faza 5 — înlocuiește re-scanarea manuală recomandată inițial, care ar fi pierdut organizarea pozelor redenumite.)*
+- Se iau doar fișierele foto suportate aflate direct în folderul ales (fără subfoldere). Numerotarea poate urma numele sau data fișierelor, cu număr de start configurabil.
+- Conflicte care blochează aplicarea: nume duplicat în lot, fișier existent (din afara lotului) cu același nume, nume invalid în Windows. Redenumirea se face în două etape (nume temporar → nume final), astfel încât schimburile de nume funcționează; la eroare, fișierele revin la numele inițiale.
 
 ### 6.9 Rotire logică
 
@@ -668,7 +670,7 @@ Aceste patru funcționalități **nu fac parte din scope-ul ferm** stabilit în 
 
 ---
 
-## 15. Decizii stabilite în timpul implementării (Fazele 0–3)
+## 15. Decizii stabilite în timpul implementării (Fazele 0–5)
 
 Clarificări și ajustări convenite pe parcursul dezvoltării; au prioritate față de formulările inițiale din secțiunile anterioare acolo unde diferă (secțiunile relevante au fost deja actualizate).
 
@@ -681,6 +683,8 @@ Clarificări și ajustări convenite pe parcursul dezvoltării; au prioritate fa
 | Previzualizare RAW | Se folosește cea mai mare previzualizare JPEG **baseline/progressive** încorporată; datele RAW stocate ca JPEG lossless (CR2/DNG) sunt ignorate, fiind nedecodabile |
 | Albume | Nume unice + subtitlu liber pe card (§4, §5.7, §6.5) |
 | Tag-uri | Badge pe miniaturile pozelor cu tag-uri (§6.6) |
+| Redenumire batch — index | Pozele deja indexate dintr-un folder redenumit sunt **actualizate direct în index** (cale + nume, același Id), deci își păstrează albumele, tag-urile și rotirea; nu mai e necesară re-scanarea (§6.8) |
+| Redenumire batch — execuție | Doar fișierele foto suportate aflate direct în folder (fără subfoldere); redenumire în două etape (nume temporar → nume final), cu revenire la numele inițiale dacă o mutare eșuează; numerotare după nume sau după data fișierului, cu număr de start configurabil (§6.8) |
 | ImageSharp | Versiunea 3.1.x (4.x cere cheie de licență la build) |
 | Structura proiectului | Pe lângă §3.3: `PhotoVault.Core/Abstractions/` (interfețele repository-urilor, ca serviciile din Core să nu depindă de Data), `PhotoVault.App/Utils/` (teme, DWM, dialoguri, localizare), `PhotoVault.App/Resources/Localization/` (texte RO/EN) |
 | Verificare pe Windows | Workflow GitHub Actions (`.github/workflows/windows-build.yml`): build, teste unitare, smoke test UI cu capturi de ecran și versiune portabilă descărcabilă, la fiecare push |
@@ -776,7 +780,7 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 - Buton dedicat în bara secundară (lângă Info/Opțiuni/Temă).
 - Util **înainte** de a importa un folder în PhotoVault — de exemplu, ca să redenumești o serie de poze descărcate de pe cameră (nume gen `IMG_1234.jpg`) într-un format mai clar (`Vacanta_Grecia_001.jpg`, `Vacanta_Grecia_002.jpg`, ...).
 - Alegi folderul, definești un pattern de nume (cu variabile: nume original, numărător secvențial, dată), și **vezi un preview** al numelor rezultate înainte să confirmi.
-- Operațiunea redenumește efectiv fișierele pe disc — dacă folderul respectiv e deja indexat în PhotoVault, re-scanează-l după redenumire.
+- Operațiunea redenumește efectiv fișierele pe disc — dacă folderul respectiv e deja indexat în PhotoVault, pozele sunt actualizate automat în index (își păstrează albumele, tag-urile și rotirea).
 
 ### Slideshow
 

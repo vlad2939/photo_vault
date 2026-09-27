@@ -425,11 +425,90 @@ Start-Sleep -Seconds 1
 Save-Screen '33-rotate-dark'
 Assert-Alive $proc
 
-# Dialog custom (Redenumire batch afișează „În curând" până în Faza 5)
-Invoke-Element (Find-Control $root 'Redenumire batch' ([System.Windows.Automation.ControlType]::Button))
-Save-Screen '07-dialog-dark'
-[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+# ---- Faza 5: redenumire batch pe un subfolder indexat (2001 → 215 poze, printre ele DSC_0001 cu tag + album) ----
+function Find-Window([string] $name, [int] $timeoutSec = 10) {
+    $cond = New-Object System.Windows.Automation.AndCondition @(
+        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, $name)),
+        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window)))
+    $deadline = (Get-Date).AddSeconds($timeoutSec)
+    while ((Get-Date) -lt $deadline) {
+        $w = [System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $cond)
+        if ($w) { return $w }
+        Start-Sleep -Milliseconds 300
+    }
+    throw "Fereastra '$name' nu a apărut."
+}
+function Set-Pattern($window, [string] $value) {
+    $box = Find-Control $window 'Pattern nume' ([System.Windows.Automation.ControlType]::Edit)
+    $box.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($value)
+    Start-Sleep -Milliseconds 400
+}
+
+$button = [System.Windows.Automation.ControlType]::Button
+Invoke-Element (Find-Control $root 'Redenumire batch' $button)
+$rw = Find-Window 'Redenumire batch'
+Wait-ForText $rw 'Alege un folder pentru a vedea' 5 | Out-Null
+Save-Screen '40-rename-empty-dark'
+
+Invoke-Element (Find-Control $rw 'Alege folderul...' $button)
+Find-TopWindow 'Alege folderul cu poze de redenumit' | Out-Null
+Start-Sleep -Seconds 1
+$renameDir = Join-Path $photosDir '2001'
+[System.Windows.Forms.SendKeys]::SendWait([regex]::Replace($renameDir, '[+^%~(){}\[\]]', '{$0}'))
 Start-Sleep -Milliseconds 500
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+Start-Sleep -Seconds 2
+$pickCond = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, 'Alege folderul cu poze de redenumit')
+if ([System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $pickCond)) {
+    [System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+}
+Wait-ForText $rw 'Folderul face parte din bibliotecă (215 poze)' 10 | Out-Null
+Write-Host "Folder de redenumit: $renameDir (215 poze indexate)"
+
+Set-Pattern $rw 'Grecia_{counter:000}'
+Wait-ForText $rw '215 fișiere de redenumit' 5 | Out-Null
+Find-ByName $rw 'DSC_0001.jpg → Grecia_001.jpg' | Out-Null
+Save-Screen '41-rename-preview-dark'
+
+# Conflict: toate fișierele ar primi același nume → „Aplică" dezactivat
+Set-Pattern $rw 'Fix'
+Wait-ForText $rw '0 fișiere de redenumit  ·  215 fișiere în conflict' 5 | Out-Null
+$apply = Find-Control $rw 'Aplică redenumirea' $button
+if ($apply.Current.IsEnabled) { throw "Butonul Aplică trebuie să fie dezactivat când există conflicte." }
+Save-Screen '42-rename-conflict-dark'
+Set-Pattern $rw 'Grecia_{counter:000}'
+Wait-ForText $rw '215 fișiere de redenumit' 5 | Out-Null
+
+Invoke-Element $apply
+Find-TopWindow 'Confirmă redenumirea' 5 | Out-Null
+Save-Screen '43-rename-confirm-dark'
+Invoke-Element (Find-Control ([System.Windows.Automation.AutomationElement]::RootElement) 'Redenumește' $button)
+Wait-ForText ([System.Windows.Automation.AutomationElement]::RootElement) 'Fișiere redenumite: 215.' 10 | Out-Null
+Save-Screen '44-rename-done-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+Start-Sleep -Milliseconds 600
+
+$renamed = @(Get-ChildItem $renameDir -Filter 'Grecia_*').Count
+Write-Host "Fișiere redenumite pe disc: $renamed"
+if ($renamed -ne 215 -or -not (Test-Path (Join-Path $renameDir 'Grecia_001.jpg'))) { throw "Redenumirea pe disc nu s-a aplicat corect." }
+Wait-ForText $rw '215 fișiere fără modificări' 5 | Out-Null   # previzualizarea refăcută de pe disc
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Seconds 2
+Assert-Alive $proc
+
+# Biblioteca: pozele redenumite și-au păstrat tag-urile / albumele (index actualizat, nu re-indexat)
+$searchBox.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('Grecia')
+Wait-ForText $root '215 poze' 5 | Out-Null
+Save-Screen '45-after-rename-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Wait-ForText $root '1.500 de poze' 5 | Out-Null
+$searchBox.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('mare')
+Wait-ForText $root '4 poze' 5 | Out-Null
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Wait-ForText $root '1.500 de poze' 5 | Out-Null
+Write-Host "Index actualizat după redenumire: tag-urile s-au păstrat."
 Assert-Alive $proc
 
 # Comutare pe tema luminoasă

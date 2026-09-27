@@ -376,9 +376,11 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void OpenBatchRename() =>
-        // Modulul de redenumire batch se implementează în Faza 5 (§6.8)
-        _dialogs.Show(Loc.Get("Str.Placeholder.Title"), Loc.Get("Str.Placeholder.BatchRename"), DialogKind.Info);
+    private async Task OpenBatchRename()
+    {
+        // Pozele indexate redenumite și-au păstrat Id-ul; se reîncarcă doar numele / căile afișate
+        if (_windows.ShowBatchRename()) await Library.RefreshAsync();
+    }
 
     [RelayCommand]
     private void OpenInfo() => _windows.ShowInfo();
