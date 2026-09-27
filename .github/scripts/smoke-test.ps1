@@ -93,7 +93,8 @@ function Wait-ForText($root, [string] $prefix, [int] $timeoutSec) {
     $textType = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Text)
     while ((Get-Date) -lt $deadline) {
         foreach ($t in $root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $textType)) {
-            if ($t.Current.Name.StartsWith($prefix)) { return $t.Current.Name }
+            $name = $t.Current.Name
+            if ($name -and $name.StartsWith($prefix)) { return $name }
         }
         Start-Sleep -Milliseconds 400
     }
