@@ -491,7 +491,7 @@ Start-Sleep -Milliseconds 600
 $renamed = @(Get-ChildItem $renameDir -Filter 'Grecia_*').Count
 Write-Host "Fișiere redenumite pe disc: $renamed"
 if ($renamed -ne 215 -or -not (Test-Path (Join-Path $renameDir 'Grecia_001.jpg'))) { throw "Redenumirea pe disc nu s-a aplicat corect." }
-Wait-ForText $rw '215 fișiere fără modificări' 5 | Out-Null   # previzualizarea refăcută de pe disc
+Wait-ForText $rw '0 fișiere de redenumit  ·  215 fișiere fără modificări' 5 | Out-Null   # previzualizarea refăcută de pe disc
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Seconds 2
 Assert-Alive $proc
