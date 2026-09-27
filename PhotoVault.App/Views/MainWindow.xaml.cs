@@ -74,6 +74,12 @@ public partial class MainWindow : ThemedWindow
 
         menu.Items.Clear();
         menu.Items.Add(MenuItem("Str.Photo.Open", vm.Grid.OpenCommand, vm.Grid.SelectedPhoto));
+        var rotate = MenuItem("Str.Photo.Rotate", vm.RotateCommand, null, "Icon.Rotate");
+        rotate.InputGestureText = "R";
+        menu.Items.Add(rotate);
+        var slideshow = MenuItem("Str.Slideshow.StartHere", vm.StartSlideshowCommand, vm.Grid.SelectedPhoto, "Icon.Slideshow");
+        slideshow.InputGestureText = "F5";
+        menu.Items.Add(slideshow);
         menu.Items.Add(new Separator());
 
         var albumMenu = MenuItem("Str.Photo.AddToAlbum", null, null, "Icon.Album");
@@ -129,6 +135,23 @@ public partial class MainWindow : ThemedWindow
                 ? VisualTreeHelper.GetParent(element)
                 : LogicalTreeHelper.GetParent(element);
         return element as T;
+    }
+
+    /// <summary>Ctrl+F: focus pe câmpul de căutare (§5.3).</summary>
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        base.OnPreviewKeyDown(e);
+        if (e.Key == Key.F && Keyboard.Modifiers == ModifierKeys.Control)
+        {
+            SearchBox.Focus();
+            SearchBox.SelectAll();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.F5 && Keyboard.Modifiers == ModifierKeys.None && ViewModel is { } vm)
+        {
+            vm.StartSlideshowCommand.Execute(null);
+            e.Handled = true;
+        }
     }
 
     protected override void OnClosing(CancelEventArgs e)

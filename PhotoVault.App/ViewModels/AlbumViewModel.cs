@@ -75,23 +75,43 @@ public partial class AlbumViewModel(IAlbumService albums, IThumbnailService thum
     /// <summary>Album nou (buton + sau „Adaugă la album → Album nou…"); întoarce albumul creat.</summary>
     public AlbumItemViewModel? PromptCreate()
     {
-        var name = dialogs.Prompt(Loc.Get("Str.Albums.NewTitle"), Loc.Get("Str.Albums.NewMessage"),
-            placeholder: Loc.Get("Str.Albums.NamePlaceholder"));
-        if (name is null) return null;
+        var input = PromptUnique(Loc.Get("Str.Albums.NewTitle"), Loc.Get("Str.Albums.NewMessage"), string.Empty, null, null);
+        if (input is not { } value) return null;
 
-        var album = albums.Create(name);
+        var album = albums.Create(value.Name, value.Subtitle);
         Reload();
         return Find(album.Id);
+    }
+
+    /// <summary>
+    /// Formularul nume + subtitlu, repetat cât timp numele e deja folosit de alt album:
+    /// utilizatorul poate modifica numele (formularul se redeschide cu ce a scris) sau renunța.
+    /// </summary>
+    private (string Name, string? Subtitle)? PromptUnique(string title, string message, string name, string? subtitle, long? exceptAlbumId)
+    {
+        while (true)
+        {
+            var input = dialogs.PromptAlbum(title, message, name, subtitle);
+            if (input is not { } value) return null;
+            if (!albums.IsNameTaken(value.Name, exceptAlbumId)) return value;
+
+            var answer = dialogs.Show(Loc.Get("Str.Albums.DuplicateTitle"), Loc.Format("Str.Albums.Duplicate", value.Name),
+                DialogKind.Warning, DialogButtons.OkCancel,
+                primaryText: Loc.Get("Str.Albums.ChangeName"), secondaryText: Loc.Get("Str.Albums.GiveUp"));
+            if (answer != DialogResultKind.Ok) return null;
+            (name, subtitle) = value;
+        }
     }
 
     [RelayCommand]
     private void CreateAlbum() => PromptCreate();
 
-    public void RenameAlbum(AlbumItemViewModel album)
+    /// <summary>Editează numele și subtitlul albumului.</summary>
+    public void EditAlbum(AlbumItemViewModel album)
     {
-        var name = dialogs.Prompt(Loc.Get("Str.Albums.RenameTitle"), Loc.Get("Str.Albums.RenameMessage"), album.Name);
-        if (name is null || name == album.Name) return;
-        albums.Rename(album.Id, name);
+        var input = PromptUnique(Loc.Get("Str.Albums.EditTitle"), Loc.Get("Str.Albums.EditMessage"), album.Name, album.Subtitle, album.Id);
+        if (input is not { } value || (value.Name == album.Name && value.Subtitle == album.Subtitle)) return;
+        albums.Update(album.Id, value.Name, value.Subtitle);
         Reload();
         AlbumChanged?.Invoke(album.Id);
     }

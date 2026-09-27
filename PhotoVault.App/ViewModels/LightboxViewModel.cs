@@ -15,13 +15,17 @@ public partial class LightboxViewModel : ObservableObject
 {
     private readonly IReadOnlyList<PhotoItemViewModel> _photos;
     private readonly IMetadataService _metadata;
+    private readonly IPhotoService _photoService;
     private readonly Dictionary<long, Task<ImageSource?>> _loads = [];
     private int _version;
 
-    public LightboxViewModel(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, IMetadataService metadata)
+    public LightboxViewModel(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title, IMetadataService metadata,
+        IPhotoService photoService)
     {
+        Title = title;
         _photos = photos;
         _metadata = metadata;
+        _photoService = photoService;
         Index = Math.Clamp(startIndex, 0, Math.Max(0, photos.Count - 1));
         _ = ShowCurrentAsync();
     }
@@ -34,6 +38,9 @@ public partial class LightboxViewModel : ObservableObject
     public PhotoItemViewModel? Current => _photos.Count > 0 ? _photos[Index] : null;
 
     public int Count => _photos.Count;
+
+    /// <summary>Contextul din care s-a deschis (folder / album / tag / toate pozele), afișat stânga sus.</summary>
+    public string Title { get; }
 
     public string CounterText => $"{Loc.Number(Index + 1)} / {Loc.Number(_photos.Count)}";
 
@@ -55,6 +62,17 @@ public partial class LightboxViewModel : ObservableObject
 
     [RelayCommand(CanExecute = nameof(CanGoPrevious))]
     private void Previous() => GoTo(Index - 1);
+
+    /// <summary>R în lightbox: rotire logică 90° a pozei curente (se reflectă și în grid).</summary>
+    [RelayCommand]
+    private void Rotate()
+    {
+        if (Current is not { } photo) return;
+        var degrees = _photoService.RotateClockwise([photo.Id])[photo.Id];
+        photo.SetRotation(degrees);
+        _loads.Remove(photo.Id);
+        _ = ShowCurrentAsync();
+    }
 
     public void GoTo(int index)
     {

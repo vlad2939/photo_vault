@@ -88,12 +88,25 @@ function Find-TopWindow([string] $name, [int] $timeoutSec = 15) {
     throw "Fereastra '$name' nu a apărut."
 }
 
+function Find-Window([string] $name, [int] $timeoutSec = 10) {
+    $cond = New-Object System.Windows.Automation.AndCondition @(
+        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, $name)),
+        (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window)))
+    $deadline = (Get-Date).AddSeconds($timeoutSec)
+    while ((Get-Date) -lt $deadline) {
+        $w = [System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $cond)
+        if ($w) { return $w }
+        Start-Sleep -Milliseconds 300
+    }
+    throw "Fereastra '$name' nu a apărut."
+}
 function Wait-ForText($root, [string] $prefix, [int] $timeoutSec) {
     $deadline = (Get-Date).AddSeconds($timeoutSec)
     $textType = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Text)
     while ((Get-Date) -lt $deadline) {
         foreach ($t in $root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $textType)) {
-            if ($t.Current.Name.StartsWith($prefix)) { return $t.Current.Name }
+            $name = $t.Current.Name
+            if ($name -and $name.StartsWith($prefix)) { return $name }
         }
         Start-Sleep -Milliseconds 400
     }
@@ -227,13 +240,17 @@ Start-Sleep -Milliseconds 600
 $grid = Get-GridItems $root
 Invoke-DoubleClick $grid.Items[0]
 Start-Sleep -Seconds 2
-$lightbox = Find-TopWindow 'Înapoi la galerie' 5
+$lightbox = Find-Window 'Vizualizare pe tot ecranul' 5
+Find-Control $lightbox 'Înapoi la galerie' ([System.Windows.Automation.ControlType]::Button) | Out-Null
 Save-Screen '11-lightbox'
 [System.Windows.Forms.SendKeys]::SendWait('{RIGHT}')
 Start-Sleep -Seconds 1
 [System.Windows.Forms.SendKeys]::SendWait('{ADD}{ADD}')
 Start-Sleep -Milliseconds 800
 Save-Screen '12-lightbox-next-zoomed'
+# Fără mișcare de mouse, după 3 s elementele UI dispar (ca în slideshow)
+Start-Sleep -Seconds 4
+Save-Screen '12b-lightbox-hidden'
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Milliseconds 800
 Assert-Alive $proc
@@ -245,7 +262,7 @@ $grid.Items[2].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern
 $grid.Items[2].SetFocus()
 [System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
 Start-Sleep -Seconds 2
-Find-TopWindow 'Înapoi la galerie' 5 | Out-Null
+Find-Window 'Vizualizare pe tot ecranul' 5 | Out-Null
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Milliseconds 800
 
@@ -311,9 +328,22 @@ function Select-Photos($root, [int] $count) {
 Invoke-Element (Find-Control $root 'Album nou' $button)
 Start-Sleep -Milliseconds 800
 Save-Screen '20-album-prompt-dark'
-[System.Windows.Forms.SendKeys]::SendWait('Vacanta 2024{ENTER}')
+[System.Windows.Forms.SendKeys]::SendWait('Vacanta 2024{TAB}10-15.08.2021{ENTER}')
 Start-Sleep -Milliseconds 800
 Find-Control $root 'Vacanta 2024' ([System.Windows.Automation.ControlType]::ListItem) | Out-Null
+
+# Nume duplicat (altă scriere a majusculelor) → avertisment „Modifică numele / Renunță"; nu se creează al doilea album
+Invoke-Element (Find-Control $root 'Album nou' $button)
+Start-Sleep -Milliseconds 800
+[System.Windows.Forms.SendKeys]::SendWait('vacanta 2024{ENTER}')
+Start-Sleep -Milliseconds 900
+Find-TopWindow 'Nume de album deja folosit' 5 | Out-Null
+Save-Screen '20b-album-duplicate-dark'
+Invoke-Element (Find-Control ([System.Windows.Automation.AutomationElement]::RootElement) 'Renunță' $button)
+Start-Sleep -Milliseconds 800
+$albumItems = (Find-ByName $root 'AlbumList').FindAll([System.Windows.Automation.TreeScope]::Children,
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem)))
+if ($albumItems.Count -ne 1) { throw "Albumul duplicat a fost creat ($($albumItems.Count) albume)." }
 
 # 4 poze selectate → click dreapta → Adaugă la album → Vacanta 2024
 Select-Photos $root 4
@@ -368,9 +398,171 @@ Invoke-Element (Find-Control $root 'Afișează toate pozele din bibliotecă' $bu
 Start-Sleep -Milliseconds 600
 Assert-Alive $proc
 
-# Dialog custom (Redenumire batch afișează „În curând" până în Faza 5)
-Invoke-Element (Find-Control $root 'Redenumire batch' ([System.Windows.Automation.ControlType]::Button))
-Save-Screen '07-dialog-dark'
+# ---- Faza 4: căutare, sortare, rotire ----
+$searchBox = Find-Control $root 'Caută (nume, tag, album)...' ([System.Windows.Automation.ControlType]::Edit)
+$searchBox.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('DSC_000')
+Wait-ForText $root '9 poze' 5 | Out-Null          # DSC_0001 … DSC_0009
+Save-Screen '30-search-name-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Wait-ForText $root '1.500 de poze' 5 | Out-Null
+$searchBox.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('mare')
+Wait-ForText $root '4 poze' 5 | Out-Null           # pozele cu tag-ul „mare"
+Save-Screen '31-search-tag-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Wait-ForText $root '1.500 de poze' 5 | Out-Null
+
+# Sortare Z → A: prima poză devine DSC_1500
+$sort = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::ComboBox)))
+$sort.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
+Start-Sleep -Milliseconds 400
+$sortItems = $sort.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem)))
+$sortItems[1].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+$sort.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Collapse()
+Start-Sleep -Seconds 1
+$first = (Get-GridItems $root).Items[0].Current.Name
+Write-Host "Prima poză după sortarea Z → A: $first"
+if ($first -notlike 'DSC_1500*') { throw "Sortarea descendentă nu funcționează (prima poză: $first)." }
+Save-Screen '32-sort-desc-dark'
+$sort.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
+Start-Sleep -Milliseconds 400
+$sortItems[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+$sort.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Collapse()
+Start-Sleep -Seconds 1
+
+# Rotire: R pe a doua poză (peisaj → portret)
+$g = Get-GridItems $root
+Click-At $g.Items[1]
+[System.Windows.Forms.SendKeys]::SendWait('r')
+Start-Sleep -Seconds 1
+Save-Screen '33-rotate-dark'
+Assert-Alive $proc
+
+# ---- Faza 5: redenumire batch pe un subfolder indexat (2001 → 215 poze, printre ele DSC_0001 cu tag + album) ----
+function Set-Pattern($window, [string] $value) {
+    $box = Find-Control $window 'Pattern nume' ([System.Windows.Automation.ControlType]::Edit)
+    $box.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($value)
+    Start-Sleep -Milliseconds 400
+}
+
+$button = [System.Windows.Automation.ControlType]::Button
+Invoke-Element (Find-Control $root 'Redenumire batch' $button)
+$rw = Find-Window 'Redenumire batch'
+Wait-ForText $rw 'Alege un folder pentru a vedea' 5 | Out-Null
+Save-Screen '40-rename-empty-dark'
+
+Invoke-Element (Find-Control $rw 'Alege folderul...' $button)
+Find-TopWindow 'Alege folderul cu poze de redenumit' | Out-Null
+Start-Sleep -Seconds 1
+$renameDir = Join-Path $photosDir '2001'
+[System.Windows.Forms.SendKeys]::SendWait([regex]::Replace($renameDir, '[+^%~(){}\[\]]', '{$0}'))
+Start-Sleep -Milliseconds 500
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+Start-Sleep -Seconds 2
+$pickCond = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, 'Alege folderul cu poze de redenumit')
+if ([System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $pickCond)) {
+    [System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+}
+Wait-ForText $rw 'Folderul face parte din bibliotecă (215 poze)' 10 | Out-Null
+Write-Host "Folder de redenumit: $renameDir (215 poze indexate)"
+
+Set-Pattern $rw 'Grecia_{counter:000}'
+Wait-ForText $rw '215 fișiere de redenumit' 5 | Out-Null
+Find-ByName $rw 'DSC_0001.jpg → Grecia_001.jpg' | Out-Null
+Save-Screen '41-rename-preview-dark'
+
+# Conflict: toate fișierele ar primi același nume → „Aplică" dezactivat
+Set-Pattern $rw 'Fix'
+Wait-ForText $rw '0 fișiere de redenumit  ·  215 fișiere în conflict' 5 | Out-Null
+$apply = Find-Control $rw 'Aplică redenumirea' $button
+if ($apply.Current.IsEnabled) { throw "Butonul Aplică trebuie să fie dezactivat când există conflicte." }
+Save-Screen '42-rename-conflict-dark'
+Set-Pattern $rw 'Grecia_{counter:000}'
+Wait-ForText $rw '215 fișiere de redenumit' 5 | Out-Null
+
+Invoke-Element $apply
+Find-TopWindow 'Confirmă redenumirea' 5 | Out-Null
+Save-Screen '43-rename-confirm-dark'
+Invoke-Element (Find-Control ([System.Windows.Automation.AutomationElement]::RootElement) 'Redenumește' $button)
+Wait-ForText ([System.Windows.Automation.AutomationElement]::RootElement) 'Fișiere redenumite: 215.' 10 | Out-Null
+Save-Screen '44-rename-done-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+Start-Sleep -Milliseconds 600
+
+$renamed = @(Get-ChildItem $renameDir -Filter 'Grecia_*').Count
+Write-Host "Fișiere redenumite pe disc: $renamed"
+if ($renamed -ne 215 -or -not (Test-Path (Join-Path $renameDir 'Grecia_001.jpg'))) { throw "Redenumirea pe disc nu s-a aplicat corect." }
+Wait-ForText $rw '0 fișiere de redenumit  ·  215 fișiere fără modificări' 5 | Out-Null   # previzualizarea refăcută de pe disc
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Seconds 2
+Assert-Alive $proc
+
+# Biblioteca: pozele redenumite și-au păstrat tag-urile / albumele (index actualizat, nu re-indexat)
+$searchBox.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('Grecia')
+Wait-ForText $root '215 poze' 5 | Out-Null
+Save-Screen '45-after-rename-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Wait-ForText $root '1.500 de poze' 5 | Out-Null
+$searchBox.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('mare')
+Wait-ForText $root '4 poze' 5 | Out-Null
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Wait-ForText $root '1.500 de poze' 5 | Out-Null
+Write-Host "Index actualizat după redenumire: tag-urile s-au păstrat."
+Assert-Alive $proc
+
+# ---- Faza 6: slideshow (Ken Burns + fade, bară de control auto-hide) + panoul de setări ----
+function Get-Counter($window) {
+    $textType = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Text)
+    foreach ($t in $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $textType)) {
+        if ($t.Current.Name -match '^[\d\.]+ / 1\.500$') { return $t.Current.Name }
+    }
+    throw "Contorul slideshow-ului nu a fost găsit."
+}
+
+Invoke-Element (Find-Control $root 'Slideshow' $button)
+$show = Find-Window 'Slideshow'
+Start-Sleep -Seconds 2
+Assert-Alive $proc
+$counter1 = Get-Counter $show
+Write-Host "Slideshow pornit: $counter1"
+Save-Screen '50-slideshow-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{RIGHT}')
+Start-Sleep -Seconds 2
+$counter2 = Get-Counter $show
+Write-Host "După →: $counter2"
+if ($counter2 -eq $counter1) { throw "Navigarea în slideshow nu funcționează." }
+[System.Windows.Forms.SendKeys]::SendWait(' ')
+Find-Control $show 'Redă' $button | Out-Null        # Space = pauză → butonul devine „Redă"
+Save-Screen '51-slideshow-paused-dark'
+[System.Windows.Forms.SendKeys]::SendWait(' ')
+Find-Control $show 'Pauză' $button | Out-Null
+# Fără mișcare de mouse, după 3 s bara și informațiile de sus dispar
+Start-Sleep -Seconds 5
+Save-Screen '52-slideshow-hidden-dark'
+Assert-Alive $proc
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Seconds 1
+$slideCond = New-Object System.Windows.Automation.AndCondition @(
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, 'Slideshow')),
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Window)))
+if ([System.Windows.Automation.AutomationElement]::RootElement.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $slideCond)) {
+    throw "Esc nu a închis slideshow-ul."
+}
+Assert-Alive $proc
+
+# Setări slideshow: secțiunea din Opțiuni (derulată până la ea)
+Invoke-Element (Find-Control $root 'Opțiuni' $button)
+$settingsWindow = Find-Window 'Opțiuni'
+Find-Control $settingsWindow 'Durată afișare poză' ([System.Windows.Automation.ControlType]::Slider) | Out-Null
+$scrollCond = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::IsScrollPatternAvailableProperty, $true)
+$scroller = $settingsWindow.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $scrollCond)
+if ($scroller) { $scroller.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern).SetScrollPercent(-1, 60) }
+Save-Screen '53-settings-slideshow-dark'
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Milliseconds 500
 Assert-Alive $proc

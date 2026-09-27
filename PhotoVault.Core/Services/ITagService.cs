@@ -18,4 +18,5 @@ public interface ITagService
     void Unassign(long tagId, long photoId);
     IReadOnlyList<Tag> GetTagsForPhoto(long photoId);
     IReadOnlySet<long> GetPhotoIds(long tagId);
+    IReadOnlySet<long> GetTaggedPhotoIds();
 }

@@ -34,18 +34,45 @@ public partial class CustomDialogWindow : Window
     /// <summary>Textul introdus (doar în modul Prompt).</summary>
     public string InputText => InputBox.Text.Trim();
 
+    /// <summary>Textul din câmpul secundar (subtitlu), dacă a fost activat.</summary>
+    public string SecondaryText => SecondaryBox.Text.Trim();
+
+    private bool HasInput => InputPanel.Visibility == Visibility.Visible;
+
     /// <summary>Transformă dialogul într-un Prompt cu câmp text (OK activ doar pentru text negol).</summary>
-    public void EnableInput(string initialText, string placeholder)
+    public void EnableInput(string initialText, string placeholder, string? label = null)
     {
-        InputBox.Visibility = Visibility.Visible;
+        InputPanel.Visibility = Visibility.Visible;
         InputBox.Text = initialText;
         Controls.InputHelper.SetPlaceholder(InputBox, placeholder);
+        if (label is not null)
+        {
+            InputLabel.Text = label;
+            InputLabel.Visibility = Visibility.Visible;
+        }
         InputBox.SelectAll();
         OnInputChanged(InputBox, null!);
     }
 
+    /// <summary>Al doilea câmp, opțional (ex. subtitlul albumului).</summary>
+    public void EnableSecondaryInput(string label, string initialText, string placeholder)
+    {
+        SecondaryLabel.Text = label;
+        SecondaryLabel.Visibility = Visibility.Visible;
+        SecondaryBox.Visibility = Visibility.Visible;
+        SecondaryBox.Text = initialText;
+        Controls.InputHelper.SetPlaceholder(SecondaryBox, placeholder);
+    }
+
+    /// <summary>Etichete proprii pentru butoane (ex. „Modifică numele" / „Renunță").</summary>
+    public void SetButtonTexts(string? primary, string? secondary)
+    {
+        if (primary is not null) PrimaryButton.Content = primary;
+        if (secondary is not null) SecondaryButton.Content = secondary;
+    }
+
     private void OnInputChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) =>
-        PrimaryButton.IsEnabled = InputBox.Visibility != Visibility.Visible || InputText.Length > 0;
+        PrimaryButton.IsEnabled = !HasInput || InputText.Length > 0;
 
     /// <summary>
     /// Poziționează dialogul peste zona client a ferestrei părinte (overlay).
@@ -121,7 +148,7 @@ public partial class CustomDialogWindow : Window
         // Focus după animație: altfel conturul de focus e poziționat pe cardul încă scalat.
         scaleY.Completed += (_, _) =>
         {
-            if (InputBox.Visibility == Visibility.Visible) InputBox.Focus(); else PrimaryButton.Focus();
+            if (HasInput) InputBox.Focus(); else PrimaryButton.Focus();
         };
         CardScale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(1, AnimationDuration) { EasingFunction = ease });
         CardScale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleY);

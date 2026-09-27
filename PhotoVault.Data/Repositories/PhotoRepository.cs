@@ -106,12 +106,77 @@ public sealed class PhotoRepository(DatabaseContext db) : IPhotoRepository
         transaction.Commit();
     }
 
+    public IReadOnlyDictionary<long, int> GetRotations(IReadOnlyCollection<long> photoIds)
+    {
+        using var connection = db.OpenConnection();
+        var result = new Dictionary<long, int>();
+        foreach (var chunk in photoIds.Chunk(500))
+            foreach (var (id, rotation) in connection.Query<(long, long)>(
+                         "SELECT Id, RotationDegrees FROM Photos WHERE Id IN @chunk", new { chunk }))
+                result[id] = (int)rotation;
+        return result;
+    }
+
+    public void SetRotations(IReadOnlyDictionary<long, int> rotations)
+    {
+        using var connection = db.OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        connection.Execute("UPDATE Photos SET RotationDegrees = @Value WHERE Id = @Key", rotations, transaction);
+        transaction.Commit();
+    }
+
+    public IReadOnlyDictionary<long, string> GetSearchKeywords()
+    {
+        using var connection = db.OpenConnection();
+        // Un singur pas prin legături (nu câte o sub-interogare per poză): rapid și la zeci de mii de poze
+        return connection.Query<(long Id, string Keywords)>(
+                """
+                SELECT PhotoId, group_concat(Name, ' ')
+                FROM (SELECT pt.PhotoId, t.Name FROM PhotoTags pt JOIN Tags t ON t.Id = pt.TagId
+                      UNION ALL
+                      SELECT ap.PhotoId, a.Name FROM AlbumPhotos ap JOIN Albums a ON a.Id = ap.AlbumId)
+                GROUP BY PhotoId
+                """)
+            .ToDictionary(r => r.Id, r => r.Keywords);
+    }
+
     public void ResetFailedThumbnails(long sourceFolderId)
     {
         using var connection = db.OpenConnection();
         connection.Execute("UPDATE Photos SET ThumbnailPath = NULL WHERE SourceFolderId = @sourceFolderId AND ThumbnailPath = ''",
             new { sourceFolderId });
     }
+
+    public int CountInFolder(string folderPath)
+    {
+        var prefix = Path.TrimEndingDirectorySeparator(folderPath) + Path.DirectorySeparatorChar;
+        using var connection = db.OpenConnection();
+        var paths = connection.Query<string>("SELECT FullPath FROM Photos WHERE FullPath LIKE @pattern ESCAPE '^'",
+            new { pattern = EscapeLike(prefix) + "%" });
+        // Doar fișierele aflate direct în folder, nu în subfoldere
+        return paths.Count(p => p.Length > prefix.Length && p.IndexOf(Path.DirectorySeparatorChar, prefix.Length) < 0);
+    }
+
+    public int UpdatePaths(IReadOnlyList<(string OldPath, string NewPath)> renames)
+    {
+        if (renames.Count == 0) return 0;
+        using var connection = db.OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        // Două etape, ca pe disc: FullPath e UNIQUE, iar un schimb de nume (A→B, B→A) ar încălca temporar constrângerea
+        const string marker = "|";   // caracter imposibil într-o cale Windows
+        foreach (var (oldPath, _) in renames)
+            connection.Execute("UPDATE Photos SET FullPath = @temp WHERE FullPath = @oldPath COLLATE NOCASE",
+                new { temp = marker + oldPath, oldPath }, transaction);
+        var updated = 0;
+        foreach (var (oldPath, newPath) in renames)
+            updated += connection.Execute("UPDATE Photos SET FullPath = @newPath, FileName = @name WHERE FullPath = @temp",
+                new { newPath, name = Path.GetFileName(newPath), temp = marker + oldPath }, transaction);
+        transaction.Commit();
+        return updated;
+    }
+
+    private static string EscapeLike(string value) =>
+        value.Replace("^", "^^").Replace("%", "^%").Replace("_", "^_");
 
     private static PhotoItem Map(Row r) => new()
     {

@@ -43,12 +43,17 @@ public static class Loc
     /// „N poze" cu acordul corect: RO — 1 poză, 2–19 poze, 20+ „de poze" (inclusiv 101–119 → poze);
     /// EN — 1 photo / N photos.
     /// </summary>
-    public static string PhotoCount(long count)
+    public static string PhotoCount(long count) => Plural("Str.Count", count);
+
+    /// <summary>„N fișiere" cu același acord (1 fișier, 2–19 fișiere, 20+ „de fișiere").</summary>
+    public static string FileCount(long count) => Plural("Str.FileCount", count);
+
+    private static string Plural(string prefix, long count)
     {
-        var key = count == 1 ? "Str.Count.One"
-            : Culture.TwoLetterISOLanguageName == "ro" && count != 0 && (count % 100 is 0 or >= 20) ? "Str.Count.Many"
-            : "Str.Count.Few";
-        return Format(key, Number(count));
+        var suffix = count == 1 ? ".One"
+            : Culture.TwoLetterISOLanguageName == "ro" && count != 0 && (count % 100 is 0 or >= 20) ? ".Many"
+            : ".Few";
+        return Format(prefix + suffix, Number(count));
     }
 
     /// <summary>Număr formatat cu separatorul de mii al limbii curente.</summary>

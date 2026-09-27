@@ -25,7 +25,17 @@ public sealed class AppSettings
 
     public List<string> SlideshowPlaylistPaths { get; set; } = [];
 
+    /// <summary>Volumul muzicii din slideshow, 0–100.</summary>
+    public int SlideshowVolume { get; set; } = 70;
+
     public const string DefaultAccentColor = "#F2821A";
+
+    /// <summary>Paleta de accent predefinită (§6.12): portocaliu (implicit, ca în mockup-uri), albastru, verde, roșu, mov, turcoaz.</summary>
+    public static IReadOnlyList<string> AccentPresets { get; } =
+        ["#F2821A", "#2D7FF9", "#2EAD5B", "#E5484D", "#8E5CF7", "#14B8A6"];
+
+    /// <summary>Limbile interfeței (§6.12).</summary>
+    public static IReadOnlyList<string> Languages { get; } = ["ro", "en"];
 }
 
 /// <summary>Cheile folosite în tabela AppSettings.</summary>
@@ -39,4 +49,5 @@ public static class AppSettingKeys
     public const string SlideshowPanIntensity = "SlideshowPanIntensity";
     public const string SlideshowZoomIntensity = "SlideshowZoomIntensity";
     public const string SlideshowPlaylistPaths = "SlideshowPlaylistPaths";
+    public const string SlideshowVolume = "SlideshowVolume";
 }

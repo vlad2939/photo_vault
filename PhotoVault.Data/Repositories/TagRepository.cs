@@ -74,6 +74,12 @@ public sealed class TagRepository(DatabaseContext db) : ITagRepository
             .ToList();
     }
 
+    public IReadOnlySet<long> GetTaggedPhotoIds()
+    {
+        using var connection = db.OpenConnection();
+        return connection.Query<long>("SELECT DISTINCT PhotoId FROM PhotoTags").ToHashSet();
+    }
+
     public IReadOnlySet<long> GetPhotoIds(long tagId)
     {
         using var connection = db.OpenConnection();

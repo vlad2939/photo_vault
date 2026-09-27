@@ -20,7 +20,7 @@
     <sys:String x:Key="Str.Tags.Empty">Niciun tag creat.</sys:String>
     <sys:String x:Key="Str.Albums.Add">Album nou</sys:String>
     <sys:String x:Key="Str.Tags.Add">Tag nou</sys:String>
-    <sys:String x:Key="Str.Search.Placeholder">Caută...</sys:String>
+    <sys:String x:Key="Str.Search.Placeholder">Caută (nume, tag, album)...</sys:String>
     <sys:String x:Key="Str.Sort.NameAsc">Sortează după: Nume (A → Z)</sys:String>
     <sys:String x:Key="Str.Sort.NameDesc">Sortează după: Nume (Z → A)</sys:String>
     <sys:String x:Key="Str.Grid.Empty.Title">Nicio poză indexată încă</sys:String>
@@ -75,6 +75,7 @@
     <sys:String x:Key="Str.Details.Aperture">Diafragmă</sys:String>
     <sys:String x:Key="Str.Details.FocalLength">Distanță focală</sys:String>
     <sys:String x:Key="Str.Details.NoTags">Niciun tag atribuit.</sys:String>
+    <sys:String x:Key="Str.Lightbox.Title">Vizualizare pe tot ecranul</sys:String>
     <sys:String x:Key="Str.Lightbox.Back">Înapoi la galerie</sys:String>
     <sys:String x:Key="Str.Lightbox.Previous">Poza anterioară (←)</sys:String>
     <sys:String x:Key="Str.Lightbox.Next">Poza următoare (→)</sys:String>
@@ -88,29 +89,24 @@
     <sys:String x:Key="Str.Info.Version">Versiunea {0}</sys:String>
     <sys:String x:Key="Str.Info.Author">Autor: vlad39</sys:String>
     <sys:String x:Key="Str.Info.HowTo">Cum se folosește</sys:String>
-    <sys:String x:Key="Str.Info.HowToText">Adaugă un folder cu poze cu butonul + din secțiunea Bibliotecă; aplicația îl indexează, cu tot cu subfolderele, fără să modifice sau să copieze fișierele.|Selectează un folder din arbore pentru a vedea doar pozele lui (inclusiv subfolderele); click pe titlul „Bibliotecă” afișează din nou toate pozele.|Dublu-click pe o poză (sau Enter) o deschide pe tot ecranul; zoom cu rotița mouse-ului, deplasare prin tragere.|Click dreapta pe un folder sursă: Re-scanează (poze noi / șterse) sau Elimină din bibliotecă.|Folderele sursă și tema se gestionează și din Opțiuni (iconița roată).|Selectează una sau mai multe poze (Ctrl / Shift + click, Ctrl+A), apoi click dreapta → Adaugă la album / Adaugă tag. Click pe titlul „Albume” afișează albumele ca grid de carduri; dublu-click deschide un album.|Tag-urile pozei selectate apar în panoul din dreapta: „+” adaugă, „×” elimină. Click pe un tag din stânga afișează toate pozele care îl au.</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Adaugă un folder cu poze cu butonul + din secțiunea Bibliotecă; aplicația îl indexează, cu tot cu subfolderele, fără să modifice sau să copieze fișierele.|Selectează un folder din arbore pentru a vedea doar pozele lui (inclusiv subfolderele); click pe titlul „Bibliotecă” afișează din nou toate pozele.|Dublu-click pe o poză (sau Enter) o deschide pe tot ecranul; zoom cu rotița mouse-ului, deplasare prin tragere.|Click dreapta pe un folder sursă: Re-scanează (poze noi / șterse) sau Elimină din bibliotecă.|Folderele sursă și tema se gestionează și din Opțiuni (iconița roată).|Selectează una sau mai multe poze (Ctrl / Shift + click, Ctrl+A), apoi click dreapta → Adaugă la album / Adaugă tag. Click pe titlul „Albume” afișează albumele ca grid de carduri; dublu-click deschide un album.|Tag-urile pozei selectate apar în panoul din dreapta: „+” adaugă, „×” elimină. Click pe un tag din stânga afișează toate pozele care îl au.|Câmpul de căutare (Ctrl+F) filtrează pozele afișate după numele fișierului, tag-uri și albume; sortarea după nume se schimbă din lista de lângă el. R rotește poza selectată cu 90° (fișierul original nu este modificat).|Redenumire batch (prima iconiță din bara de sus): alegi un folder de pe disc, scrii un pattern (ex. Vacanta_Grecia_{counter:000}) și vezi numele noi înainte de aplicare. Pozele deja aflate în bibliotecă își păstrează albumele, tag-urile și rotirea.|Slideshow (butonul din dreapta sus a listei de poze sau F5): pornește cu pozele afișate, de la poza selectată. Space = pauză / redare, ← / → = navigare, Esc = ieșire. Durata, fade-ul, intensitatea efectului și muzica (MP3 în buclă) se setează în Opțiuni.</sys:String>
     <sys:String x:Key="Str.Info.Shortcuts">Scurtături de tastatură</sys:String>
-    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Deschide poza selectată pe tot ecranul|Esc=Închide vizualizarea pe tot ecranul / modalul logo / acest modal|← / →=Poza anterioară / următoare (pe tot ecranul)|Home / End=Prima / ultima poză (pe tot ecranul)|+ / −=Mărește / micșorează (pe tot ecranul)|0=Potrivire în ecran|1=Dimensiune reală (1:1)|Ctrl+A=Selectează toate pozele din grid|Ctrl / Shift + click=Selecție multiplă în grid</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Deschide poza selectată pe tot ecranul|Esc=Închide vizualizarea pe tot ecranul / modalul logo / acest modal|← / →=Poza anterioară / următoare (pe tot ecranul)|Home / End=Prima / ultima poză (pe tot ecranul)|+ / −=Mărește / micșorează (pe tot ecranul)|0=Potrivire în ecran|1=Dimensiune reală (1:1)|Ctrl+A=Selectează toate pozele din grid|Ctrl / Shift + click=Selecție multiplă în grid|R=Rotește poza cu 90° (grid sau pe tot ecranul)|Ctrl+F=Focus pe câmpul de căutare|Esc (în căutare)=Golește căutarea|F5=Pornește slideshow-ul|Space=Pauză / redare (slideshow)|Esc=Ieși din slideshow</sys:String>
     <sys:String x:Key="Str.Settings.Title">Opțiuni</sys:String>
     <sys:String x:Key="Str.Settings.SourceFolders">Foldere sursă</sys:String>
     <sys:String x:Key="Str.Settings.SourceFoldersHint">Folderele de pe disc indexate de PhotoVault. Re-scanarea detectează pozele noi și le elimină din index pe cele șterse; eliminarea unui folder nu atinge fișierele de pe disc.</sys:String>
     <sys:String x:Key="Str.Settings.Appearance">Aspect</sys:String>
     <sys:String x:Key="Str.Settings.ThemeDark">Temă întunecată</sys:String>
     <sys:String x:Key="Str.Settings.ThemeLight">Temă luminoasă</sys:String>
-    <sys:String x:Key="Str.Settings.MoreSoon">Setările pentru slideshow, culoarea de accent și limba interfeței vor apărea aici în fazele următoare.</sys:String>
-    <sys:String x:Key="Str.Placeholder.BatchRename">Modulul de redenumire batch (cu previzualizarea numelor noi) va fi disponibil în Faza 5.</sys:String>
     <sys:String x:Key="Str.Context.AllPhotos">Toate pozele</sys:String>
     <sys:String x:Key="Str.Albums.ShowAll">Afișează toate albumele</sys:String>
     <sys:String x:Key="Str.Albums.Back">Înapoi la albume</sys:String>
     <sys:String x:Key="Str.Albums.Open">Deschide albumul</sys:String>
-    <sys:String x:Key="Str.Albums.Rename">Redenumește...</sys:String>
     <sys:String x:Key="Str.Albums.Delete">Șterge albumul</sys:String>
     <sys:String x:Key="Str.Albums.NewEllipsis">Album nou...</sys:String>
     <sys:String x:Key="Str.Albums.NewTitle">Album nou</sys:String>
-    <sys:String x:Key="Str.Albums.NewMessage">Alege un nume pentru album.</sys:String>
-    <sys:String x:Key="Str.Albums.NamePlaceholder">ex. Vacanță Grecia 2024</sys:String>
-    <sys:String x:Key="Str.Albums.RenameTitle">Redenumește albumul</sys:String>
-    <sys:String x:Key="Str.Albums.RenameMessage">Noul nume al albumului:</sys:String>
+    <sys:String x:Key="Str.Albums.NewMessage">Alege un nume pentru album și, opțional, un subtitlu (ex. perioada sau locul).</sys:String>
+    <sys:String x:Key="Str.Albums.NamePlaceholder">ex. Vacanță la mare</sys:String>
     <sys:String x:Key="Str.Albums.DeleteTitle">Ștergi albumul?</sys:String>
     <sys:String x:Key="Str.Albums.DeleteConfirm">Albumul „{0}” ({1}) va fi șters. Pozele rămân în bibliotecă și pe disc — se șterge doar gruparea lor.</sys:String>
     <sys:String x:Key="Str.Albums.EmptyTitle">Niciun album creat încă</sys:String>
@@ -142,5 +138,118 @@
     <sys:String x:Key="Str.Count.One">{0} poză</sys:String>
     <sys:String x:Key="Str.Count.Few">{0} poze</sys:String>
     <sys:String x:Key="Str.Count.Many">{0} de poze</sys:String>
+    <sys:String x:Key="Str.Albums.Edit">Editează...</sys:String>
+    <sys:String x:Key="Str.Albums.EditShort">Editează</sys:String>
+    <sys:String x:Key="Str.Albums.EditTitle">Editează albumul</sys:String>
+    <sys:String x:Key="Str.Albums.EditMessage">Modifică numele sau subtitlul albumului.</sys:String>
+    <sys:String x:Key="Str.Albums.NameLabel">Nume album</sys:String>
+    <sys:String x:Key="Str.Albums.SubtitleLabel">Subtitlu (opțional) — apare pe cardul albumului</sys:String>
+    <sys:String x:Key="Str.Albums.SubtitlePlaceholder">ex. 10–15.08.2021</sys:String>
+    <sys:String x:Key="Str.Albums.DuplicateTitle">Nume de album deja folosit</sys:String>
+    <sys:String x:Key="Str.Albums.Duplicate">Există deja un album numit „{0}”. Alege un alt nume sau renunță.</sys:String>
+    <sys:String x:Key="Str.Albums.ChangeName">Modifică numele</sys:String>
+    <sys:String x:Key="Str.Albums.GiveUp">Renunță</sys:String>
+    <sys:String x:Key="Str.Grid.HasTags">Poza are tag-uri</sys:String>
+    <sys:String x:Key="Str.Search.Tooltip">Caută în numele fișierelor, tag-uri și albume (Ctrl+F). Esc golește căutarea.</sys:String>
+    <sys:String x:Key="Str.Search.NoResults">Nicio poză nu corespunde căutării.</sys:String>
+    <sys:String x:Key="Str.Search.Clear">Golește căutarea</sys:String>
+    <sys:String x:Key="Str.Photo.Rotate">Rotește 90°</sys:String>
+    <sys:String x:Key="Str.Lightbox.Rotate">Rotește 90° (R)</sys:String>
+
+    <!-- Redenumire batch (§6.8) -->
+    <sys:String x:Key="Str.FileCount.One">{0} fișier</sys:String>
+    <sys:String x:Key="Str.FileCount.Few">{0} fișiere</sys:String>
+    <sys:String x:Key="Str.FileCount.Many">{0} de fișiere</sys:String>
+    <sys:String x:Key="Str.Rename.Title">Redenumire batch</sys:String>
+    <sys:String x:Key="Str.Rename.Subtitle">Redenumește pozele dintr-un folder de pe disc, de preferat înainte de import. Numele noi se văd în listă înainte de aplicare.</sys:String>
+    <sys:String x:Key="Str.Rename.Folder">Folder</sys:String>
+    <sys:String x:Key="Str.Rename.ChooseFolder">Alege folderul...</sys:String>
+    <sys:String x:Key="Str.Rename.PickFolder">Alege folderul cu poze de redenumit</sys:String>
+    <sys:String x:Key="Str.Rename.NoFolderShort">Niciun folder ales</sys:String>
+    <sys:String x:Key="Str.Rename.IndexedInfo">Folderul face parte din bibliotecă ({0}). După redenumire, pozele sunt actualizate automat în index — albumele, tag-urile și rotirea se păstrează.</sys:String>
+    <sys:String x:Key="Str.Rename.ReadError" xml:space="preserve">Folderul nu poate fi citit:&#x0a;{0}</sys:String>
+    <sys:String x:Key="Str.Rename.Pattern">Pattern nume</sys:String>
+    <sys:String x:Key="Str.Rename.PatternPlaceholder">ex. Vacanta_Grecia_{counter:000}</sys:String>
+    <sys:String x:Key="Str.Rename.Insert">Inserează:</sys:String>
+    <sys:String x:Key="Str.Rename.Help">{name} = numele original · {counter} sau {counter:000} = număr secvențial (cu zerouri în față) · {date} sau {date:yyyyMMdd} = data fișierului · extensia se păstrează automat.</sys:String>
+    <sys:String x:Key="Str.Rename.CounterStart">Începe de la</sys:String>
+    <sys:String x:Key="Str.Rename.Order">Numerotare după</sys:String>
+    <sys:String x:Key="Str.Rename.Order.Name">Nume fișier</sys:String>
+    <sys:String x:Key="Str.Rename.Order.Date">Data fișierului</sys:String>
+    <sys:String x:Key="Str.Rename.Column.Current">Nume actual</sys:String>
+    <sys:String x:Key="Str.Rename.Column.New">Nume nou</sys:String>
+    <sys:String x:Key="Str.Rename.Column.Status">Stare</sys:String>
+    <sys:String x:Key="Str.Rename.Preview">Previzualizare</sys:String>
+    <sys:String x:Key="Str.Rename.NoFolder">Alege un folder pentru a vedea previzualizarea numelor noi.</sys:String>
+    <sys:String x:Key="Str.Rename.NoFiles">Folderul nu conține poze suportate (JPG, PNG, CR2, NEF, DNG). Subfolderele nu sunt incluse.</sys:String>
+    <sys:String x:Key="Str.Rename.Error.Empty">Scrie un pattern pentru numele noi.</sys:String>
+    <sys:String x:Key="Str.Rename.Error.Brace">Pattern-ul are o acoladă neînchisă sau în plus.</sys:String>
+    <sys:String x:Key="Str.Rename.Error.Token">Variabilă necunoscută: {0}. Variabile disponibile: {{name}}, {{counter}}, {{counter:000}}, {{date}}, {{date:format}}, {{ext}}.</sys:String>
+    <sys:String x:Key="Str.Rename.Error.Start">Numărul de start trebuie să fie un număr întreg (0 sau mai mare).</sys:String>
+    <sys:String x:Key="Str.Rename.Summary.ToRename">{0} de redenumit</sys:String>
+    <sys:String x:Key="Str.Rename.Summary.Conflicts">{0} în conflict</sys:String>
+    <sys:String x:Key="Str.Rename.Summary.Unchanged">{0} fără modificări</sys:String>
+    <sys:String x:Key="Str.Rename.ConflictHint">Rezolvă conflictele (marcate cu roșu) modificând pattern-ul înainte de aplicare.</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Ok">Se redenumește</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Unchanged">Neschimbat</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Invalid">Nume invalid</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Duplicate">Nume duplicat</sys:String>
+    <sys:String x:Key="Str.Rename.Status.Exists">Există deja</sys:String>
+    <sys:String x:Key="Str.Rename.Apply">Aplică redenumirea</sys:String>
+    <sys:String x:Key="Str.Rename.ConfirmTitle">Confirmă redenumirea</sys:String>
+    <sys:String x:Key="Str.Rename.ConfirmMessage" xml:space="preserve">Se vor redenumi {0} din folderul „{1}”.&#x0a;Operația schimbă numele fișierelor originale de pe disc.</sys:String>
+    <sys:String x:Key="Str.Rename.ConfirmIndexed">Pozele deja aflate în bibliotecă vor fi actualizate automat (albumele, tag-urile și rotirea se păstrează).</sys:String>
+    <sys:String x:Key="Str.Rename.ConfirmYes">Redenumește</sys:String>
+    <sys:String x:Key="Str.Rename.Done">Fișiere redenumite: {0}.</sys:String>
+    <sys:String x:Key="Str.Rename.DoneIndexed">Biblioteca a fost actualizată: {0}.</sys:String>
+    <sys:String x:Key="Str.Rename.Failed" xml:space="preserve">Redenumirea nu a fost aplicată. Fișierele au rămas cu numele inițiale.&#x0a;&#x0a;{0}</sys:String>
+    <sys:String x:Key="Str.Rename.Failure.SourceMissing">Fișierul „{0}” nu mai există în folder.</sys:String>
+    <sys:String x:Key="Str.Rename.Failure.TargetExists">Între timp a apărut în folder un fișier numit „{0}”.</sys:String>
+    <sys:String x:Key="Str.Rename.Failure.Conflicts">Lista conține conflicte.</sys:String>
+
+    <!-- Slideshow (§5.8, §6.10) -->
+    <sys:String x:Key="Str.Slideshow.Title">Slideshow</sys:String>
+    <sys:String x:Key="Str.Slideshow.Start">Slideshow</sys:String>
+    <sys:String x:Key="Str.Slideshow.StartTooltip">Pornește slideshow-ul cu pozele afișate (F5)</sys:String>
+    <sys:String x:Key="Str.Slideshow.StartHere">Pornește slideshow de aici</sys:String>
+    <sys:String x:Key="Str.Slideshow.Play">Redă</sys:String>
+    <sys:String x:Key="Str.Slideshow.Pause">Pauză</sys:String>
+    <sys:String x:Key="Str.Slideshow.Previous">Poza anterioară</sys:String>
+    <sys:String x:Key="Str.Slideshow.Next">Poza următoare</sys:String>
+    <sys:String x:Key="Str.Slideshow.Exit">Ieși din slideshow</sys:String>
+    <sys:String x:Key="Str.Settings.Slideshow">Slideshow</sys:String>
+    <sys:String x:Key="Str.Settings.SlideshowHint">Fiecare poză se apropie sau se depărtează lent și alunecă într-o direcție aleasă la întâmplare (efect Ken Burns), cu trecere fade spre următoarea.</sys:String>
+    <sys:String x:Key="Str.Settings.Duration">Durată afișare poză</sys:String>
+    <sys:String x:Key="Str.Settings.Fade">Durată fade</sys:String>
+    <sys:String x:Key="Str.Settings.Pan">Intensitate pan</sys:String>
+    <sys:String x:Key="Str.Settings.Zoom">Intensitate zoom</sys:String>
+    <sys:String x:Key="Str.Settings.Music">Muzică</sys:String>
+    <sys:String x:Key="Str.Settings.MusicHint">Piesele MP3 se redau în ordine, în buclă, pe toată durata slideshow-ului.</sys:String>
+    <sys:String x:Key="Str.Settings.MusicEmpty">Nicio piesă adăugată — slideshow-ul rulează fără muzică.</sys:String>
+    <sys:String x:Key="Str.Settings.MusicAdd">Adaugă MP3...</sys:String>
+    <sys:String x:Key="Str.Settings.MusicPick">Alege piese MP3 pentru slideshow</sys:String>
+    <sys:String x:Key="Str.Settings.MusicFilter">Fișiere MP3</sys:String>
+    <sys:String x:Key="Str.Settings.MusicRemove">Elimină din playlist</sys:String>
+    <sys:String x:Key="Str.Settings.MusicMissing">fișier negăsit</sys:String>
+    <sys:String x:Key="Str.Settings.Volume">Volum</sys:String>
+
+    <!-- Opțiuni → General, re-scanare globală (Faza 7) -->
+    <sys:String x:Key="Str.Settings.General">General</sys:String>
+    <sys:String x:Key="Str.Settings.Accent">Culoare de accent</sys:String>
+    <sys:String x:Key="Str.Settings.Language">Limba interfeței</sys:String>
+    <sys:String x:Key="Str.Settings.LanguageTitle">Limba interfeței</sys:String>
+    <sys:String x:Key="Str.Settings.LanguageRestart">Limba aleasă se aplică după repornirea aplicației. Repornești acum?</sys:String>
+    <sys:String x:Key="Str.Settings.RestartNow">Repornește acum</sys:String>
+    <sys:String x:Key="Str.Settings.RestartLater">Mai târziu</sys:String>
+    <sys:String x:Key="Str.Settings.LanguagePending">Repornește aplicația pentru a aplica limba selectată.</sys:String>
+    <sys:String x:Key="Str.Accent.Orange">Portocaliu</sys:String>
+    <sys:String x:Key="Str.Accent.Blue">Albastru</sys:String>
+    <sys:String x:Key="Str.Accent.Green">Verde</sys:String>
+    <sys:String x:Key="Str.Accent.Red">Roșu</sys:String>
+    <sys:String x:Key="Str.Accent.Purple">Mov</sys:String>
+    <sys:String x:Key="Str.Accent.Teal">Turcoaz</sys:String>
+    <sys:String x:Key="Str.Library.RescanAll">Re-scanează toate</sys:String>
+    <sys:String x:Key="Str.Library.RescanAllTooltip">Caută poze noi în toate folderele sursă și elimină din index pozele șterse sau mutate</sys:String>
+    <sys:String x:Key="Str.Library.UnavailableMany" xml:space="preserve">Următoarele foldere nu sunt accesibile acum (ex. disc extern deconectat) și au fost sărite; pozele lor au rămas în bibliotecă:&#x0a;&#x0a;{0}</sys:String>
 
 </ResourceDictionary>

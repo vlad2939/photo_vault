@@ -33,6 +33,8 @@ public sealed class TagService(ITagRepository tags) : ITagService
 
     public IReadOnlySet<long> GetPhotoIds(long tagId) => tags.GetPhotoIds(tagId);
 
+    public IReadOnlySet<long> GetTaggedPhotoIds() => tags.GetTaggedPhotoIds();
+
     /// <summary>Spațiile multiple sunt comprimate; tag-ul nu poate fi gol.</summary>
     private static string NormalizeName(string name)
     {

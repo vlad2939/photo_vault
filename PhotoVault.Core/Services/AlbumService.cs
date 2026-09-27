@@ -7,9 +7,24 @@ public sealed class AlbumService(IAlbumRepository albums) : IAlbumService
 {
     public IReadOnlyList<AlbumSummary> GetAlbums() => albums.GetAll();
 
-    public Album Create(string name) => albums.Create(NormalizeName(name));
+    public bool IsNameTaken(string name, long? exceptAlbumId = null)
+    {
+        var normalized = NormalizeName(name);
+        return albums.GetAll().Any(a => a.Album.Id != exceptAlbumId &&
+                                        string.Equals(a.Album.Name, normalized, StringComparison.CurrentCultureIgnoreCase));
+    }
 
-    public void Rename(long albumId, string name) => albums.Rename(albumId, NormalizeName(name));
+    public Album Create(string name, string? subtitle = null)
+    {
+        if (IsNameTaken(name)) throw new InvalidOperationException($"Există deja un album numit „{name.Trim()}”.");
+        return albums.Create(NormalizeName(name), NormalizeSubtitle(subtitle));
+    }
+
+    public void Update(long albumId, string name, string? subtitle)
+    {
+        if (IsNameTaken(name, albumId)) throw new InvalidOperationException($"Există deja un album numit „{name.Trim()}”.");
+        albums.Update(albumId, NormalizeName(name), NormalizeSubtitle(subtitle));
+    }
 
     public void Delete(long albumId) => albums.Delete(albumId);
 
@@ -23,7 +38,10 @@ public sealed class AlbumService(IAlbumRepository albums) : IAlbumService
 
     public void SetCover(long albumId, long photoId) => albums.SetCover(albumId, photoId);
 
-    /// <summary>Numele albumelor pot repeta (nu sunt unice în schemă), dar nu pot fi goale.</summary>
+    private static string? NormalizeSubtitle(string? subtitle) =>
+        string.IsNullOrWhiteSpace(subtitle) ? null : subtitle.Trim();
+
+    /// <summary>Numele nu pot fi goale; unicitatea e verificată de <see cref="IsNameTaken"/>.</summary>
     private static string NormalizeName(string name)
     {
         var trimmed = name.Trim();

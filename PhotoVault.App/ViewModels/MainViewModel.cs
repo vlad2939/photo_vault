@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhotoVault.App.Utils;
@@ -38,12 +39,14 @@ public partial class MainViewModel : ObservableObject
     private readonly IWindowService _windows;
     private readonly IAlbumService _albumService;
     private readonly ITagService _tagService;
+    private readonly IPhotoService _photoService;
     private readonly CancellationTokenSource _shutdown = new();
+    private readonly DispatcherTimer _searchDebounce = new() { Interval = TimeSpan.FromMilliseconds(300) };
     private bool _navigating;
 
     public MainViewModel(ISettingsService settings, IThemeService theme, IDialogService dialogs, IWindowService windows,
         IPhotoIndexService index, IThumbnailService thumbnails, IMetadataService metadata, IAlbumService albumService,
-        ITagService tagService, IFolderPicker folderPicker)
+        ITagService tagService, IPhotoService photoService, IFolderPicker folderPicker, IFilePicker filePicker, IAppLifetime lifetime)
     {
         _settings = settings;
         _theme = theme;
@@ -51,6 +54,7 @@ public partial class MainViewModel : ObservableObject
         _windows = windows;
         _albumService = albumService;
         _tagService = tagService;
+        _photoService = photoService;
         IsDarkTheme = theme.CurrentTheme == AppTheme.Dark;
 
         Status = new StatusBarViewModel();
@@ -59,8 +63,15 @@ public partial class MainViewModel : ObservableObject
         Library = new FolderTreeViewModel(index, dialogs, folderPicker, Status, Grid, _shutdown.Token);
         Albums = new AlbumViewModel(albumService, thumbnails, dialogs);
         Tags = new TagViewModel(tagService, dialogs);
+        SlideshowSettings = new SlideshowSettingsViewModel(settings, filePicker);
+        General = new GeneralSettingsViewModel(settings, theme, dialogs, lifetime);
 
         Grid.PropertyChanged += OnGridPropertyChanged;
+        _searchDebounce.Tick += (_, _) =>
+        {
+            _searchDebounce.Stop();
+            Grid.SetSearch(SearchText);
+        };
         Albums.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(AlbumViewModel.SelectedAlbum)) OnPropertyChanged(nameof(DetailsMode));
@@ -81,6 +92,8 @@ public partial class MainViewModel : ObservableObject
     public FolderTreeViewModel Library { get; }
     public AlbumViewModel Albums { get; }
     public TagViewModel Tags { get; }
+    public SlideshowSettingsViewModel SlideshowSettings { get; }
+    public GeneralSettingsViewModel General { get; }
 
     [ObservableProperty]
     public partial bool IsDarkTheme { get; set; }
@@ -94,6 +107,8 @@ public partial class MainViewModel : ObservableObject
     /// <summary>Titlul contextului curent (bara de deasupra grid-ului).</summary>
     [ObservableProperty]
     public partial string ContextTitle { get; set; } = string.Empty;
+
+    partial void OnContextTitleChanged(string value) => Grid.ContextTitle = value;
 
     /// <summary>Albumul deschis (în contextul Album).</summary>
     [ObservableProperty]
@@ -198,27 +213,80 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Badge-urile de tag și cuvintele-cheie de căutare (tag-uri + albume) ale pozelor,
+    /// după orice schimbare a atribuirilor / numelor.
+    /// </summary>
+    private void RefreshTagBadges()
+    {
+        Grid.SetTaggedPhotos(_tagService.GetTaggedPhotoIds());
+        Grid.SetSearchKeywords(_photoService.GetSearchKeywords());
+    }
+
+    // ------------------------------------------------------------------ Căutare, sortare, rotire (§6.7, §6.9)
+
+    /// <summary>Textul din câmpul de căutare; grid-ul se filtrează la 300 ms după ultima tastă.</summary>
+    [ObservableProperty]
+    public partial string SearchText { get; set; } = string.Empty;
+
+    partial void OnSearchTextChanged(string value)
+    {
+        _searchDebounce.Stop();
+        _searchDebounce.Start();
+    }
+
+    [RelayCommand]
+    private void ClearSearch()
+    {
+        SearchText = string.Empty;
+        _searchDebounce.Stop();
+        Grid.SetSearch(null);
+    }
+
+    /// <summary>0 = nume A → Z, 1 = nume Z → A (dropdown-ul de sortare).</summary>
+    [ObservableProperty]
+    public partial int SortIndex { get; set; }
+
+    partial void OnSortIndexChanged(int value) => Grid.SortDescending = value == 1;
+
+    /// <summary>R / „Rotește 90°": rotire logică a pozelor selectate; fișierele originale rămân neatinse.</summary>
+    [RelayCommand]
+    private void Rotate()
+    {
+        var targets = Grid.SelectedPhotos.Count > 0 ? Grid.SelectedPhotos
+            : Grid.SelectedPhoto is { } single ? [single] : [];
+        if (targets.Count == 0) return;
+
+        var rotations = _photoService.RotateClockwise(targets.Select(p => p.Id).ToList());
+        foreach (var photo in targets)
+            if (rotations.TryGetValue(photo.Id, out var degrees)) photo.SetRotation(degrees);
+    }
+
     private void OnLibraryReloaded()
     {
         Albums.Reload();
         Tags.Reload();
+        RefreshTagBadges();
         if (Context is BrowseContext.Album or BrowseContext.Tag) RefreshContext();
     }
 
     private void OnAlbumChanged(long albumId)
     {
+        RefreshTagBadges();   // numele albumelor fac parte din căutare
         if (Context == BrowseContext.Album) RefreshContext();
     }
 
     private void OnTagChanged(long tagId)
     {
         Details.RefreshTags();
+        RefreshTagBadges();
         if (Context == BrowseContext.Tag) RefreshContext();
     }
 
     private void OnTagsAssignmentChanged()
     {
         Tags.Reload();
+        RefreshTagBadges();
         if (Context == BrowseContext.Tag) RefreshContext();
     }
 
@@ -239,6 +307,7 @@ public partial class MainViewModel : ObservableObject
 
         var added = _albumService.AddPhotos(album.Id, ids);
         Albums.Reload();
+        RefreshTagBadges();
         Status.ShowMessage(Loc.Format("Str.Status.AddedToAlbum", Loc.PhotoCount(added), album.Name));
     }
 
@@ -252,6 +321,7 @@ public partial class MainViewModel : ObservableObject
 
         var removed = _albumService.RemovePhotos(album.Id, ids);
         Albums.Reload();
+        RefreshTagBadges();
         RefreshContext();
         Status.ShowMessage(Loc.Format("Str.Status.RemovedFromAlbum", Loc.PhotoCount(removed), album.Name));
     }
@@ -277,6 +347,7 @@ public partial class MainViewModel : ObservableObject
         var added = _tagService.Assign(tag.Id, ids);
         Tags.Reload();
         Details.RefreshTags();
+        RefreshTagBadges();
         if (Context == BrowseContext.Tag) RefreshContext();
         Status.ShowMessage(Loc.Format("Str.Status.TagAdded", tag.Name, Loc.PhotoCount(added)));
     }
@@ -292,6 +363,7 @@ public partial class MainViewModel : ObservableObject
         _tagService.Assign(tag.Id, [photo.Id]);
         Tags.Reload();
         Details.RefreshTags();
+        RefreshTagBadges();
         if (Context == BrowseContext.Tag) RefreshContext();
     }
 
@@ -310,9 +382,22 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void OpenBatchRename() =>
-        // Modulul de redenumire batch se implementează în Faza 5 (§6.8)
-        _dialogs.Show(Loc.Get("Str.Placeholder.Title"), Loc.Get("Str.Placeholder.BatchRename"), DialogKind.Info);
+    private async Task OpenBatchRename()
+    {
+        // Pozele indexate redenumite și-au păstrat Id-ul; se reîncarcă doar numele / căile afișate
+        if (_windows.ShowBatchRename()) await Library.RefreshAsync();
+    }
+
+    /// <summary>Slideshow cu pozele afișate în grid (context + căutare + sortare), de la poza selectată (§6.10).</summary>
+    [RelayCommand]
+    private void StartSlideshow(PhotoItemViewModel? from)
+    {
+        if (!IsPhotosView || Grid.Photos.Count == 0) return;
+        from ??= Grid.SelectedPhoto;
+        var start = from is null ? 0 : Math.Max(0, Grid.Photos.IndexOf(from));
+        var reached = _windows.ShowSlideshow(Grid.Photos.ToList(), start, ContextTitle);
+        if (reached is not null) Grid.SelectedPhoto = reached;
+    }
 
     [RelayCommand]
     private void OpenInfo() => _windows.ShowInfo();

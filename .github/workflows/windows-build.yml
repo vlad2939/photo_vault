@@ -60,3 +60,30 @@ jobs:
         with:
           name: PhotoVault-portabil-win-x64
           path: publish/
+
+  # Profiling pe o bibliotecă de 50.000 de poze (§9 Faza 7). Durează ~15–25 min, deci rulează doar
+  # la cerere (Run workflow) sau la un commit care conține „[perf]" în mesaj.
+  perf-50k:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[perf]')
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build
+        run: dotnet build PhotoVault.App -c Release
+
+      - name: Test de performanță (50.000 de poze)
+        shell: powershell
+        run: ./.github/scripts/perf-test.ps1 -Exe "PhotoVault.App/bin/Release/net10.0-windows/PhotoVault.exe" -OutDir "perf"
+
+      - name: Upload rezultate performanță
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performanta-50k
+          path: perf/

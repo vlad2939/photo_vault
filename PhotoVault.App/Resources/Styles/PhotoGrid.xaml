@@ -49,6 +49,14 @@
                                     </Border.Background>
                                 </Border>
 
+                                <!-- Badge: poza are cel puțin un tag (fundal închis semi-transparent → vizibil pe orice imagine) -->
+                                <Border x:Name="TagBadge" Margin="10,10,0,0" Padding="7,4" CornerRadius="10"
+                                        HorizontalAlignment="Left" VerticalAlignment="Top" Background="#B8141414"
+                                        Visibility="Collapsed" ToolTip="{DynamicResource Str.Grid.HasTags}">
+                                    <TextBlock FontFamily="{DynamicResource Font.Icons}" FontSize="11" Foreground="White"
+                                               Text="{DynamicResource Icon.Tag}" />
+                                </Border>
+
                                 <!-- Nume fișier + etichetă format -->
                                 <Grid Grid.Row="1" Margin="12,0,10,0">
                                     <Grid.ColumnDefinitions>
@@ -85,6 +93,9 @@
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding HasTags}" Value="True">
+                            <Setter TargetName="TagBadge" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsThumbnailUnavailable}" Value="True">
                             <Setter TargetName="Placeholder" Property="Opacity" Value="0.6" />
                         </DataTrigger>
@@ -160,9 +171,14 @@
                                 </Border>
                                 <StackPanel Grid.Row="1" Margin="14,0" VerticalAlignment="Center">
                                     <TextBlock Style="{DynamicResource Text.Body}" FontWeight="SemiBold" FontSize="14" Text="{Binding Name}" />
+                                    <!-- Subtitlul scris de utilizator (ex. perioada); data creării apare doar în panoul de detalii -->
                                     <Grid Margin="0,4,0,0">
-                                        <TextBlock Style="{DynamicResource Text.Caption}" Text="{Binding DateText}" />
-                                        <TextBlock HorizontalAlignment="Right" Style="{DynamicResource Text.Caption}" Text="{Binding PhotoCountLabel}" />
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Margin="0,0,10,0" Style="{DynamicResource Text.Caption}" Text="{Binding Subtitle}" />
+                                        <TextBlock Grid.Column="1" Style="{DynamicResource Text.Caption}" Text="{Binding PhotoCountLabel}" />
                                     </Grid>
                                 </StackPanel>
                             </Grid>

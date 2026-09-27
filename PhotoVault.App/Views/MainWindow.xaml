@@ -241,7 +241,7 @@
                                     <Grid Background="Transparent" AutomationProperties.Name="{Binding Name}">
                                         <Grid.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="{DynamicResource Str.Albums.Rename}" Command="{Binding RenameCommand}" />
+                                                <MenuItem Header="{DynamicResource Str.Albums.Edit}" Command="{Binding EditCommand}" />
                                                 <Separator />
                                                 <MenuItem Header="{DynamicResource Str.Albums.Delete}" Icon="{DynamicResource Icon.Delete}"
                                                           Command="{Binding DeleteCommand}" />
@@ -342,20 +342,40 @@
                                    Visibility="{Binding IsPhotosView, Converter={StaticResource BoolToVisibility}}" />
                     </Grid>
 
-                    <!-- Căutare + sortare (funcționale în Faza 4) -->
+                    <!-- Căutare (nume fișier + tag-uri + albume, Ctrl+F) + sortare după nume (§6.7) -->
                     <Grid Grid.Row="1" Visibility="{Binding IsPhotosView, Converter={StaticResource BoolToVisibility}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" MinWidth="120" />
                             <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="SearchBox"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                                  ctl:InputHelper.Placeholder="{DynamicResource Str.Search.Placeholder}"
-                                 ctl:InputHelper.Icon="{DynamicResource Icon.Search}" />
-                        <ComboBox Grid.Column="2" SelectedIndex="0" MinWidth="200">
+                                 ctl:InputHelper.Icon="{DynamicResource Icon.Search}"
+                                 ToolTip="{DynamicResource Str.Search.Tooltip}"
+                                 AutomationProperties.Name="{DynamicResource Str.Search.Placeholder}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Escape" Command="{Binding ClearSearchCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <ComboBox Grid.Column="2" SelectedIndex="{Binding SortIndex}" MinWidth="200">
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameAsc}" />
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameDesc}" />
                         </ComboBox>
+                        <!-- Slideshow cu pozele afișate (§6.10) -->
+                        <Button Grid.Column="4" Style="{StaticResource Button.Primary}" Command="{Binding StartSlideshowCommand}"
+                                ToolTip="{DynamicResource Str.Slideshow.StartTooltip}"
+                                AutomationProperties.Name="{DynamicResource Str.Slideshow.Start}"
+                                IsEnabled="{Binding Grid.IsEmpty, Converter={StaticResource InverseBoolean}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="{DynamicResource Font.Icons}" FontSize="12" VerticalAlignment="Center"
+                                           Text="{DynamicResource Icon.Play}" />
+                                <TextBlock Margin="8,0,0,0" Text="{DynamicResource Str.Slideshow.Start}" />
+                            </StackPanel>
+                        </Button>
                     </Grid>
 
                     <!-- ============ Poze ============ -->
@@ -379,8 +399,9 @@
                             <ContextMenu />
                         </ListBox.ContextMenu>
                         <ListBox.InputBindings>
-                            <!-- Enter → lightbox (dublu-click: OnPhotoListMouseDown) -->
+                            <!-- Enter → lightbox (dublu-click: OnPhotoListMouseDown); R → rotire 90° -->
                             <KeyBinding Key="Enter" Command="{Binding Grid.OpenCommand}" />
+                            <KeyBinding Key="R" Command="{Binding RotateCommand}" />
                         </ListBox.InputBindings>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -396,6 +417,17 @@
                                    Foreground="{DynamicResource Brush.Text.Tertiary}" Text="{DynamicResource Icon.Folder}" />
                         <TextBlock Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Secondary}"
                                    Text="{DynamicResource Str.Grid.FolderEmpty}" />
+                    </StackPanel>
+
+                    <!-- Căutare fără rezultate -->
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"
+                                Visibility="{Binding Grid.IsSearchEmpty, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Style="{StaticResource Text.Icon}" FontSize="30"
+                                   Foreground="{DynamicResource Brush.Text.Tertiary}" Text="{DynamicResource Icon.Search}" />
+                        <TextBlock Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Secondary}"
+                                   Text="{DynamicResource Str.Search.NoResults}" />
+                        <Button Margin="0,14,0,0" HorizontalAlignment="Center" Style="{StaticResource Button.Secondary}"
+                                Content="{DynamicResource Str.Search.Clear}" Command="{Binding ClearSearchCommand}" />
                     </StackPanel>
 
                     <!-- Bibliotecă goală -->
@@ -437,7 +469,7 @@
                                         <Setter.Value>
                                             <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                                                 <MenuItem Header="{DynamicResource Str.Albums.Open}" Command="{Binding OpenCommand}" />
-                                                <MenuItem Header="{DynamicResource Str.Albums.Rename}" Command="{Binding RenameCommand}" />
+                                                <MenuItem Header="{DynamicResource Str.Albums.Edit}" Command="{Binding EditCommand}" />
                                                 <Separator />
                                                 <MenuItem Header="{DynamicResource Str.Albums.Delete}" Icon="{DynamicResource Icon.Delete}"
                                                           Command="{Binding DeleteCommand}" />
@@ -564,6 +596,9 @@
                         </Border>
                         <TextBlock Margin="0,14,0,0" Style="{StaticResource Text.SectionHeader}" FontSize="16" TextWrapping="Wrap"
                                    TextTrimming="None" Text="{Binding Albums.SelectedAlbum.Name}" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Secondary}" TextWrapping="Wrap" TextTrimming="None"
+                                   Text="{Binding Albums.SelectedAlbum.Subtitle}"
+                                   Visibility="{Binding Albums.SelectedAlbum.HasSubtitle, Converter={StaticResource BoolToVisibility}}" />
                         <Border Style="{StaticResource Divider.Horizontal}" Margin="0,14,0,10" />
                         <Grid Margin="0,5">
                             <Grid.ColumnDefinitions>
@@ -581,8 +616,12 @@
                             <TextBlock Style="{StaticResource Text.Secondary}" FontSize="12.5" Text="{DynamicResource Str.Details.PhotoCount}" />
                             <TextBlock Grid.Column="1" FontSize="12.5" Text="{Binding Albums.SelectedAlbum.PhotoCountText}" />
                         </Grid>
-                        <Button Margin="0,18,0,0" HorizontalAlignment="Left" Style="{StaticResource Button.Primary}"
-                                Content="{DynamicResource Str.Albums.Open}" Command="{Binding Albums.SelectedAlbum.OpenCommand}" />
+                        <StackPanel Margin="0,18,0,0" Orientation="Horizontal">
+                            <Button Style="{StaticResource Button.Primary}"
+                                    Content="{DynamicResource Str.Albums.Open}" Command="{Binding Albums.SelectedAlbum.OpenCommand}" />
+                            <Button Margin="10,0,0,0" Style="{StaticResource Button.Secondary}"
+                                    Content="{DynamicResource Str.Albums.EditShort}" Command="{Binding Albums.SelectedAlbum.EditCommand}" />
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </ContentControl>

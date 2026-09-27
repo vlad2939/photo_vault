@@ -19,3 +19,21 @@ public sealed class FolderPicker : IFolderPicker
         return dialog.ShowDialog(owner) == true ? dialog.FolderName : null;
     }
 }
+
+/// <summary>Alegerea unuia sau mai multor fișiere (ex. piese MP3 pentru slideshow).</summary>
+public interface IFilePicker
+{
+    IReadOnlyList<string> PickFiles(string title, string filter);
+}
+
+/// <summary>Dialogul nativ Windows de deschidere fișiere, cu selecție multiplă.</summary>
+public sealed class FilePicker : IFilePicker
+{
+    public IReadOnlyList<string> PickFiles(string title, string filter)
+    {
+        var dialog = new OpenFileDialog { Title = title, Filter = filter, Multiselect = true, CheckFileExists = true };
+        var app = System.Windows.Application.Current;
+        var owner = app.Windows.OfType<System.Windows.Window>().FirstOrDefault(w => w.IsActive) ?? app.MainWindow;
+        return dialog.ShowDialog(owner) == true ? dialog.FileNames : [];
+    }
+}

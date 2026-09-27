@@ -5,13 +5,14 @@ using PhotoVault.Core.Services;
 
 namespace PhotoVault.App.Utils;
 
-public sealed class WindowService(IMetadataService metadata) : IWindowService
+public sealed class WindowService(IMetadataService metadata, IPhotoService photoService, IBatchRenameService batchRename,
+    IDialogService dialogs, IFolderPicker folderPicker, ISettingsService settings, ISlideshowService slideshow) : IWindowService
 {
     private static Window? Owner => Application.Current.MainWindow;
 
-    public PhotoItemViewModel? ShowLightbox(IReadOnlyList<PhotoItemViewModel> photos, int startIndex)
+    public PhotoItemViewModel? ShowLightbox(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title)
     {
-        var viewModel = new LightboxViewModel(photos, startIndex, metadata);
+        var viewModel = new LightboxViewModel(photos, startIndex, title, metadata, photoService);
         var window = new LightboxWindow { DataContext = viewModel, Owner = Owner };
         window.ShowDialog();
         return viewModel.Current;
@@ -35,5 +36,23 @@ public sealed class WindowService(IMetadataService metadata) : IWindowService
     {
         var window = new SettingsWindow { DataContext = viewModel, Owner = Owner };
         window.ShowDialog();
+    }
+
+    public bool ShowBatchRename()
+    {
+        var viewModel = new BatchRenameViewModel(batchRename, dialogs, folderPicker);
+        var window = new BatchRenameWindow { DataContext = viewModel, Owner = Owner };
+        window.ShowDialog();
+        return viewModel.LibraryChanged;
+    }
+
+    public PhotoItemViewModel? ShowSlideshow(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title)
+    {
+        if (photos.Count == 0) return null;
+        var viewModel = new SlideshowViewModel(photos, startIndex, title, settings.Current, metadata, slideshow,
+            new MusicPlayer(slideshow));
+        var window = new SlideshowWindow { DataContext = viewModel, Owner = Owner };
+        window.ShowDialog();
+        return viewModel.Current;
     }
 }

@@ -43,6 +43,7 @@ public class SettingsServiceTests
         service.Current.SlideshowDurationSec = 9.5;
         service.Current.SlideshowZoomIntensity = 1.2;
         service.Current.SlideshowPlaylistPaths = [@"C:\Muzica\a.mp3", @"D:\b.mp3"];
+        service.Current.SlideshowVolume = 35;
         service.Save();
 
         var reloaded = new SettingsService(repository).Load();
@@ -52,6 +53,7 @@ public class SettingsServiceTests
         Assert.Equal(9.5, reloaded.SlideshowDurationSec);
         Assert.Equal(1.2, reloaded.SlideshowZoomIntensity);
         Assert.Equal([@"C:\Muzica\a.mp3", @"D:\b.mp3"], reloaded.SlideshowPlaylistPaths);
+        Assert.Equal(35, reloaded.SlideshowVolume);
     }
 
     [Fact]
@@ -68,5 +70,26 @@ public class SettingsServiceTests
         Assert.Equal(AppSettings.DefaultAccentColor, settings.AccentColor);
         Assert.Equal(15, settings.SlideshowDurationSec);
         Assert.Empty(settings.SlideshowPlaylistPaths);
+    }
+
+    [Fact]
+    public void AccentAndLanguage_PersistImmediately_InvalidIgnored()
+    {
+        using var db = new TestDatabase();
+        var repository = new AppSettingsRepository(db.Context);
+        var service = new SettingsService(repository);
+        service.Load();
+
+        service.SetAccentColor("#2d7ff9");
+        service.SetAccentColor("albastru");   // invalid → ignorat
+        service.SetLanguage("en");
+
+        var reloaded = new SettingsService(repository).Load();
+        Assert.Equal("#2D7FF9", reloaded.AccentColor);
+        Assert.Equal("en", reloaded.Language);
+        Assert.Contains(reloaded.AccentColor, AppSettings.AccentPresets);
+
+        service.SetLanguage("fr");            // necunoscută → română
+        Assert.Equal("ro", new SettingsService(repository).Load().Language);
     }
 }

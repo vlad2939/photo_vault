@@ -1,0 +1,93 @@
+<!--
+    Slideshow (§5.8, §6.10): pe tot ecranul, fundal negru, efect Ken Burns + fade între poze.
+    Informațiile din colțurile de sus și bara de control de jos apar / dispar împreună (auto-hide după 3 s).
+    Paleta e mereu închisă (independentă de tema aplicației), ca în mockup.
+-->
+<Window x:Class="PhotoVault.App.Views.SlideshowWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:PhotoVault.App.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:SlideshowViewModel, IsDesignTimeCreatable=False}"
+        Title="{DynamicResource Str.Slideshow.Title}"
+        WindowStyle="None" ResizeMode="NoResize" WindowState="Maximized"
+        ShowInTaskbar="False" Background="Black" UseLayoutRounding="True"
+        FontFamily="{DynamicResource Font.Text}" FontSize="{DynamicResource FontSize.Body}"
+        Foreground="#F2F2F2">
+
+    <Window.Resources>
+        <!-- Play / Pause: butonul central, cerc conturat cu accentul (ca în mockup) -->
+        <Style x:Key="Slideshow.PlayButton" TargetType="Button" BasedOn="{StaticResource Viewer.CircleButton}">
+            <Setter Property="Content" Value="{DynamicResource Icon.Pause}" />
+            <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Slideshow.Pause}" />
+            <Setter Property="ToolTip" Value="{DynamicResource Str.Slideshow.Pause}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="False">
+                    <Setter Property="Content" Value="{DynamicResource Icon.Play}" />
+                    <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Slideshow.Play}" />
+                    <Setter Property="ToolTip" Value="{DynamicResource Str.Slideshow.Play}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="Root" Background="Black">
+        <!-- Scena: două straturi suprapuse (ieșire fade-out / intrare fade-in), fiecare cu mișcarea lui Ken Burns -->
+        <Grid x:Name="Stage" ClipToBounds="True">
+            <Image x:Name="LayerA" Stretch="Uniform" Opacity="0" RenderTransformOrigin="0.5,0.5"
+                   RenderOptions.BitmapScalingMode="HighQuality" />
+            <Image x:Name="LayerB" Stretch="Uniform" Opacity="0" RenderTransformOrigin="0.5,0.5"
+                   RenderOptions.BitmapScalingMode="HighQuality" />
+        </Grid>
+
+        <!-- ============ Elemente UI (apar / dispar împreună) ============ -->
+        <Grid x:Name="Chrome">
+            <!-- Stânga sus: aplicația + albumul / folderul -->
+            <Border Margin="24,22,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource Viewer.Pill}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="26" Height="26" Source="pack://application:,,,/PhotoVault;component/Resources/Images/logo_128.png"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="15" FontWeight="SemiBold" Foreground="White"
+                               Text="PhotoVault" />
+                    <Border Width="1" Height="22" Margin="16,0" Background="#33FFFFFF" />
+                    <TextBlock VerticalAlignment="Center" FontFamily="{DynamicResource Font.Icons}" FontSize="16"
+                               Foreground="{DynamicResource Brush.Accent}" Text="{DynamicResource Icon.Folder}" />
+                    <TextBlock x:Name="TitleText" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="#F2F2F2"
+                               MaxWidth="420" TextTrimming="CharacterEllipsis" Text="{Binding Title}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Dreapta sus: numele pozei curente -->
+            <Border Margin="0,22,24,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Viewer.Pill}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" FontFamily="{DynamicResource Font.Icons}" FontSize="16" Foreground="#E0E0E0"
+                               Text="{DynamicResource Icon.Photo}" />
+                    <TextBlock x:Name="FileNameText" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="#F2F2F2"
+                               MaxWidth="360" TextTrimming="CharacterEllipsis" Text="{Binding FileName}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Jos: bara de control -->
+            <Border x:Name="ControlBar" Style="{StaticResource Viewer.ControlBar}">
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Previous}"
+                            Command="{Binding PreviousCommand}"
+                            ToolTip="{DynamicResource Str.Slideshow.Previous}" AutomationProperties.Name="{DynamicResource Str.Slideshow.Previous}" />
+                    <Button Style="{StaticResource Slideshow.PlayButton}" Command="{Binding TogglePlayCommand}" />
+                    <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Next}"
+                            Command="{Binding NextCommand}"
+                            ToolTip="{DynamicResource Str.Slideshow.Next}" AutomationProperties.Name="{DynamicResource Str.Slideshow.Next}" />
+                    <Border Style="{StaticResource Viewer.Divider}" />
+                    <TextBlock x:Name="CounterText" MinWidth="72" VerticalAlignment="Center" TextAlignment="Center" FontSize="15"
+                               Foreground="#F2F2F2" Text="{Binding CounterText}" />
+                    <Border Style="{StaticResource Viewer.Divider}" />
+                    <Button Style="{StaticResource Viewer.Button}" FontSize="16" Content="{DynamicResource Icon.Close}"
+                            Command="{Binding ExitCommand}"
+                            ToolTip="{DynamicResource Str.Slideshow.Exit}" AutomationProperties.Name="{DynamicResource Str.Slideshow.Exit}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

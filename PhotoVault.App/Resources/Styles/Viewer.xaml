@@ -1,0 +1,114 @@
+<!--
+    Stiluri comune pentru ferestrele pe tot ecranul (vizualizare poză și slideshow, §5.8 / §6.4):
+    „pastile" semi-transparente în colțurile de sus, bară de control rotunjită jos,
+    butoane-glifă în culoarea accentului. Paleta e mereu închisă, independentă de temă.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="Viewer.PillBackground" Color="#B3202124" />
+    <SolidColorBrush x:Key="Viewer.PillBorder" Color="#26FFFFFF" />
+    <SolidColorBrush x:Key="Viewer.Text" Color="#F2F2F2" />
+    <SolidColorBrush x:Key="Viewer.DividerBrush" Color="#33FFFFFF" />
+
+    <Style x:Key="Viewer.Pill" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource Viewer.PillBackground}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Viewer.PillBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="18" ShadowDepth="2" Opacity="0.35" Color="Black" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Bara de control de jos: pastilă alungită, centrată -->
+    <Style x:Key="Viewer.ControlBar" TargetType="Border" BasedOn="{StaticResource Viewer.Pill}">
+        <Setter Property="CornerRadius" Value="38" />
+        <Setter Property="Padding" Value="22,10" />
+        <Setter Property="Margin" Value="0,0,0,40" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+    </Style>
+
+    <Style x:Key="Viewer.Divider" TargetType="Border">
+        <Setter Property="Width" Value="1" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Margin" Value="20,0" />
+        <Setter Property="Background" Value="{StaticResource Viewer.DividerBrush}" />
+    </Style>
+
+    <Style x:Key="Viewer.PillText" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource Viewer.Text}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <Style x:Key="Viewer.PillIcon" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font.Icons}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Accent}" />
+    </Style>
+
+    <!-- Butoane din bara de control: glifă în culoarea accentului, fără fundal; cerc discret la hover -->
+    <Style x:Key="Viewer.Button" TargetType="ButtonBase">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Width" Value="46" />
+        <Setter Property="Height" Value="46" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font.Icons}" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.Accent}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ButtonBase">
+                    <Grid>
+                        <Ellipse x:Name="Circle" Fill="Transparent" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Circle" Property="Fill" Value="#1FFFFFFF" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Circle" Property="Fill" Value="#33FFFFFF" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.35" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Butonul central: cerc conturat cu accentul (Play/Pause în slideshow, Potrivire în vizualizare) -->
+    <Style x:Key="Viewer.CircleButton" TargetType="ButtonBase" BasedOn="{StaticResource Viewer.Button}">
+        <Setter Property="Width" Value="52" />
+        <Setter Property="Height" Value="52" />
+        <Setter Property="Margin" Value="14,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ButtonBase">
+                    <Grid>
+                        <Ellipse x:Name="Circle" Fill="#14FFFFFF" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="2" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Circle" Property="Fill" Value="#2EFFFFFF" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Circle" Property="Fill" Value="#40FFFFFF" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

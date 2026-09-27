@@ -14,17 +14,6 @@ public sealed class ThemeManager : IThemeService
 {
     private const string ThemesFolder = "/Themes/";
 
-    /// <summary>Paleta de accent predefinită (6 culori, §6.12 — selector în Faza 7).</summary>
-    public static IReadOnlyList<string> AccentPresets { get; } =
-    [
-        "#F2821A", // portocaliu (implicit, conform mockup-urilor)
-        "#2D7FF9", // albastru
-        "#2EAD5B", // verde
-        "#E5484D", // roșu
-        "#8E5CF7", // mov
-        "#14B8A6", // turcoaz
-    ];
-
     private ResourceDictionary? _accentDictionary;
 
     public static ThemeManager Instance { get; } = new();

@@ -14,6 +14,7 @@ public sealed class PhotoIndexService(
     IThumbnailService thumbnails) : IPhotoIndexService
 {
     private const int InsertBatchSize = 500;
+    private const int ProgressStep = 20;
     private const int ThumbnailFlushSize = 64;
 
     private static readonly EnumerationOptions ScanOptions = new()
@@ -202,7 +203,10 @@ public sealed class PhotoIndexService(
                 }
                 if (toFlush is not null) Flush(toFlush);
 
-                progress?.Report(new IndexProgress(IndexPhase.Thumbnails, Interlocked.Increment(ref done), total));
+                // Progresul se raportează din 20 în 20 (+ ultimul): la zeci de mii de poze, UI-ul nu e inundat de mesaje
+                var current = Interlocked.Increment(ref done);
+                if (current % ProgressStep == 0 || current == total)
+                    progress?.Report(new IndexProgress(IndexPhase.Thumbnails, current, total));
                 return ValueTask.CompletedTask;
             }).ConfigureAwait(false);
         }
