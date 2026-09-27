@@ -198,10 +198,14 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>Badge-urile de tag din grid (după orice schimbare a atribuirilor).</summary>
+    private void RefreshTagBadges() => Grid.SetTaggedPhotos(_tagService.GetTaggedPhotoIds());
+
     private void OnLibraryReloaded()
     {
         Albums.Reload();
         Tags.Reload();
+        RefreshTagBadges();
         if (Context is BrowseContext.Album or BrowseContext.Tag) RefreshContext();
     }
 
@@ -213,12 +217,14 @@ public partial class MainViewModel : ObservableObject
     private void OnTagChanged(long tagId)
     {
         Details.RefreshTags();
+        RefreshTagBadges();
         if (Context == BrowseContext.Tag) RefreshContext();
     }
 
     private void OnTagsAssignmentChanged()
     {
         Tags.Reload();
+        RefreshTagBadges();
         if (Context == BrowseContext.Tag) RefreshContext();
     }
 
@@ -277,6 +283,7 @@ public partial class MainViewModel : ObservableObject
         var added = _tagService.Assign(tag.Id, ids);
         Tags.Reload();
         Details.RefreshTags();
+        RefreshTagBadges();
         if (Context == BrowseContext.Tag) RefreshContext();
         Status.ShowMessage(Loc.Format("Str.Status.TagAdded", tag.Name, Loc.PhotoCount(added)));
     }
@@ -292,6 +299,7 @@ public partial class MainViewModel : ObservableObject
         _tagService.Assign(tag.Id, [photo.Id]);
         Tags.Reload();
         Details.RefreshTags();
+        RefreshTagBadges();
         if (Context == BrowseContext.Tag) RefreshContext();
     }
 

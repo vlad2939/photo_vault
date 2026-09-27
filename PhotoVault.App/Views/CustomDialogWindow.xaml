@@ -63,9 +63,13 @@
                                    Foreground="{DynamicResource Brush.Text.Secondary}" />
                     </ScrollViewer>
 
-                    <!-- Câmp text (doar pentru Prompt: nume album / tag) -->
-                    <TextBox x:Name="InputBox" Grid.Row="2" Grid.Column="1" Margin="0,14,0,0" Visibility="Collapsed"
-                             MaxLength="120" TextChanged="OnInputChanged" />
+                    <!-- Câmpuri text (doar pentru Prompt: nume album / tag, subtitlu album) -->
+                    <StackPanel x:Name="InputPanel" Grid.Row="2" Grid.Column="1" Margin="0,14,0,0" Visibility="Collapsed">
+                        <TextBlock x:Name="InputLabel" Margin="0,0,0,6" Style="{StaticResource Text.Caption}" Visibility="Collapsed" />
+                        <TextBox x:Name="InputBox" MaxLength="120" TextChanged="OnInputChanged" />
+                        <TextBlock x:Name="SecondaryLabel" Margin="0,12,0,6" Style="{StaticResource Text.Caption}" Visibility="Collapsed" />
+                        <TextBox x:Name="SecondaryBox" MaxLength="120" Visibility="Collapsed" />
+                    </StackPanel>
 
                     <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="0,22,0,0"
                                 Orientation="Horizontal" HorizontalAlignment="Right">

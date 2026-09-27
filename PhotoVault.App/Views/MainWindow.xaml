@@ -241,7 +241,7 @@
                                     <Grid Background="Transparent" AutomationProperties.Name="{Binding Name}">
                                         <Grid.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="{DynamicResource Str.Albums.Rename}" Command="{Binding RenameCommand}" />
+                                                <MenuItem Header="{DynamicResource Str.Albums.Edit}" Command="{Binding EditCommand}" />
                                                 <Separator />
                                                 <MenuItem Header="{DynamicResource Str.Albums.Delete}" Icon="{DynamicResource Icon.Delete}"
                                                           Command="{Binding DeleteCommand}" />
@@ -437,7 +437,7 @@
                                         <Setter.Value>
                                             <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                                                 <MenuItem Header="{DynamicResource Str.Albums.Open}" Command="{Binding OpenCommand}" />
-                                                <MenuItem Header="{DynamicResource Str.Albums.Rename}" Command="{Binding RenameCommand}" />
+                                                <MenuItem Header="{DynamicResource Str.Albums.Edit}" Command="{Binding EditCommand}" />
                                                 <Separator />
                                                 <MenuItem Header="{DynamicResource Str.Albums.Delete}" Icon="{DynamicResource Icon.Delete}"
                                                           Command="{Binding DeleteCommand}" />
@@ -564,6 +564,9 @@
                         </Border>
                         <TextBlock Margin="0,14,0,0" Style="{StaticResource Text.SectionHeader}" FontSize="16" TextWrapping="Wrap"
                                    TextTrimming="None" Text="{Binding Albums.SelectedAlbum.Name}" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Secondary}" TextWrapping="Wrap" TextTrimming="None"
+                                   Text="{Binding Albums.SelectedAlbum.Subtitle}"
+                                   Visibility="{Binding Albums.SelectedAlbum.HasSubtitle, Converter={StaticResource BoolToVisibility}}" />
                         <Border Style="{StaticResource Divider.Horizontal}" Margin="0,14,0,10" />
                         <Grid Margin="0,5">
                             <Grid.ColumnDefinitions>
@@ -581,8 +584,12 @@
                             <TextBlock Style="{StaticResource Text.Secondary}" FontSize="12.5" Text="{DynamicResource Str.Details.PhotoCount}" />
                             <TextBlock Grid.Column="1" FontSize="12.5" Text="{Binding Albums.SelectedAlbum.PhotoCountText}" />
                         </Grid>
-                        <Button Margin="0,18,0,0" HorizontalAlignment="Left" Style="{StaticResource Button.Primary}"
-                                Content="{DynamicResource Str.Albums.Open}" Command="{Binding Albums.SelectedAlbum.OpenCommand}" />
+                        <StackPanel Margin="0,18,0,0" Orientation="Horizontal">
+                            <Button Style="{StaticResource Button.Primary}"
+                                    Content="{DynamicResource Str.Albums.Open}" Command="{Binding Albums.SelectedAlbum.OpenCommand}" />
+                            <Button Margin="10,0,0,0" Style="{StaticResource Button.Secondary}"
+                                    Content="{DynamicResource Str.Albums.EditShort}" Command="{Binding Albums.SelectedAlbum.EditCommand}" />
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </ContentControl>

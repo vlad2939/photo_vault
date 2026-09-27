@@ -69,6 +69,12 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
     /// <summary>Filtru după o mulțime de Id-uri (album, tag).</summary>
     public static Func<PhotoItemViewModel, bool> IdFilter(IReadOnlySet<long> ids) => p => ids.Contains(p.Id);
 
+    /// <summary>Actualizează badge-ul de tag pe toate cardurile.</summary>
+    public void SetTaggedPhotos(IReadOnlySet<long> taggedIds)
+    {
+        foreach (var photo in _all) photo.HasTags = taggedIds.Contains(photo.Id);
+    }
+
     /// <summary>O miniatură tocmai a fost generată în fundal → cardul ei se actualizează.</summary>
     public void ApplyThumbnail(ThumbnailResult result)
     {

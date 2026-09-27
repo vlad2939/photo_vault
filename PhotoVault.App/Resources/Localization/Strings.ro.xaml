@@ -103,14 +103,11 @@
     <sys:String x:Key="Str.Albums.ShowAll">Afișează toate albumele</sys:String>
     <sys:String x:Key="Str.Albums.Back">Înapoi la albume</sys:String>
     <sys:String x:Key="Str.Albums.Open">Deschide albumul</sys:String>
-    <sys:String x:Key="Str.Albums.Rename">Redenumește...</sys:String>
     <sys:String x:Key="Str.Albums.Delete">Șterge albumul</sys:String>
     <sys:String x:Key="Str.Albums.NewEllipsis">Album nou...</sys:String>
     <sys:String x:Key="Str.Albums.NewTitle">Album nou</sys:String>
-    <sys:String x:Key="Str.Albums.NewMessage">Alege un nume pentru album.</sys:String>
-    <sys:String x:Key="Str.Albums.NamePlaceholder">ex. Vacanță Grecia 2024</sys:String>
-    <sys:String x:Key="Str.Albums.RenameTitle">Redenumește albumul</sys:String>
-    <sys:String x:Key="Str.Albums.RenameMessage">Noul nume al albumului:</sys:String>
+    <sys:String x:Key="Str.Albums.NewMessage">Alege un nume pentru album și, opțional, un subtitlu (ex. perioada sau locul).</sys:String>
+    <sys:String x:Key="Str.Albums.NamePlaceholder">ex. Vacanță la mare</sys:String>
     <sys:String x:Key="Str.Albums.DeleteTitle">Ștergi albumul?</sys:String>
     <sys:String x:Key="Str.Albums.DeleteConfirm">Albumul „{0}” ({1}) va fi șters. Pozele rămân în bibliotecă și pe disc — se șterge doar gruparea lor.</sys:String>
     <sys:String x:Key="Str.Albums.EmptyTitle">Niciun album creat încă</sys:String>
@@ -142,5 +139,17 @@
     <sys:String x:Key="Str.Count.One">{0} poză</sys:String>
     <sys:String x:Key="Str.Count.Few">{0} poze</sys:String>
     <sys:String x:Key="Str.Count.Many">{0} de poze</sys:String>
+    <sys:String x:Key="Str.Albums.Edit">Editează...</sys:String>
+    <sys:String x:Key="Str.Albums.EditShort">Editează</sys:String>
+    <sys:String x:Key="Str.Albums.EditTitle">Editează albumul</sys:String>
+    <sys:String x:Key="Str.Albums.EditMessage">Modifică numele sau subtitlul albumului.</sys:String>
+    <sys:String x:Key="Str.Albums.NameLabel">Nume album</sys:String>
+    <sys:String x:Key="Str.Albums.SubtitleLabel">Subtitlu (opțional) — apare pe cardul albumului</sys:String>
+    <sys:String x:Key="Str.Albums.SubtitlePlaceholder">ex. 10–15.08.2021</sys:String>
+    <sys:String x:Key="Str.Albums.DuplicateTitle">Nume de album deja folosit</sys:String>
+    <sys:String x:Key="Str.Albums.Duplicate">Există deja un album numit „{0}”. Alege un alt nume sau renunță.</sys:String>
+    <sys:String x:Key="Str.Albums.ChangeName">Modifică numele</sys:String>
+    <sys:String x:Key="Str.Albums.GiveUp">Renunță</sys:String>
+    <sys:String x:Key="Str.Grid.HasTags">Poza are tag-uri</sys:String>
 
 </ResourceDictionary>

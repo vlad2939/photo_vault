@@ -311,9 +311,22 @@ function Select-Photos($root, [int] $count) {
 Invoke-Element (Find-Control $root 'Album nou' $button)
 Start-Sleep -Milliseconds 800
 Save-Screen '20-album-prompt-dark'
-[System.Windows.Forms.SendKeys]::SendWait('Vacanta 2024{ENTER}')
+[System.Windows.Forms.SendKeys]::SendWait('Vacanta 2024{TAB}10-15.08.2021{ENTER}')
 Start-Sleep -Milliseconds 800
 Find-Control $root 'Vacanta 2024' ([System.Windows.Automation.ControlType]::ListItem) | Out-Null
+
+# Nume duplicat (altă scriere a majusculelor) → avertisment „Modifică numele / Renunță"; nu se creează al doilea album
+Invoke-Element (Find-Control $root 'Album nou' $button)
+Start-Sleep -Milliseconds 800
+[System.Windows.Forms.SendKeys]::SendWait('vacanta 2024{ENTER}')
+Start-Sleep -Milliseconds 900
+Find-TopWindow 'Nume de album deja folosit' 5 | Out-Null
+Save-Screen '20b-album-duplicate-dark'
+Invoke-Element (Find-Control ([System.Windows.Automation.AutomationElement]::RootElement) 'Renunță' $button)
+Start-Sleep -Milliseconds 800
+$albumItems = (Find-ByName $root 'AlbumList').FindAll([System.Windows.Automation.TreeScope]::Children,
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem)))
+if ($albumItems.Count -ne 1) { throw "Albumul duplicat a fost creat ($($albumItems.Count) albume)." }
 
 # 4 poze selectate → click dreapta → Adaugă la album → Vacanta 2024
 Select-Photos $root 4

@@ -17,6 +17,7 @@ public partial class AlbumItemViewModel : ObservableObject
         _owner = owner;
         Id = summary.Album.Id;
         Name = summary.Album.Name;
+        Subtitle = summary.Album.Subtitle;
         DateCreated = summary.Album.DateCreated;
         PhotoCount = summary.PhotoCount;
         CoverPhotoId = summary.CoverPhotoId;
@@ -25,6 +26,10 @@ public partial class AlbumItemViewModel : ObservableObject
 
     public long Id { get; }
     public string Name { get; }
+
+    /// <summary>Subtitlul scris de utilizator (ex. „10–15.08.2021") — afișat pe card.</summary>
+    public string? Subtitle { get; }
+    public bool HasSubtitle => !string.IsNullOrWhiteSpace(Subtitle);
     public DateTime DateCreated { get; }
     public int PhotoCount { get; }
     public long? CoverPhotoId { get; }
@@ -58,7 +63,7 @@ public partial class AlbumItemViewModel : ObservableObject
     private void Open() => _owner.RequestOpen(this);
 
     [RelayCommand]
-    private void Rename() => _owner.RenameAlbum(this);
+    private void Edit() => _owner.EditAlbum(this);
 
     [RelayCommand]
     private void Delete() => _owner.DeleteAlbum(this);

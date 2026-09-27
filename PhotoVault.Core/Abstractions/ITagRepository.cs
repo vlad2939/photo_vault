@@ -16,4 +16,7 @@ public interface ITagRepository
     void Unassign(long tagId, long photoId);
     IReadOnlyList<Tag> GetForPhoto(long photoId);
     IReadOnlySet<long> GetPhotoIds(long tagId);
+
+    /// <summary>Id-urile tuturor pozelor care au cel puțin un tag (badge-ul din grid).</summary>
+    IReadOnlySet<long> GetTaggedPhotoIds();
 }

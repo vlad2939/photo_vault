@@ -17,7 +17,7 @@ public class DatabaseContextTests
         Assert.Contains("idx_photos_filename", indexes);
         Assert.Contains("idx_photos_sourcefolder", indexes);
 
-        Assert.Equal(2, db.Context.GetSchemaVersion());
+        Assert.Equal(3, db.Context.GetSchemaVersion());
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class DatabaseContextTests
         using var db = new TestDatabase();
         db.Context.Initialize();
         db.Context.Initialize();
-        Assert.Equal(2, db.Context.GetSchemaVersion());
+        Assert.Equal(3, db.Context.GetSchemaVersion());
     }
 
     [Fact]

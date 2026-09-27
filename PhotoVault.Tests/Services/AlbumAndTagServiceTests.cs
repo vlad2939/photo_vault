@@ -52,8 +52,9 @@ public sealed class AlbumAndTagServiceTests : IDisposable
     {
         var album = _albums.Create("Temp");
         _albums.AddPhotos(album.Id, _photoIds);
-        _albums.Rename(album.Id, "Final");
+        _albums.Update(album.Id, "Final", "  10–15.08.2021 ");
         Assert.Equal("Final", _albums.GetAlbums().Single().Album.Name);
+        Assert.Equal("10–15.08.2021", _albums.GetAlbums().Single().Album.Subtitle);
 
         _albums.Delete(album.Id);
 
@@ -61,6 +62,34 @@ public sealed class AlbumAndTagServiceTests : IDisposable
         using var c = _db.Context.OpenConnection();
         Assert.Equal(3, c.ExecuteScalar<long>("SELECT COUNT(*) FROM Photos"));
         Assert.Equal(0, c.ExecuteScalar<long>("SELECT COUNT(*) FROM AlbumPhotos"));
+    }
+
+    [Fact]
+    public void Album_DuplicateName_IsRejectedCaseInsensitive()
+    {
+        var mare = _albums.Create("Vacanță la mare", "10–15.08.2021");
+        var munte = _albums.Create("Munte");
+
+        Assert.True(_albums.IsNameTaken("VACANȚĂ LA MARE"));
+        Assert.False(_albums.IsNameTaken("Vacanță la mare", mare.Id));   // propriul nume nu contează la editare
+        Assert.Throws<InvalidOperationException>(() => _albums.Create(" vacanță la mare "));
+        Assert.Throws<InvalidOperationException>(() => _albums.Update(munte.Id, "Vacanță la Mare", null));
+
+        _albums.Update(mare.Id, "Vacanță la Mare", "");   // doar majusculele propriului nume → permis
+        var updated = _albums.GetAlbums().Single(a => a.Album.Id == mare.Id).Album;
+        Assert.Equal("Vacanță la Mare", updated.Name);
+        Assert.Null(updated.Subtitle);
+    }
+
+    [Fact]
+    public void Tag_GetTaggedPhotoIds_ReturnsPhotosWithAnyTag()
+    {
+        var mare = _tags.GetOrCreate("mare");
+        var apus = _tags.GetOrCreate("apus");
+        _tags.Assign(mare.Id, [_photoIds[0]]);
+        _tags.Assign(apus.Id, [_photoIds[0], _photoIds[2]]);
+
+        Assert.Equal(new HashSet<long> { _photoIds[0], _photoIds[2] }, _tags.GetTaggedPhotoIds());
     }
 
     [Fact]

@@ -30,6 +30,10 @@ public partial class PhotoItemViewModel : ObservableObject
     public long? FileSizeBytes => _photo.FileSizeBytes;
     public int RotationDegrees => _photo.RotationDegrees;
 
+    /// <summary>Poza are cel puțin un tag → badge pe miniatură.</summary>
+    [ObservableProperty]
+    public partial bool HasTags { get; set; }
+
     /// <summary>Eticheta de format de pe card (JPG, PNG, CR2...).</summary>
     public string FormatLabel => _photo.Extension == "jpeg" ? "JPG" : _photo.Extension.ToUpperInvariant();
 

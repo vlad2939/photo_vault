@@ -6,8 +6,15 @@ namespace PhotoVault.Core.Services;
 public interface IAlbumService
 {
     IReadOnlyList<AlbumSummary> GetAlbums();
-    Album Create(string name);
-    void Rename(long albumId, string name);
+    /// <summary>true dacă există deja un album cu acest nume (fără diferență de majuscule), altul decât <paramref name="exceptAlbumId"/>.</summary>
+    bool IsNameTaken(string name, long? exceptAlbumId = null);
+
+    /// <exception cref="InvalidOperationException">Numele e deja folosit de alt album.</exception>
+    Album Create(string name, string? subtitle = null);
+
+    /// <summary>Schimbă numele și subtitlul.</summary>
+    /// <exception cref="InvalidOperationException">Numele e deja folosit de alt album.</exception>
+    void Update(long albumId, string name, string? subtitle);
     void Delete(long albumId);
     int AddPhotos(long albumId, IReadOnlyCollection<long> photoIds);
     int RemovePhotos(long albumId, IReadOnlyCollection<long> photoIds);

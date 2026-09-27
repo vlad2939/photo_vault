@@ -5,8 +5,8 @@ namespace PhotoVault.Core.Abstractions;
 public interface IAlbumRepository
 {
     IReadOnlyList<AlbumSummary> GetAll();
-    Album Create(string name);
-    void Rename(long albumId, string name);
+    Album Create(string name, string? subtitle);
+    void Update(long albumId, string name, string? subtitle);
 
     /// <summary>Șterge doar structura logică (Albums + AlbumPhotos); pozele rămân indexate.</summary>
     void Delete(long albumId);

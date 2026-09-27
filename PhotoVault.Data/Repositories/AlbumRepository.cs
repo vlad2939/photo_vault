@@ -12,9 +12,9 @@ public sealed class AlbumRepository(DatabaseContext db) : IAlbumRepository
         // Coperta efectivă: cea setată manual, altfel prima poză adăugată în album (§5.7)
         return connection.Query<Row>(
                 """
-                SELECT x.Id, x.Name, x.DateCreated, x.PhotoCount, x.EffectiveCover, p.ThumbnailPath
+                SELECT x.Id, x.Name, x.Subtitle, x.DateCreated, x.PhotoCount, x.EffectiveCover, p.ThumbnailPath
                 FROM (
-                    SELECT a.Id, a.Name, a.DateCreated,
+                    SELECT a.Id, a.Name, a.Subtitle, a.DateCreated,
                            (SELECT COUNT(*) FROM AlbumPhotos ap WHERE ap.AlbumId = a.Id) AS PhotoCount,
                            COALESCE(a.CoverPhotoId,
                                     (SELECT ap.PhotoId FROM AlbumPhotos ap WHERE ap.AlbumId = a.Id
@@ -25,25 +25,25 @@ public sealed class AlbumRepository(DatabaseContext db) : IAlbumRepository
                 ORDER BY x.Name COLLATE NOCASE, x.Id
                 """)
             .Select(r => new AlbumSummary(
-                new Album { Id = r.Id, Name = r.Name, DateCreated = SqliteDates.FromDb(r.DateCreated), CoverPhotoId = r.EffectiveCover },
+                new Album { Id = r.Id, Name = r.Name, Subtitle = r.Subtitle, DateCreated = SqliteDates.FromDb(r.DateCreated), CoverPhotoId = r.EffectiveCover },
                 (int)r.PhotoCount, r.EffectiveCover, r.ThumbnailPath))
             .ToList();
     }
 
-    public Album Create(string name)
+    public Album Create(string name, string? subtitle)
     {
         var created = SqliteDates.FromDb(SqliteDates.ToDb(DateTime.Now));
         using var connection = db.OpenConnection();
         var id = connection.ExecuteScalar<long>(
-            "INSERT INTO Albums (Name, DateCreated) VALUES (@name, @created); SELECT last_insert_rowid();",
-            new { name, created = SqliteDates.ToDb(created) });
-        return new Album { Id = id, Name = name, DateCreated = created };
+            "INSERT INTO Albums (Name, Subtitle, DateCreated) VALUES (@name, @subtitle, @created); SELECT last_insert_rowid();",
+            new { name, subtitle, created = SqliteDates.ToDb(created) });
+        return new Album { Id = id, Name = name, Subtitle = subtitle, DateCreated = created };
     }
 
-    public void Rename(long albumId, string name)
+    public void Update(long albumId, string name, string? subtitle)
     {
         using var connection = db.OpenConnection();
-        connection.Execute("UPDATE Albums SET Name = @name WHERE Id = @albumId", new { albumId, name });
+        connection.Execute("UPDATE Albums SET Name = @name, Subtitle = @subtitle WHERE Id = @albumId", new { albumId, name, subtitle });
     }
 
     public void Delete(long albumId)
@@ -109,6 +109,7 @@ public sealed class AlbumRepository(DatabaseContext db) : IAlbumRepository
     {
         public long Id { get; init; }
         public string Name { get; init; } = string.Empty;
+        public string? Subtitle { get; init; }
         public string DateCreated { get; init; } = string.Empty;
         public long PhotoCount { get; init; }
         public long? EffectiveCover { get; init; }

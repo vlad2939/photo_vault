@@ -103,14 +103,11 @@
     <sys:String x:Key="Str.Albums.ShowAll">Show all albums</sys:String>
     <sys:String x:Key="Str.Albums.Back">Back to albums</sys:String>
     <sys:String x:Key="Str.Albums.Open">Open album</sys:String>
-    <sys:String x:Key="Str.Albums.Rename">Rename...</sys:String>
     <sys:String x:Key="Str.Albums.Delete">Delete album</sys:String>
     <sys:String x:Key="Str.Albums.NewEllipsis">New album...</sys:String>
     <sys:String x:Key="Str.Albums.NewTitle">New album</sys:String>
-    <sys:String x:Key="Str.Albums.NewMessage">Choose a name for the album.</sys:String>
-    <sys:String x:Key="Str.Albums.NamePlaceholder">e.g. Greece holiday 2024</sys:String>
-    <sys:String x:Key="Str.Albums.RenameTitle">Rename album</sys:String>
-    <sys:String x:Key="Str.Albums.RenameMessage">New album name:</sys:String>
+    <sys:String x:Key="Str.Albums.NewMessage">Choose a name for the album and, optionally, a subtitle (e.g. the period or place).</sys:String>
+    <sys:String x:Key="Str.Albums.NamePlaceholder">e.g. Seaside holiday</sys:String>
     <sys:String x:Key="Str.Albums.DeleteTitle">Delete the album?</sys:String>
     <sys:String x:Key="Str.Albums.DeleteConfirm">The album “{0}” ({1}) will be deleted. The photos stay in the library and on disk — only the grouping is removed.</sys:String>
     <sys:String x:Key="Str.Albums.EmptyTitle">No albums yet</sys:String>
@@ -142,5 +139,17 @@
     <sys:String x:Key="Str.Count.One">{0} photo</sys:String>
     <sys:String x:Key="Str.Count.Few">{0} photos</sys:String>
     <sys:String x:Key="Str.Count.Many">{0} photos</sys:String>
+    <sys:String x:Key="Str.Albums.Edit">Edit...</sys:String>
+    <sys:String x:Key="Str.Albums.EditShort">Edit</sys:String>
+    <sys:String x:Key="Str.Albums.EditTitle">Edit album</sys:String>
+    <sys:String x:Key="Str.Albums.EditMessage">Change the album name or subtitle.</sys:String>
+    <sys:String x:Key="Str.Albums.NameLabel">Album name</sys:String>
+    <sys:String x:Key="Str.Albums.SubtitleLabel">Subtitle (optional) — shown on the album card</sys:String>
+    <sys:String x:Key="Str.Albums.SubtitlePlaceholder">e.g. 10–15.08.2021</sys:String>
+    <sys:String x:Key="Str.Albums.DuplicateTitle">Album name already in use</sys:String>
+    <sys:String x:Key="Str.Albums.Duplicate">An album named “{0}” already exists. Choose another name or cancel.</sys:String>
+    <sys:String x:Key="Str.Albums.ChangeName">Change name</sys:String>
+    <sys:String x:Key="Str.Albums.GiveUp">Cancel</sys:String>
+    <sys:String x:Key="Str.Grid.HasTags">This photo has tags</sys:String>
 
 </ResourceDictionary>
