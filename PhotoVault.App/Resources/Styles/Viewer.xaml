@@ -21,7 +21,7 @@
     </Style>
 
     <!-- Bara de control de jos: pastilă alungită, centrată -->
-    <Style x:Key="Viewer.ControlBar" TargetType="Border" BasedOn="{DynamicResource Viewer.Pill}">
+    <Style x:Key="Viewer.ControlBar" TargetType="Border" BasedOn="{StaticResource Viewer.Pill}">
         <Setter Property="CornerRadius" Value="38" />
         <Setter Property="Padding" Value="22,10" />
         <Setter Property="Margin" Value="0,0,0,40" />
@@ -84,7 +84,7 @@
     </Style>
 
     <!-- Butonul central: cerc conturat cu accentul (Play/Pause în slideshow, Potrivire în vizualizare) -->
-    <Style x:Key="Viewer.CircleButton" TargetType="ButtonBase" BasedOn="{DynamicResource Viewer.Button}">
+    <Style x:Key="Viewer.CircleButton" TargetType="ButtonBase" BasedOn="{StaticResource Viewer.Button}">
         <Setter Property="Width" Value="52" />
         <Setter Property="Height" Value="52" />
         <Setter Property="Margin" Value="14,0" />
