@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using PhotoVault.App.Utils;
 using PhotoVault.Core.Models;
 using PhotoVault.Core.Services;
+using PhotoVault.Core.Utils;
 
 namespace PhotoVault.App.ViewModels;
 
@@ -17,10 +18,12 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
     private List<PhotoItemViewModel> _all = [];
     private Dictionary<long, PhotoItemViewModel> _byId = [];
     private Func<PhotoItemViewModel, bool>? _filter;
+    private string[] _searchTerms = [];
+    private IReadOnlyDictionary<long, string> _keywords = new Dictionary<long, string>();
     private IReadOnlyList<PhotoItemViewModel> _selection = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsEmpty), nameof(IsLibraryEmpty), nameof(IsFolderEmpty), nameof(CountText))]
+    [NotifyPropertyChangedFor(nameof(IsEmpty), nameof(IsLibraryEmpty), nameof(IsFolderEmpty), nameof(IsSearchEmpty), nameof(CountText))]
     public partial ObservableCollection<PhotoItemViewModel> Photos { get; set; } = [];
 
     /// <summary>Poza curentă (ultima selectată) — sursa panoului de detalii.</summary>
@@ -41,8 +44,40 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
     /// <summary>Nicio poză indexată deloc → mesajul de bun venit.</summary>
     public bool IsLibraryEmpty => _all.Count == 0;
 
-    /// <summary>Folderul selectat nu conține poze.</summary>
-    public bool IsFolderEmpty => Photos.Count == 0 && _all.Count > 0;
+    /// <summary>Contextul curent (folder / album / tag) nu conține poze.</summary>
+    public bool IsFolderEmpty => Photos.Count == 0 && _all.Count > 0 && !IsSearching;
+
+    /// <summary>Căutarea nu a găsit nimic în contextul curent.</summary>
+    public bool IsSearchEmpty => Photos.Count == 0 && _all.Count > 0 && IsSearching;
+
+    public bool IsSearching => _searchTerms.Length > 0;
+
+    /// <summary>Sortare după nume fișier descendentă (Z → A); implicit ascendentă (§6.7).</summary>
+    public bool SortDescending
+    {
+        get;
+        set
+        {
+            if (!SetProperty(ref field, value)) return;
+            ApplyFilter();
+        }
+    }
+
+    /// <summary>Căutare în nume fișier + tag-uri + albume, peste contextul curent (§6.7).</summary>
+    public void SetSearch(string? query)
+    {
+        var terms = SearchText.Terms(query);
+        if (terms.SequenceEqual(_searchTerms)) return;
+        _searchTerms = terms;
+        ApplyFilter();
+    }
+
+    /// <summary>Textele de tag-uri / albume ale fiecărei poze (reîmprospătate după orice modificare).</summary>
+    public void SetSearchKeywords(IReadOnlyDictionary<long, string> keywords)
+    {
+        _keywords = keywords;
+        if (IsSearching) ApplyFilter();
+    }
 
     /// <summary>Înlocuiește conținutul grid-ului (o singură notificare, nu zeci de mii).</summary>
     public void Load(IReadOnlyList<PhotoItem> photos)
@@ -98,8 +133,13 @@ public partial class PhotoGridViewModel(IThumbnailService thumbnails, IWindowSer
 
     private void ApplyFilter()
     {
-        var filtered = _filter is null ? _all : _all.Where(_filter).ToList();
+        IEnumerable<PhotoItemViewModel> filtered = _filter is null ? _all : _all.Where(_filter);
+        if (IsSearching)
+            filtered = filtered.Where(p => SearchText.Matches(_searchTerms, p.FileName, _keywords.GetValueOrDefault(p.Id)));
+        // _all vine din DB deja sortat ascendent după nume → descendent = ordinea inversă
+        if (SortDescending) filtered = filtered.Reverse();
         Photos = new ObservableCollection<PhotoItemViewModel>(filtered);
+        OnPropertyChanged(nameof(IsSearching));
         if (SelectedPhoto is not null && !Photos.Contains(SelectedPhoto)) SelectedPhoto = null;
     }
 

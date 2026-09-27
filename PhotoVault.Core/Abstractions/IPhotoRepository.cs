@@ -26,6 +26,12 @@ public interface IPhotoRepository
     /// <summary>Salvează rezultatele generării de miniaturi (o tranzacție pentru tot lotul).</summary>
     void UpdateThumbnails(IReadOnlyCollection<ThumbnailResult> results);
 
+    IReadOnlyDictionary<long, int> GetRotations(IReadOnlyCollection<long> photoIds);
+    void SetRotations(IReadOnlyDictionary<long, int> rotations);
+
+    /// <summary>Nume tag-uri + nume albume, per poză (doar pozele care au cel puțin unul).</summary>
+    IReadOnlyDictionary<long, string> GetSearchKeywords();
+
     /// <summary>Marchează pentru reîncercare miniaturile eșuate (ThumbnailPath = '') dintr-un folder sursă.</summary>
     void ResetFailedThumbnails(long sourceFolderId);
 }

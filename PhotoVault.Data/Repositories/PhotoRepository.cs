@@ -106,6 +106,40 @@ public sealed class PhotoRepository(DatabaseContext db) : IPhotoRepository
         transaction.Commit();
     }
 
+    public IReadOnlyDictionary<long, int> GetRotations(IReadOnlyCollection<long> photoIds)
+    {
+        using var connection = db.OpenConnection();
+        var result = new Dictionary<long, int>();
+        foreach (var chunk in photoIds.Chunk(500))
+            foreach (var (id, rotation) in connection.Query<(long, long)>(
+                         "SELECT Id, RotationDegrees FROM Photos WHERE Id IN @chunk", new { chunk }))
+                result[id] = (int)rotation;
+        return result;
+    }
+
+    public void SetRotations(IReadOnlyDictionary<long, int> rotations)
+    {
+        using var connection = db.OpenConnection();
+        using var transaction = connection.BeginTransaction();
+        connection.Execute("UPDATE Photos SET RotationDegrees = @Value WHERE Id = @Key", rotations, transaction);
+        transaction.Commit();
+    }
+
+    public IReadOnlyDictionary<long, string> GetSearchKeywords()
+    {
+        using var connection = db.OpenConnection();
+        return connection.Query<(long Id, string? Tags, string? Albums)>(
+                """
+                SELECT p.Id,
+                       (SELECT group_concat(t.Name, ' ') FROM PhotoTags pt JOIN Tags t ON t.Id = pt.TagId WHERE pt.PhotoId = p.Id),
+                       (SELECT group_concat(a.Name, ' ') FROM AlbumPhotos ap JOIN Albums a ON a.Id = ap.AlbumId WHERE ap.PhotoId = p.Id)
+                FROM Photos p
+                WHERE EXISTS (SELECT 1 FROM PhotoTags pt WHERE pt.PhotoId = p.Id)
+                   OR EXISTS (SELECT 1 FROM AlbumPhotos ap WHERE ap.PhotoId = p.Id)
+                """)
+            .ToDictionary(r => r.Id, r => $"{r.Tags} {r.Albums}".Trim());
+    }
+
     public void ResetFailedThumbnails(long sourceFolderId)
     {
         using var connection = db.OpenConnection();

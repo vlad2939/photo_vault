@@ -52,14 +52,16 @@ public partial class App : Application
 
         var metadata = new MetadataService();
         var thumbnails = new ThumbnailService(paths.ThumbnailsDirectory, metadata);
-        var index = new PhotoIndexService(new SourceFolderRepository(database), new PhotoRepository(database), thumbnails);
+        var photoRepository = new PhotoRepository(database);
+        var index = new PhotoIndexService(new SourceFolderRepository(database), photoRepository, thumbnails);
+        var photoService = new PhotoService(photoRepository);
 
         var mainWindow = new MainWindow
         {
-            DataContext = new MainViewModel(settings, ThemeManager.Instance, _dialogs, new WindowService(metadata),
+            DataContext = new MainViewModel(settings, ThemeManager.Instance, _dialogs, new WindowService(metadata, photoService),
                 index, thumbnails, metadata,
                 new AlbumService(new AlbumRepository(database)), new TagService(new TagRepository(database)),
-                new FolderPicker())
+                photoService, new FolderPicker())
         };
         MainWindow = mainWindow;
         mainWindow.Show();

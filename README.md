@@ -2,7 +2,7 @@
 
 Aplicație portabilă pentru organizarea și vizualizarea albumelor foto personale.
 
-**Stadiu dezvoltare:** Faza 3 finalizată (albume și tag-uri) · **Ultima actualizare:** septembrie 2026
+**Stadiu dezvoltare:** Faza 4 finalizată (sortare, căutare, rotire) · **Ultima actualizare:** septembrie 2026
 
 ---
 
@@ -60,6 +60,8 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 - Selectând un folder, grid-ul central afișează pozele din acel folder **și din toate subfolderele lui**. Click pe titlul **Bibliotecă** afișează din nou toate pozele.
 - Click pe o poză afișează în panoul din dreapta detaliile ei: cale completă, dimensiune, extensie și — dacă există în fișier — dimensiunile în pixeli, data fotografierii, camera, obiectivul, ISO, timpul de expunere, diafragma și distanța focală.
 - **Dublu-click** pe o poză (sau **Enter**) o deschide pe tot ecranul: ← / → pentru navigare, rotița mouse-ului sau + / − pentru zoom, tragere cu mouse-ul pentru deplasare când imaginea e mărită, 0 = potrivire în ecran, 1 = dimensiune reală, Esc = închidere.
+- **Căutare** (câmpul din bara de deasupra grid-ului, sau **Ctrl+F**): caută simultan în numele fișierelor, în tag-uri și în numele albumelor, în ce e afișat în acel moment (toate pozele / folderul / albumul / tag-ul selectat). Nu ține cont de majuscule sau diacritice („vacanta” găsește „Vacanță”); mai multe cuvinte = toate trebuie să apară. **Esc** golește căutarea.
+- **Sortare**: lista de lângă câmpul de căutare — după nume fișier, A → Z sau Z → A.
 
 ### Albume
 
@@ -103,7 +105,7 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 
 ### Rotire poze
 
-- Poți roti o poză din 90 în 90 de grade (tastă `R` sau meniu contextual).
+- Poți roti o poză din 90 în 90 de grade (tastă `R` sau click dreapta → **Rotește 90°**; funcționează și pentru mai multe poze selectate, și în vizualizarea pe tot ecranul).
 - Rotirea este **logică** — se reține doar în baza de date a aplicației; fișierul original de pe disc rămâne exact așa cum era. Dacă deschizi fișierul cu alt program, va apărea nerotit.
 
 ### Shortcut-uri de tastatură

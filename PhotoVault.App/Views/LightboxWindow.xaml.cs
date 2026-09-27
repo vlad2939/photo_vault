@@ -27,6 +27,7 @@ public partial class LightboxWindow : Window
             case Key.Subtract or Key.OemMinus: Viewer.ZoomOut(); break;
             case Key.D0 or Key.NumPad0: Viewer.Fit(); break;
             case Key.D1 or Key.NumPad1: Viewer.ActualSize(); break;
+            case Key.R: ViewModel?.RotateCommand.Execute(null); break;
             default: return;
         }
         e.Handled = true;

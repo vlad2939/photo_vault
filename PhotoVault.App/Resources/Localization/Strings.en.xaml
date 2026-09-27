@@ -20,7 +20,7 @@
     <sys:String x:Key="Str.Tags.Empty">No tags yet.</sys:String>
     <sys:String x:Key="Str.Albums.Add">New album</sys:String>
     <sys:String x:Key="Str.Tags.Add">New tag</sys:String>
-    <sys:String x:Key="Str.Search.Placeholder">Search...</sys:String>
+    <sys:String x:Key="Str.Search.Placeholder">Search (name, tag, album)...</sys:String>
     <sys:String x:Key="Str.Sort.NameAsc">Sort by: Name (A → Z)</sys:String>
     <sys:String x:Key="Str.Sort.NameDesc">Sort by: Name (Z → A)</sys:String>
     <sys:String x:Key="Str.Grid.Empty.Title">No photos indexed yet</sys:String>
@@ -88,9 +88,9 @@
     <sys:String x:Key="Str.Info.Version">Version {0}</sys:String>
     <sys:String x:Key="Str.Info.Author">Author: vlad39</sys:String>
     <sys:String x:Key="Str.Info.HowTo">How to use it</sys:String>
-    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).|Select one or more photos (Ctrl / Shift + click, Ctrl+A), then right-click → Add to album / Add tag. Click the “Albums” title to see albums as a grid of cards; double-click opens an album.|The selected photo's tags appear in the right panel: “+” adds, “×” removes. Click a tag on the left to see all photos that have it.</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Add a folder with photos using the + button in the Library section; the app indexes it, including subfolders, without modifying or copying any file.|Select a folder in the tree to see only its photos (including subfolders); click the “Library” title to show all photos again.|Double-click a photo (or press Enter) to open it full screen; zoom with the mouse wheel, pan by dragging.|Right-click a source folder: Rescan (new / deleted photos) or Remove from library.|Source folders and the theme can also be managed from Options (gear icon).|Select one or more photos (Ctrl / Shift + click, Ctrl+A), then right-click → Add to album / Add tag. Click the “Albums” title to see albums as a grid of cards; double-click opens an album.|The selected photo's tags appear in the right panel: “+” adds, “×” removes. Click a tag on the left to see all photos that have it.|The search field (Ctrl+F) filters the displayed photos by file name, tags and albums; the name sort order is changed from the list next to it. R rotates the selected photo by 90° (the original file is not modified).</sys:String>
     <sys:String x:Key="Str.Info.Shortcuts">Keyboard shortcuts</sys:String>
-    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid|Ctrl / Shift + click=Multiple selection in the grid</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Open the selected photo full screen|Esc=Close full-screen view / logo view / this dialog|← / →=Previous / next photo (full screen)|Home / End=First / last photo (full screen)|+ / −=Zoom in / out (full screen)|0=Fit to screen|1=Actual size (1:1)|Ctrl+A=Select all photos in the grid|Ctrl / Shift + click=Multiple selection in the grid|R=Rotate the photo 90° (grid or full screen)|Ctrl+F=Focus the search field|Esc (in search)=Clear the search</sys:String>
     <sys:String x:Key="Str.Settings.Title">Options</sys:String>
     <sys:String x:Key="Str.Settings.SourceFolders">Source folders</sys:String>
     <sys:String x:Key="Str.Settings.SourceFoldersHint">Folders on disk indexed by PhotoVault. Rescanning detects new photos and removes deleted ones from the index; removing a folder never touches files on disk.</sys:String>
@@ -151,5 +151,10 @@
     <sys:String x:Key="Str.Albums.ChangeName">Change name</sys:String>
     <sys:String x:Key="Str.Albums.GiveUp">Cancel</sys:String>
     <sys:String x:Key="Str.Grid.HasTags">This photo has tags</sys:String>
+    <sys:String x:Key="Str.Search.Tooltip">Search file names, tags and albums (Ctrl+F). Esc clears the search.</sys:String>
+    <sys:String x:Key="Str.Search.NoResults">No photos match the search.</sys:String>
+    <sys:String x:Key="Str.Search.Clear">Clear search</sys:String>
+    <sys:String x:Key="Str.Photo.Rotate">Rotate 90°</sys:String>
+    <sys:String x:Key="Str.Lightbox.Rotate">Rotate 90° (R)</sys:String>
 
 </ResourceDictionary>

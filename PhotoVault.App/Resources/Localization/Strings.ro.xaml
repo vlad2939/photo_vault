@@ -20,7 +20,7 @@
     <sys:String x:Key="Str.Tags.Empty">Niciun tag creat.</sys:String>
     <sys:String x:Key="Str.Albums.Add">Album nou</sys:String>
     <sys:String x:Key="Str.Tags.Add">Tag nou</sys:String>
-    <sys:String x:Key="Str.Search.Placeholder">Caută...</sys:String>
+    <sys:String x:Key="Str.Search.Placeholder">Caută (nume, tag, album)...</sys:String>
     <sys:String x:Key="Str.Sort.NameAsc">Sortează după: Nume (A → Z)</sys:String>
     <sys:String x:Key="Str.Sort.NameDesc">Sortează după: Nume (Z → A)</sys:String>
     <sys:String x:Key="Str.Grid.Empty.Title">Nicio poză indexată încă</sys:String>
@@ -88,9 +88,9 @@
     <sys:String x:Key="Str.Info.Version">Versiunea {0}</sys:String>
     <sys:String x:Key="Str.Info.Author">Autor: vlad39</sys:String>
     <sys:String x:Key="Str.Info.HowTo">Cum se folosește</sys:String>
-    <sys:String x:Key="Str.Info.HowToText">Adaugă un folder cu poze cu butonul + din secțiunea Bibliotecă; aplicația îl indexează, cu tot cu subfolderele, fără să modifice sau să copieze fișierele.|Selectează un folder din arbore pentru a vedea doar pozele lui (inclusiv subfolderele); click pe titlul „Bibliotecă” afișează din nou toate pozele.|Dublu-click pe o poză (sau Enter) o deschide pe tot ecranul; zoom cu rotița mouse-ului, deplasare prin tragere.|Click dreapta pe un folder sursă: Re-scanează (poze noi / șterse) sau Elimină din bibliotecă.|Folderele sursă și tema se gestionează și din Opțiuni (iconița roată).|Selectează una sau mai multe poze (Ctrl / Shift + click, Ctrl+A), apoi click dreapta → Adaugă la album / Adaugă tag. Click pe titlul „Albume” afișează albumele ca grid de carduri; dublu-click deschide un album.|Tag-urile pozei selectate apar în panoul din dreapta: „+” adaugă, „×” elimină. Click pe un tag din stânga afișează toate pozele care îl au.</sys:String>
+    <sys:String x:Key="Str.Info.HowToText">Adaugă un folder cu poze cu butonul + din secțiunea Bibliotecă; aplicația îl indexează, cu tot cu subfolderele, fără să modifice sau să copieze fișierele.|Selectează un folder din arbore pentru a vedea doar pozele lui (inclusiv subfolderele); click pe titlul „Bibliotecă” afișează din nou toate pozele.|Dublu-click pe o poză (sau Enter) o deschide pe tot ecranul; zoom cu rotița mouse-ului, deplasare prin tragere.|Click dreapta pe un folder sursă: Re-scanează (poze noi / șterse) sau Elimină din bibliotecă.|Folderele sursă și tema se gestionează și din Opțiuni (iconița roată).|Selectează una sau mai multe poze (Ctrl / Shift + click, Ctrl+A), apoi click dreapta → Adaugă la album / Adaugă tag. Click pe titlul „Albume” afișează albumele ca grid de carduri; dublu-click deschide un album.|Tag-urile pozei selectate apar în panoul din dreapta: „+” adaugă, „×” elimină. Click pe un tag din stânga afișează toate pozele care îl au.|Câmpul de căutare (Ctrl+F) filtrează pozele afișate după numele fișierului, tag-uri și albume; sortarea după nume se schimbă din lista de lângă el. R rotește poza selectată cu 90° (fișierul original nu este modificat).</sys:String>
     <sys:String x:Key="Str.Info.Shortcuts">Scurtături de tastatură</sys:String>
-    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Deschide poza selectată pe tot ecranul|Esc=Închide vizualizarea pe tot ecranul / modalul logo / acest modal|← / →=Poza anterioară / următoare (pe tot ecranul)|Home / End=Prima / ultima poză (pe tot ecranul)|+ / −=Mărește / micșorează (pe tot ecranul)|0=Potrivire în ecran|1=Dimensiune reală (1:1)|Ctrl+A=Selectează toate pozele din grid|Ctrl / Shift + click=Selecție multiplă în grid</sys:String>
+    <sys:String x:Key="Str.Info.ShortcutsText">Enter=Deschide poza selectată pe tot ecranul|Esc=Închide vizualizarea pe tot ecranul / modalul logo / acest modal|← / →=Poza anterioară / următoare (pe tot ecranul)|Home / End=Prima / ultima poză (pe tot ecranul)|+ / −=Mărește / micșorează (pe tot ecranul)|0=Potrivire în ecran|1=Dimensiune reală (1:1)|Ctrl+A=Selectează toate pozele din grid|Ctrl / Shift + click=Selecție multiplă în grid|R=Rotește poza cu 90° (grid sau pe tot ecranul)|Ctrl+F=Focus pe câmpul de căutare|Esc (în căutare)=Golește căutarea</sys:String>
     <sys:String x:Key="Str.Settings.Title">Opțiuni</sys:String>
     <sys:String x:Key="Str.Settings.SourceFolders">Foldere sursă</sys:String>
     <sys:String x:Key="Str.Settings.SourceFoldersHint">Folderele de pe disc indexate de PhotoVault. Re-scanarea detectează pozele noi și le elimină din index pe cele șterse; eliminarea unui folder nu atinge fișierele de pe disc.</sys:String>
@@ -151,5 +151,10 @@
     <sys:String x:Key="Str.Albums.ChangeName">Modifică numele</sys:String>
     <sys:String x:Key="Str.Albums.GiveUp">Renunță</sys:String>
     <sys:String x:Key="Str.Grid.HasTags">Poza are tag-uri</sys:String>
+    <sys:String x:Key="Str.Search.Tooltip">Caută în numele fișierelor, tag-uri și albume (Ctrl+F). Esc golește căutarea.</sys:String>
+    <sys:String x:Key="Str.Search.NoResults">Nicio poză nu corespunde căutării.</sys:String>
+    <sys:String x:Key="Str.Search.Clear">Golește căutarea</sys:String>
+    <sys:String x:Key="Str.Photo.Rotate">Rotește 90°</sys:String>
+    <sys:String x:Key="Str.Lightbox.Rotate">Rotește 90° (R)</sys:String>
 
 </ResourceDictionary>

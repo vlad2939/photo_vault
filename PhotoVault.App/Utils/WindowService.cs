@@ -5,13 +5,13 @@ using PhotoVault.Core.Services;
 
 namespace PhotoVault.App.Utils;
 
-public sealed class WindowService(IMetadataService metadata) : IWindowService
+public sealed class WindowService(IMetadataService metadata, IPhotoService photoService) : IWindowService
 {
     private static Window? Owner => Application.Current.MainWindow;
 
     public PhotoItemViewModel? ShowLightbox(IReadOnlyList<PhotoItemViewModel> photos, int startIndex)
     {
-        var viewModel = new LightboxViewModel(photos, startIndex, metadata);
+        var viewModel = new LightboxViewModel(photos, startIndex, metadata, photoService);
         var window = new LightboxWindow { DataContext = viewModel, Owner = Owner };
         window.ShowDialog();
         return viewModel.Current;

@@ -381,6 +381,49 @@ Invoke-Element (Find-Control $root 'Afișează toate pozele din bibliotecă' $bu
 Start-Sleep -Milliseconds 600
 Assert-Alive $proc
 
+# ---- Faza 4: căutare, sortare, rotire ----
+$searchBox = Find-Control $root 'Caută (nume, tag, album)...' ([System.Windows.Automation.ControlType]::Edit)
+$searchBox.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('DSC_000')
+Wait-ForText $root '9 poze' 5 | Out-Null          # DSC_0001 … DSC_0009
+Save-Screen '30-search-name-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Wait-ForText $root '1.500 de poze' 5 | Out-Null
+$searchBox.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('mare')
+Wait-ForText $root '4 poze' 5 | Out-Null           # pozele cu tag-ul „mare"
+Save-Screen '31-search-tag-dark'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Wait-ForText $root '1.500 de poze' 5 | Out-Null
+
+# Sortare Z → A: prima poză devine DSC_1500
+$sort = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::ComboBox)))
+$sort.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
+Start-Sleep -Milliseconds 400
+$sortItems = $sort.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+    (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem)))
+$sortItems[1].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+$sort.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Collapse()
+Start-Sleep -Seconds 1
+$first = (Get-GridItems $root).Items[0].Current.Name
+Write-Host "Prima poză după sortarea Z → A: $first"
+if ($first -notlike 'DSC_1500*') { throw "Sortarea descendentă nu funcționează (prima poză: $first)." }
+Save-Screen '32-sort-desc-dark'
+$sort.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
+Start-Sleep -Milliseconds 400
+$sortItems[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+$sort.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Collapse()
+Start-Sleep -Seconds 1
+
+# Rotire: R pe a doua poză (peisaj → portret)
+$g = Get-GridItems $root
+Click-At $g.Items[1]
+[System.Windows.Forms.SendKeys]::SendWait('r')
+Start-Sleep -Seconds 1
+Save-Screen '33-rotate-dark'
+Assert-Alive $proc
+
 # Dialog custom (Redenumire batch afișează „În curând" până în Faza 5)
 Invoke-Element (Find-Control $root 'Redenumire batch' ([System.Windows.Automation.ControlType]::Button))
 Save-Screen '07-dialog-dark'

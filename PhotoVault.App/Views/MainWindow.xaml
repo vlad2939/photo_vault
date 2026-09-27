@@ -342,7 +342,7 @@
                                    Visibility="{Binding IsPhotosView, Converter={StaticResource BoolToVisibility}}" />
                     </Grid>
 
-                    <!-- Căutare + sortare (funcționale în Faza 4) -->
+                    <!-- Căutare (nume fișier + tag-uri + albume, Ctrl+F) + sortare după nume (§6.7) -->
                     <Grid Grid.Row="1" Visibility="{Binding IsPhotosView, Converter={StaticResource BoolToVisibility}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" MinWidth="120" />
@@ -350,9 +350,16 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBox x:Name="SearchBox"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                                  ctl:InputHelper.Placeholder="{DynamicResource Str.Search.Placeholder}"
-                                 ctl:InputHelper.Icon="{DynamicResource Icon.Search}" />
-                        <ComboBox Grid.Column="2" SelectedIndex="0" MinWidth="200">
+                                 ctl:InputHelper.Icon="{DynamicResource Icon.Search}"
+                                 ToolTip="{DynamicResource Str.Search.Tooltip}"
+                                 AutomationProperties.Name="{DynamicResource Str.Search.Placeholder}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Escape" Command="{Binding ClearSearchCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <ComboBox Grid.Column="2" SelectedIndex="{Binding SortIndex}" MinWidth="200">
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameAsc}" />
                             <ComboBoxItem Content="{DynamicResource Str.Sort.NameDesc}" />
                         </ComboBox>
@@ -379,8 +386,9 @@
                             <ContextMenu />
                         </ListBox.ContextMenu>
                         <ListBox.InputBindings>
-                            <!-- Enter → lightbox (dublu-click: OnPhotoListMouseDown) -->
+                            <!-- Enter → lightbox (dublu-click: OnPhotoListMouseDown); R → rotire 90° -->
                             <KeyBinding Key="Enter" Command="{Binding Grid.OpenCommand}" />
+                            <KeyBinding Key="R" Command="{Binding RotateCommand}" />
                         </ListBox.InputBindings>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -396,6 +404,17 @@
                                    Foreground="{DynamicResource Brush.Text.Tertiary}" Text="{DynamicResource Icon.Folder}" />
                         <TextBlock Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Secondary}"
                                    Text="{DynamicResource Str.Grid.FolderEmpty}" />
+                    </StackPanel>
+
+                    <!-- Căutare fără rezultate -->
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"
+                                Visibility="{Binding Grid.IsSearchEmpty, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Style="{StaticResource Text.Icon}" FontSize="30"
+                                   Foreground="{DynamicResource Brush.Text.Tertiary}" Text="{DynamicResource Icon.Search}" />
+                        <TextBlock Margin="0,12,0,0" HorizontalAlignment="Center" Style="{StaticResource Text.Secondary}"
+                                   Text="{DynamicResource Str.Search.NoResults}" />
+                        <Button Margin="0,14,0,0" HorizontalAlignment="Center" Style="{StaticResource Button.Secondary}"
+                                Content="{DynamicResource Str.Search.Clear}" Command="{Binding ClearSearchCommand}" />
                     </StackPanel>
 
                     <!-- Bibliotecă goală -->
