@@ -262,7 +262,8 @@
                     </Grid>
 
                     <!-- Grid miniaturi: virtualizat (doar rândurile vizibile au containere) -->
-                    <ListBox Grid.Row="1" Margin="-6,8,-10,-8" ItemsSource="{Binding Grid.Photos}"
+                    <ListBox x:Name="PhotoList" Grid.Row="1" Margin="-6,8,-10,-8" ItemsSource="{Binding Grid.Photos}"
+                             PreviewMouseLeftButtonDown="OnPhotoListMouseDown"
                              SelectionMode="Extended"
                              SelectedItem="{Binding Grid.SelectedPhoto, Mode=TwoWay}"
                              ItemContainerStyle="{StaticResource PhotoCard.Container}"
@@ -273,8 +274,7 @@
                              AutomationProperties.Name="PhotoGrid"
                              Visibility="{Binding Grid.IsEmpty, Converter={StaticResource InverseBoolToVisibility}}">
                         <ListBox.InputBindings>
-                            <!-- Dublu-click sau Enter → lightbox -->
-                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Grid.OpenCommand}" />
+                            <!-- Enter → lightbox (dublu-click: OnPhotoListMouseDown) -->
                             <KeyBinding Key="Enter" Command="{Binding Grid.OpenCommand}" />
                         </ListBox.InputBindings>
                         <ListBox.ItemsPanel>

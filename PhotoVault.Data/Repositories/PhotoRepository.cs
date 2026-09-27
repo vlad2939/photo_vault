@@ -106,6 +106,13 @@ public sealed class PhotoRepository(DatabaseContext db) : IPhotoRepository
         transaction.Commit();
     }
 
+    public void ResetFailedThumbnails(long sourceFolderId)
+    {
+        using var connection = db.OpenConnection();
+        connection.Execute("UPDATE Photos SET ThumbnailPath = NULL WHERE SourceFolderId = @sourceFolderId AND ThumbnailPath = ''",
+            new { sourceFolderId });
+    }
+
     private static PhotoItem Map(Row r) => new()
     {
         Id = r.Id,

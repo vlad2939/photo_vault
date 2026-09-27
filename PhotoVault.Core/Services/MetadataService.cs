@@ -63,8 +63,9 @@ public sealed class MetadataService : IMetadataService
         {
             return ImageMetadataReader.ReadMetadata(path);
         }
-        catch (Exception e) when (e is ImageProcessingException or IOException or UnauthorizedAccessException)
+        catch (Exception e) when (e is not OutOfMemoryException)
         {
+            // Metadatele sunt opționale: un fișier cu structură neobișnuită nu trebuie să blocheze nimic
             return [];
         }
     }

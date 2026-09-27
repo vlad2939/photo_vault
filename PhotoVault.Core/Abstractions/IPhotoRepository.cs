@@ -25,4 +25,7 @@ public interface IPhotoRepository
 
     /// <summary>Salvează rezultatele generării de miniaturi (o tranzacție pentru tot lotul).</summary>
     void UpdateThumbnails(IReadOnlyCollection<ThumbnailResult> results);
+
+    /// <summary>Marchează pentru reîncercare miniaturile eșuate (ThumbnailPath = '') dintr-un folder sursă.</summary>
+    void ResetFailedThumbnails(long sourceFolderId);
 }

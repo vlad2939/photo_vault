@@ -29,26 +29,27 @@ internal static class TestImages
     }
 
     /// <summary>
-    /// Fișier TIFF little-endian care imită un CR2/DNG: IFD0 cu un strip JPEG mare
-    /// (Compression = 6) + IFD1 cu un thumbnail mic (JPEGInterchangeFormat), plus Orientation.
+    /// Fișier TIFF little-endian care imită un CR2: IFD0 cu previzualizarea JPEG mare (Compression = 6),
+    /// IFD1 cu un thumbnail mic (JPEGInterchangeFormat) și IFD2 cu „datele RAW" — un JPEG lossless (SOF3),
+    /// mai mare decât previzualizarea, pe care extractorul trebuie să-l ignore.
     /// </summary>
     public static void WriteSyntheticRaw(string path, byte[] largePreview, byte[] smallThumb, ushort orientation = 1)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        var rawData = LosslessJpegStub(largePreview.Length * 3);
+
         using var ms = new MemoryStream();
         using var w = new BinaryWriter(ms);
 
         // Header: "II", 42, offset IFD0 = 8
         w.Write((byte)'I'); w.Write((byte)'I'); w.Write((ushort)42); w.Write(8u);
 
-        // IFD0: 5 intrări (12 octeți fiecare) + next IFD offset
-        const int ifd0Entries = 5;
-        var ifd0Size = 2 + ifd0Entries * 12 + 4;
-        var ifd1Offset = 8 + ifd0Size;
-        const int ifd1Entries = 2;
-        var ifd1Size = 2 + ifd1Entries * 12 + 4;
-        var largeOffset = ifd1Offset + ifd1Size;
+        const int ifd0Entries = 5, ifd1Entries = 2, ifd2Entries = 3;
+        var ifd1Offset = 8 + IfdSize(ifd0Entries);
+        var ifd2Offset = ifd1Offset + IfdSize(ifd1Entries);
+        var largeOffset = ifd2Offset + IfdSize(ifd2Entries);
         var smallOffset = largeOffset + largePreview.Length;
+        var rawOffset = smallOffset + smallThumb.Length;
 
         w.Write((ushort)ifd0Entries);
         Entry(w, 0x0103, 3, 1, 6);                              // Compression = JPEG (vechi)
@@ -61,12 +62,30 @@ internal static class TestImages
         w.Write((ushort)ifd1Entries);
         Entry(w, 0x0201, 4, 1, (uint)smallOffset);              // JPEGInterchangeFormat
         Entry(w, 0x0202, 4, 1, (uint)smallThumb.Length);        // JPEGInterchangeFormatLength
+        w.Write((uint)ifd2Offset);
+
+        w.Write((ushort)ifd2Entries);
+        Entry(w, 0x0103, 3, 1, 6);                              // „JPEG" — dar lossless (datele RAW)
+        Entry(w, 0x0111, 4, 1, (uint)rawOffset);
+        Entry(w, 0x0117, 4, 1, (uint)rawData.Length);
         w.Write(0u);
 
         w.Write(largePreview);
         w.Write(smallThumb);
+        w.Write(rawData);
         File.WriteAllBytes(path, ms.ToArray());
     }
+
+    /// <summary>Început de JPEG lossless (SOI + SOF3), umplut până la lungimea cerută.</summary>
+    public static byte[] LosslessJpegStub(int length)
+    {
+        var data = new byte[length];
+        byte[] header = [0xFF, 0xD8, 0xFF, 0xC3, 0x00, 0x0B, 0x0C, 0x0F, 0xA0, 0x13, 0x60, 0x01, 0x01, 0x11, 0x00];
+        header.CopyTo(data, 0);
+        return data;
+    }
+
+    private static int IfdSize(int entries) => 2 + entries * 12 + 4;
 
     private static void Entry(BinaryWriter w, ushort tag, ushort type, uint count, uint value)
     {

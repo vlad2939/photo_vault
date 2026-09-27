@@ -264,6 +264,8 @@ public sealed class PhotoIndexService(
             foreach (var photo in missing) thumbnails.Delete(photo.ThumbnailPath);
         }
 
+        // Re-scanarea reîncearcă și miniaturile eșuate (ex. fișier blocat temporar la indexarea anterioară)
+        photos.ResetFailedThumbnails(folder.Id);
         folders.UpdateLastScanned(folder.Id, now);
         return new ScanResult(newFiles.Count, missing.Count, onDisk.Count);
     }

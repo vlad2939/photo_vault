@@ -10,7 +10,9 @@ namespace PhotoVault.Core.Utils;
 /// Locațiile candidate sunt citite prin MetadataExtractor din toate IFD-urile:
 ///  • JPEGInterchangeFormat / Length (0x0201 / 0x0202) — NEF JpgFromRaw, thumbnail IFD1
 ///  • StripOffsets / StripByteCounts (0x0111 / 0x0117) cu compresie JPEG — CR2 IFD0, DNG SubIFD
-/// Fiecare candidat e validat prin markerul JPEG SOI (FF D8).
+/// Fiecare candidat e validat: trebuie să fie un JPEG baseline/progressive (SOF0–SOF2).
+/// Datele RAW propriu-zise din CR2/DNG sunt tot „JPEG", dar lossless (SOF3) — nedecodabile
+/// de ImageSharp/WPF — și sunt de obicei cel mai mare bloc din fișier, deci trebuie excluse.
 /// </summary>
 public static class RawPreviewExtractor
 {
@@ -29,7 +31,7 @@ public static class RawPreviewExtractor
         {
             directories = ImageMetadataReader.ReadMetadata(stream);
         }
-        catch (ImageProcessingException)
+        catch (Exception e) when (e is not OutOfMemoryException)
         {
             return null;
         }
@@ -46,16 +48,50 @@ public static class RawPreviewExtractor
                 candidates.Add((stripOffset, stripLength));
         }
 
-        foreach (var (offset, length) in candidates.OrderByDescending(c => c.Length))
+        foreach (var (offset, length) in candidates.Distinct().OrderByDescending(c => c.Length))
         {
             if (offset <= 0 || length < 4 || offset + length > stream.Length) continue;
+
+            // Verificarea tipului se face pe primii octeți, înainte de a citi tot blocul (datele RAW au zeci de MB)
+            var head = new byte[(int)Math.Min(length, 64 * 1024)];
+            stream.Position = offset;
+            stream.ReadExactly(head);
+            if (!IsDisplayableJpeg(head)) continue;
 
             var buffer = new byte[length];
             stream.Position = offset;
             stream.ReadExactly(buffer);
-            if (buffer[0] == 0xFF && buffer[1] == 0xD8) return buffer;
+            return buffer;
         }
         return null;
+    }
+
+    /// <summary>
+    /// true dacă datele încep cu un JPEG pe care decodoarele uzuale îl suportă:
+    /// primul marker SOF este SOF0 (baseline), SOF1 (extended) sau SOF2 (progressive).
+    /// </summary>
+    public static bool IsDisplayableJpeg(ReadOnlySpan<byte> data)
+    {
+        if (data.Length < 4 || data[0] != 0xFF || data[1] != 0xD8) return false;
+
+        var pos = 2;
+        while (pos + 4 <= data.Length)
+        {
+            if (data[pos] != 0xFF) return false;
+            var marker = data[pos + 1];
+            if (marker == 0xFF) { pos++; continue; }                   // octeți de umplere
+            if (marker is 0xD8 or 0x01 or (>= 0xD0 and <= 0xD7)) { pos += 2; continue; }   // markeri fără lungime
+
+            // SOF0..SOF15 (fără DHT=C4, JPG=C8, DAC=CC)
+            if (marker is >= 0xC0 and <= 0xCF and not 0xC4 and not 0xC8 and not 0xCC)
+                return marker is 0xC0 or 0xC1 or 0xC2;
+            if (marker is 0xDA or 0xD9) return false;                   // începutul datelor fără SOF
+
+            var segmentLength = (data[pos + 2] << 8) | data[pos + 3];
+            if (segmentLength < 2) return false;
+            pos += 2 + segmentLength;
+        }
+        return false;
     }
 
     /// <summary>Valoarea numerică a unui tag; pentru tablouri (mai multe strip-uri) — doar dacă e unul singur.</summary>

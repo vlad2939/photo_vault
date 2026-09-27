@@ -15,6 +15,7 @@ public static class Native {
     [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int w, int ht, uint flags);
     [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
     [DllImport("user32.dll")] public static extern bool SetProcessDPIAware();
+    [DllImport("user32.dll")] public static extern void mouse_event(uint flags, int dx, int dy, uint data, UIntPtr extra);
 }
 "@
 [Native]::SetProcessDPIAware() | Out-Null
@@ -54,6 +55,17 @@ function Find-Control($root, [string] $name, $controlType) {
         Start-Sleep -Milliseconds 250
     }
     throw "Controlul '$name' nu a fost găsit."
+}
+
+function Invoke-DoubleClick($el) {
+    $pt = $el.GetClickablePoint()
+    [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point([int]$pt.X, [int]$pt.Y)
+    Start-Sleep -Milliseconds 200
+    for ($i = 0; $i -lt 2; $i++) {
+        [Native]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)   # LEFTDOWN
+        [Native]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)   # LEFTUP
+        Start-Sleep -Milliseconds 60
+    }
 }
 
 function Invoke-Element($el) {
@@ -210,12 +222,11 @@ if ($filtered -ge 1500) { throw "Filtrarea după folder nu funcționează." }
 Invoke-Element (Find-Control $root 'Afișează toate pozele din bibliotecă' ([System.Windows.Automation.ControlType]::Button))
 Start-Sleep -Milliseconds 600
 
-# Lightbox: Enter pe poza selectată, apoi →, zoom, Esc
+# Lightbox: dublu-click real cu mouse-ul pe prima poză, apoi →, zoom, Esc
 $grid = Get-GridItems $root
-$grid.Items[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
-$grid.Items[0].SetFocus()
-[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+Invoke-DoubleClick $grid.Items[0]
 Start-Sleep -Seconds 2
+$lightbox = Find-TopWindow 'Înapoi la galerie' 5
 Save-Screen '11-lightbox'
 [System.Windows.Forms.SendKeys]::SendWait('{RIGHT}')
 Start-Sleep -Seconds 1
@@ -226,6 +237,16 @@ Save-Screen '12-lightbox-next-zoomed'
 Start-Sleep -Milliseconds 800
 Assert-Alive $proc
 Save-Screen '13-details-after-lightbox'
+
+# Lightbox și din tastatură (Enter pe poza selectată)
+$grid = Get-GridItems $root
+$grid.Items[2].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+$grid.Items[2].SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+Start-Sleep -Seconds 2
+Find-TopWindow 'Înapoi la galerie' 5 | Out-Null
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Milliseconds 800
 
 # Modal Info
 Invoke-Element (Find-Control $root 'Informații' ([System.Windows.Automation.ControlType]::Button))

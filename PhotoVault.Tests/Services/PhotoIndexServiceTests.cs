@@ -113,6 +113,21 @@ public sealed class PhotoIndexServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task Rescan_RetriesFailedThumbnails()
+    {
+        var (folder, _) = await _service.AddSourceFolderAsync(_photos, null, CancellationToken.None);
+        await _service.EnsureThumbnailsAsync(null, null, CancellationToken.None);
+        Assert.Equal(string.Empty, _service.GetAllPhotos().Single(p => p.FileName == "stricat.jpg").ThumbnailPath);
+
+        // Fișierul devine lizibil (ex. copiere terminată) → re-scanarea îl reîncearcă
+        TestImages.WriteJpeg(Path.Combine(_photos, "stricat.jpg"));
+        await _service.RescanAsync(folder.Id, null, CancellationToken.None);
+        await _service.EnsureThumbnailsAsync(null, null, CancellationToken.None);
+
+        Assert.False(string.IsNullOrEmpty(_service.GetAllPhotos().Single(p => p.FileName == "stricat.jpg").ThumbnailPath));
+    }
+
+    [Fact]
     public async Task Rescan_MissingFolder_ThrowsAndKeepsIndex()
     {
         var (folder, _) = await _service.AddSourceFolderAsync(_photos, null, CancellationToken.None);

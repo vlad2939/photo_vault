@@ -26,6 +26,14 @@ public class RawPreviewExtractorTests
     }
 
     [Fact]
+    public void IsDisplayableJpeg_AcceptsBaselineRejectsLossless()
+    {
+        Assert.True(RawPreviewExtractor.IsDisplayableJpeg(TestImages.JpegBytes(64, 48)));
+        Assert.False(RawPreviewExtractor.IsDisplayableJpeg(TestImages.LosslessJpegStub(4096)));
+        Assert.False(RawPreviewExtractor.IsDisplayableJpeg([0x3C, 0x44, 0x75, 0x6D]));   // „<Dummy"
+    }
+
+    [Fact]
     public void ExtractLargestJpeg_NonTiffFile_ReturnsNull()
     {
         var path = Path.GetTempFileName();

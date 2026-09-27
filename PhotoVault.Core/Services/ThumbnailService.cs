@@ -47,9 +47,10 @@ public sealed class ThumbnailService(string thumbnailsDirectory, IMetadataServic
             }
             return new ThumbnailResult(photo.Id, relative, meta.DateTaken);
         }
-        catch (Exception e) when (e is ImageFormatException or UnknownImageFormatException or InvalidImageContentException
-                                      or NotSupportedException or IOException or UnauthorizedAccessException)
+        catch (Exception e) when (e is not OperationCanceledException and not OutOfMemoryException)
         {
+            // Orice fișier problematic (format neașteptat, RAW exotic, fișier blocat) primește doar
+            // iconița de rezervă — nu trebuie să oprească generarea miniaturilor pentru restul colecției.
             return new ThumbnailResult(photo.Id, null, meta.DateTaken);
         }
     }
