@@ -46,8 +46,10 @@ jobs:
           name: screenshots
           path: artifacts/
 
-      - name: Publicare versiune portabilă (self-contained, un singur .exe)
-        run: dotnet publish PhotoVault.App -p:PublishProfile=Portabil
+      # Același script pe care îl folosește utilizatorul pe PC-ul lui (compilare + publicare + arhivă .zip)
+      - name: Publicare versiune portabilă (build-app.bat)
+        shell: cmd
+        run: build-app.bat notest
 
       # Aplicația publicată pornită de pe un „stick", fără .NET; apoi mutată pe „alt calculator" + realiniere foldere
       - name: Test de portabilitate
@@ -65,7 +67,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PhotoVault-portabil-win-x64
-          path: publish/
+          path: |
+            publish/
+            !publish/*.zip
 
   # Profiling pe o bibliotecă de 50.000 de poze (§9 Faza 7). Durează ~15–25 min, deci rulează doar
   # la cerere (Run workflow) sau la un commit care conține „[perf]" în mesaj.

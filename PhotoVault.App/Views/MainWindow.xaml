@@ -635,8 +635,8 @@
             </ContentControl>
         </Grid>
 
-        <!-- ===================== Footer (§5.5) ===================== -->
-        <ContentControl Grid.Row="2" Margin="12" Height="54" Style="{StaticResource Card.Panel}" Padding="22,0">
+        <!-- ===================== Footer (§5.5) — compact: ~jumătate din înălțimea inițială (78 → 42 px cu marginile) ===================== -->
+        <ContentControl Grid.Row="2" Margin="12,8,12,7" Height="27" Style="{StaticResource Card.Panel}" Padding="18,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -645,10 +645,10 @@
 
                 <!-- Stânga: mesaje de stare + bară de progres (vizibile doar când există o operațiune activă) -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Style="{StaticResource Text.Body}" VerticalAlignment="Center"
+                    <TextBlock Style="{StaticResource Text.Body}" FontSize="{DynamicResource FontSize.Caption}" VerticalAlignment="Center"
                                Text="{Binding Status.StatusText}"
                                Visibility="{Binding Status.StatusText, Converter={StaticResource StringToVisibility}}" />
-                    <ProgressBar Width="380" Margin="24,0,0,0" VerticalAlignment="Center"
+                    <ProgressBar Width="380" Height="5" Margin="20,0,0,0" VerticalAlignment="Center"
                                  Maximum="{Binding Status.ProgressMaximum}" Value="{Binding Status.ProgressValue}"
                                  IsIndeterminate="{Binding Status.IsIndeterminate}"
                                  Visibility="{Binding Status.IsProgressVisible, Converter={StaticResource BoolToVisibility}}" />
@@ -656,7 +656,7 @@
 
                 <!-- Dreapta: credit (text fix) -->
                 <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Text.Secondary}"
-                           Text="{DynamicResource Str.Footer.Credit}" />
+                           FontSize="{DynamicResource FontSize.Caption}" Text="{DynamicResource Str.Footer.Credit}" />
             </Grid>
         </ContentControl>
     </Grid>
