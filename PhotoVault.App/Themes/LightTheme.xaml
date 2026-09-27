@@ -57,4 +57,18 @@
     <SolidColorBrush x:Key="Brush.Status.Warning" Color="#E09B12" />
     <SolidColorBrush x:Key="Brush.Status.Error" Color="#DC3C42" />
 
+    <!-- Ferestrele pe tot ecranul: vizualizare poză + slideshow (Resources/Styles/Viewer.xaml) -->
+    <SolidColorBrush x:Key="Viewer.Background" Color="#F2F3F5" />
+    <SolidColorBrush x:Key="Viewer.PillBackground" Color="#E6FFFFFF" />
+    <SolidColorBrush x:Key="Viewer.PillBorder" Color="#1A1A2433" />
+    <SolidColorBrush x:Key="Viewer.Text" Color="#1B2330" />
+    <SolidColorBrush x:Key="Viewer.TextSecondary" Color="#5E6673" />
+    <SolidColorBrush x:Key="Viewer.Icon" Color="#4A5261" />
+    <SolidColorBrush x:Key="Viewer.DividerBrush" Color="#241A2433" />
+    <SolidColorBrush x:Key="Viewer.ButtonHover" Color="#141A2433" />
+    <SolidColorBrush x:Key="Viewer.ButtonPressed" Color="#261A2433" />
+    <SolidColorBrush x:Key="Viewer.CircleFill" Color="#0D1A2433" />
+    <SolidColorBrush x:Key="Viewer.CircleHover" Color="#1F1A2433" />
+    <SolidColorBrush x:Key="Viewer.CirclePressed" Color="#301A2433" />
+
 </ResourceDictionary>

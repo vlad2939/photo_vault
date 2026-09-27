@@ -15,11 +15,11 @@
         d:DataContext="{d:DesignInstance Type=vm:LightboxViewModel, IsDesignTimeCreatable=False}"
         Title="{DynamicResource Str.Lightbox.Title}"
         WindowStyle="None" ResizeMode="NoResize" WindowState="Maximized"
-        ShowInTaskbar="False" Background="Black" UseLayoutRounding="True"
+        ShowInTaskbar="False" Background="{DynamicResource Viewer.Background}" UseLayoutRounding="True"
         FontFamily="{DynamicResource Font.Text}" FontSize="{DynamicResource FontSize.Body}"
-        Foreground="#F2F2F2">
+        Foreground="{DynamicResource Viewer.Text}">
 
-    <Grid Background="Black">
+    <Grid Background="{DynamicResource Viewer.Background}">
         <!-- Miniatura, afișată instant cât timp imaginea mare se decodează -->
         <Image Source="{Binding Current.Thumbnail}" Stretch="Uniform"
                RenderOptions.BitmapScalingMode="HighQuality"
@@ -30,8 +30,8 @@
         <!-- Imagine ilizibilă -->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                     Visibility="{Binding LoadFailed, Converter={StaticResource BoolToVisibility}}">
-            <TextBlock Style="{StaticResource Text.Icon}" FontSize="40" Foreground="#80FFFFFF" Text="{DynamicResource Icon.Photo}" />
-            <TextBlock Margin="0,12,0,0" HorizontalAlignment="Center" Foreground="#B5B5B5"
+            <TextBlock Style="{StaticResource Text.Icon}" FontSize="40" Foreground="{DynamicResource Viewer.TextSecondary}" Text="{DynamicResource Icon.Photo}" />
+            <TextBlock Margin="0,12,0,0" HorizontalAlignment="Center" Foreground="{DynamicResource Viewer.TextSecondary}"
                        Text="{DynamicResource Str.Lightbox.LoadFailed}" />
         </StackPanel>
 
@@ -48,8 +48,8 @@
                     <Image Width="26" Height="26" Source="pack://application:,,,/PhotoVault;component/Resources/Images/logo_128.png"
                            RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock Margin="10,0,0,0" Style="{StaticResource Viewer.PillText}" FontSize="15" FontWeight="SemiBold"
-                               Foreground="White" Text="PhotoVault" />
-                    <Border Width="1" Height="22" Margin="16,0" Background="{StaticResource Viewer.DividerBrush}" />
+                               Foreground="{DynamicResource Viewer.Text}" Text="PhotoVault" />
+                    <Border Width="1" Height="22" Margin="16,0" Background="{DynamicResource Viewer.DividerBrush}" />
                     <TextBlock Style="{StaticResource Viewer.PillIcon}" Text="{DynamicResource Icon.Folder}" />
                     <TextBlock Margin="10,0,0,0" MaxWidth="420" Style="{StaticResource Viewer.PillText}" Text="{Binding Title}" />
                 </StackPanel>
@@ -58,7 +58,7 @@
             <!-- Dreapta sus: numele pozei curente -->
             <Border Margin="0,22,24,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource Viewer.Pill}">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Style="{StaticResource Viewer.PillIcon}" Foreground="#E0E0E0" Text="{DynamicResource Icon.Photo}" />
+                    <TextBlock Style="{StaticResource Viewer.PillIcon}" Foreground="{DynamicResource Viewer.Icon}" Text="{DynamicResource Icon.Photo}" />
                     <TextBlock Margin="10,0,0,0" MaxWidth="360" Style="{StaticResource Viewer.PillText}" Text="{Binding Current.FileName}" />
                 </StackPanel>
             </Border>
@@ -81,7 +81,7 @@
                     <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.ZoomOut}" Click="OnZoomOutClick"
                             ToolTip="{DynamicResource Str.Lightbox.ZoomOut}" AutomationProperties.Name="{DynamicResource Str.Lightbox.ZoomOut}" />
                     <TextBlock MinWidth="56" VerticalAlignment="Center" TextAlignment="Center" FontSize="14"
-                               Foreground="{StaticResource Viewer.Text}"
+                               Foreground="{DynamicResource Viewer.Text}"
                                Text="{Binding ZoomPercent, ElementName=Viewer, StringFormat={}{0:0}%}" />
                     <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.ZoomIn}" Click="OnZoomInClick"
                             ToolTip="{DynamicResource Str.Lightbox.ZoomIn}" AutomationProperties.Name="{DynamicResource Str.Lightbox.ZoomIn}" />
@@ -111,7 +111,7 @@
 
                     <Border Style="{StaticResource Viewer.Divider}" />
                     <TextBlock MinWidth="72" VerticalAlignment="Center" TextAlignment="Center" FontSize="15"
-                               Foreground="{StaticResource Viewer.Text}" Text="{Binding CounterText}" />
+                               Foreground="{DynamicResource Viewer.Text}" Text="{Binding CounterText}" />
                     <Border Style="{StaticResource Viewer.Divider}" />
 
                     <Button Style="{StaticResource Viewer.Button}" FontSize="16" Content="{DynamicResource Icon.Close}" Click="OnCloseClick"

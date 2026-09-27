@@ -57,15 +57,16 @@ public partial class App : Application
         var index = new PhotoIndexService(new SourceFolderRepository(database), photoRepository, thumbnails, backup);
         var photoService = new PhotoService(photoRepository);
         var folderPicker = new FolderPicker();
+        var filePicker = new FilePicker();
         var windows = new WindowService(metadata, photoService, new BatchRenameService(photoRepository, backup), _dialogs, folderPicker,
-            settings, new SlideshowService());
+            settings, new SlideshowService(), filePicker);
 
         var mainWindow = new MainWindow
         {
             DataContext = new MainViewModel(settings, ThemeManager.Instance, _dialogs, windows,
                 index, thumbnails, metadata,
                 new AlbumService(new AlbumRepository(database), backup), new TagService(new TagRepository(database), backup),
-                photoService, folderPicker, new FilePicker(), new AppLifetime(), backup)
+                photoService, folderPicker, filePicker, new AppLifetime(), backup)
         };
         MainWindow = mainWindow;
         mainWindow.Show();

@@ -153,9 +153,11 @@ Assert-Alive $proc
 if ($proc.MainWindowHandle -eq 0) { throw "Fereastra principală nu a apărut." }
 $hwnd = $proc.MainWindowHandle
 
-# Fereastra încape pe ecran (runner-ele au adesea rezoluție mică)
-$w = [Math]::Min(1440, $screen.Width); $h = [Math]::Min(900, $screen.Height - 40)
-[Native]::SetWindowPos($hwnd, [IntPtr]::Zero, 0, 0, $w, $h, 0x0040) | Out-Null
+# Aplicația pornește maximizată
+$windowPattern = [System.Windows.Automation.AutomationElement]::FromHandle($hwnd).GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
+$visualState = $windowPattern.Current.WindowVisualState
+Write-Host "Starea ferestrei principale la pornire: $visualState"
+if ($visualState -ne [System.Windows.Automation.WindowVisualState]::Maximized) { throw "Fereastra principală nu pornește maximizată." }
 [Native]::SetForegroundWindow($hwnd) | Out-Null
 Start-Sleep -Seconds 2
 Assert-Alive $proc
@@ -541,6 +543,29 @@ Find-Control $show 'Redă' $button | Out-Null        # Space = pauză → butonu
 Save-Screen '51-slideshow-paused-dark'
 [System.Windows.Forms.SendKeys]::SendWait(' ')
 Find-Control $show 'Pauză' $button | Out-Null
+
+# Butonul „Muzică" din bara slideshow-ului: alegere MP3 (aici un fișier de test ilizibil — pe runner nu există nici
+# dispozitiv audio), deci aplicația trebuie să afișeze mesajul discret, fără eroare
+$musicFile = Join-Path ([IO.Path]::GetTempPath()) 'PhotoVaultSmoke	est-muzica.mp3'
+[IO.File]::WriteAllBytes($musicFile, [byte[]](73, 68, 51, 3, 0, 0, 0, 0, 0, 0) + (1..4096 | ForEach-Object { 0 }))
+Invoke-Element (Find-Control $show 'Adaugă muzică (MP3)' $button)
+Find-TopWindow 'Alege piese MP3 pentru slideshow' 10 | Out-Null
+Start-Sleep -Seconds 1
+[System.Windows.Forms.SendKeys]::SendWait([regex]::Replace($musicFile, '[+^%~(){}\[\]]', '{$0}'))
+Start-Sleep -Milliseconds 500
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+$nowPlaying = $null
+for ($i = 0; $i -lt 30 -and -not $nowPlaying; $i++) {
+    Start-Sleep -Milliseconds 300
+    $textType = New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Text)
+    foreach ($t in $show.FindAll([System.Windows.Automation.TreeScope]::Descendants, $textType)) {
+        $name = $t.Current.Name
+        if ($name -and ($name.StartsWith('Muzica nu poate fi redată') -or $name -eq 'test-muzica')) { $nowPlaying = $name }
+    }
+}
+if (-not $nowPlaying) { throw "După alegerea piesei MP3, slideshow-ul nu afișează nici piesa, nici mesajul despre muzică." }
+Write-Host "Muzică în slideshow: $nowPlaying"
+Save-Screen '51b-slideshow-music-dark'
 # Fără mișcare de mouse, după 3 s bara și informațiile de sus dispar
 Start-Sleep -Seconds 5
 Save-Screen '52-slideshow-hidden-dark'
@@ -621,6 +646,21 @@ Start-Sleep -Seconds 1
 Save-Screen '09b-settings-light'
 [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
 Start-Sleep -Milliseconds 500
+Assert-Alive $proc
+
+# Slideshow-ul și vizualizarea pe tot ecranul urmează tema Light
+Invoke-Element (Find-Control $root 'Slideshow' $button)
+$show = Find-Window 'Slideshow'
+Start-Sleep -Seconds 3
+Save-Screen '54-slideshow-light'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Seconds 1
+Invoke-DoubleClick (Get-GridItems $root).Items[0]
+Find-Window 'Vizualizare pe tot ecranul' 5 | Out-Null
+Start-Sleep -Seconds 2
+Save-Screen '11b-lightbox-light'
+[System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+Start-Sleep -Milliseconds 800
 Assert-Alive $proc
 
 # Tema trebuie să persiste între porniri (AppSettings.Theme)

@@ -15,7 +15,7 @@
                   Title="PhotoVault"
                   Icon="pack://application:,,,/PhotoVault;component/Resources/Images/icon.ico"
                   Width="1440" Height="900" MinWidth="1024" MinHeight="640"
-                  WindowStartupLocation="CenterScreen">
+                  WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
     <Grid>
         <Grid.RowDefinitions>

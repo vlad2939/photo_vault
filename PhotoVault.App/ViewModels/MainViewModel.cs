@@ -466,6 +466,7 @@ public partial class MainViewModel : ObservableObject
     private void OpenSettings()
     {
         Backups.Refresh();
+        SlideshowSettings.Reload();
         _windows.ShowSettings(this);
     }
 

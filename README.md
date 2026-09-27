@@ -66,7 +66,8 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 - Selectând un folder, grid-ul central afișează pozele din acel folder **și din toate subfolderele lui**. Click pe titlul **Bibliotecă** afișează din nou toate pozele.
 - Click pe o poză afișează în panoul din dreapta detaliile ei: cale completă, dimensiune, extensie și — dacă există în fișier — dimensiunile în pixeli, data fotografierii, camera, obiectivul, ISO, timpul de expunere, diafragma și distanța focală.
 - **Dublu-click** pe o poză (sau **Enter**) o deschide pe tot ecranul: ← / → pentru navigare, rotița mouse-ului sau + / − pentru zoom, tragere cu mouse-ul pentru deplasare când imaginea e mărită, 0 = potrivire în ecran, 1 = dimensiune reală, R = rotire, Esc = închidere.
-- Vizualizarea pe tot ecranul arată ca slideshow-ul: sus numele folderului / albumului și al pozei, jos bara de control (navigare, zoom, rotire, contor, închidere); toate dispar după 3 secunde fără mișcare de mouse și reapar când miști mouse-ul.
+- La pornire, fereastra aplicației se deschide maximizată.
+- Vizualizarea pe tot ecranul arată ca slideshow-ul (și, ca el, urmează tema Dark / Light): sus numele folderului / albumului și al pozei, jos bara de control (navigare, zoom, rotire, contor, închidere); toate dispar după 3 secunde fără mișcare de mouse și reapar când miști mouse-ul.
 - **Căutare** (câmpul din bara de deasupra grid-ului, sau **Ctrl+F**): caută simultan în numele fișierelor, în tag-uri și în numele albumelor, în ce e afișat în acel moment (toate pozele / folderul / albumul / tag-ul selectat). Nu ține cont de majuscule sau diacritice („vacanta” găsește „Vacanță”); mai multe cuvinte = toate trebuie să apară. **Esc** golește căutarea.
 - **Sortare**: lista de lângă câmpul de căutare — după nume fișier, A → Z sau Z → A.
 
@@ -111,7 +112,7 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 - Pornește un slideshow din orice folder/album deschis: butonul **Slideshow** de deasupra listei de poze, tasta **F5** sau click dreapta pe o poză → „Pornește slideshow de aici”.
 - Rulează cu pozele afișate în acel moment (inclusiv filtrul de căutare și sortarea), începând cu poza selectată; după ultima poză se încheie singur și revii în galerie, cu ultima poză vizionată selectată.
 - Fiecare poză are un efect lent de zoom (in sau out, aleator) și deplasare (pan, una din 4 diagonale, aleator), cu tranziție fade către poza următoare.
-- Poți adăuga una sau mai multe piese MP3 din calculatorul tău (Opțiuni → Slideshow → Muzică) — se redau în ordine, în buclă, până la finalul slideshow-ului. Piesele mutate sau șterse de pe disc sunt sărite; pe un calculator fără ieșire audio slideshow-ul rulează fără muzică.
+- Poți adăuga una sau mai multe piese MP3 din calculatorul tău — direct din slideshow, cu butonul **Muzică** (nota muzicală) din bara de control sau tasta **M**, ori din **Opțiuni → Slideshow → Muzică**. Piesele alese din slideshow încep să cânte imediat și rămân salvate în playlist; numele piesei curente apare discret deasupra barei de control. Piesele se redau în ordine, în buclă, până la finalul slideshow-ului. Piesele mutate sau șterse de pe disc sunt sărite; pe un calculator fără ieșire audio slideshow-ul rulează fără muzică.
 - Bara de control (Pauză/Redă, Anterioara/Următoarea, contor poze, Ieșire) și numele pozei/albumului dispar automat după 3 secunde de inactivitate a mouse-ului și reapar imediat la mișcarea mouse-ului — pentru o vizionare curată, fără elemente pe ecran. Pauza oprește și mișcarea pozei, și muzica.
 - Parametrii (durată afișare 3–15 s, durată fade 0,5–3 s, intensitate pan 5–25%, intensitate zoom 1,05–1,30×, volum) se configurează din **Opțiuni** și se salvează imediat.
 
@@ -168,6 +169,7 @@ Aceeași listă apare și în aplicație, în modalul **Informații** (iconița 
 | `Ctrl+F` | Focus pe câmpul de căutare |
 | `F5` | Pornește slideshow-ul cu pozele afișate |
 | `Space` | Pauză / redare (slideshow) |
+| `M` | Adaugă muzică MP3 (slideshow) |
 
 ---
 
