@@ -88,6 +88,18 @@ function Find-TopWindow([string] $name, [int] $timeoutSec = 15) {
     throw "Fereastra '$name' nu a apărut."
 }
 
+# Diagnostic la eșec: ferestrele de nivel superior, jurnalul de erori al aplicației și o captură de ecran
+function Write-Diagnostics([string] $context) {
+    Write-Host "---- Diagnostic: $context ----"
+    $cond = [System.Windows.Automation.Condition]::TrueCondition
+    foreach ($w in [System.Windows.Automation.AutomationElement]::RootElement.FindAll([System.Windows.Automation.TreeScope]::Children, $cond)) {
+        Write-Host ("Fereastră: '{0}' ({1})" -f $w.Current.Name, $w.Current.ClassName)
+    }
+    $logs = Join-Path $appDir 'logs'
+    if (Test-Path $logs) { Get-ChildItem $logs -File | ForEach-Object { Get-Content $_.FullName | Select-Object -First 60 | Write-Host } }
+    try { Save-Screen 'zz-failure' } catch { }
+}
+
 function Find-Window([string] $name, [int] $timeoutSec = 10) {
     $cond = New-Object System.Windows.Automation.AndCondition @(
         (New-Object System.Windows.Automation.PropertyCondition ([System.Windows.Automation.AutomationElement]::NameProperty, $name)),
@@ -98,6 +110,7 @@ function Find-Window([string] $name, [int] $timeoutSec = 10) {
         if ($w) { return $w }
         Start-Sleep -Milliseconds 300
     }
+    Write-Diagnostics "Fereastra '$name' nu a apărut"
     throw "Fereastra '$name' nu a apărut."
 }
 function Wait-ForText($root, [string] $prefix, [int] $timeoutSec) {
