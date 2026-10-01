@@ -38,6 +38,7 @@ public sealed class SettingsService(IAppSettingsRepository repository) : ISettin
             SlideshowZoomIntensity = Double(AppSettingKeys.SlideshowZoomIntensity, defaults.SlideshowZoomIntensity, 1.05, 1.30),
             SlideshowPlaylistPaths = ParsePlaylist(Raw(AppSettingKeys.SlideshowPlaylistPaths)),
             SlideshowVolume = (int)Double(AppSettingKeys.SlideshowVolume, defaults.SlideshowVolume, 0, 100),
+            SlideshowLoop = bool.TryParse(Raw(AppSettingKeys.SlideshowLoop), out var loop) ? loop : defaults.SlideshowLoop,
             GridThumbnailSize = Double(AppSettingKeys.GridThumbnailSize, defaults.GridThumbnailSize,
                 AppSettings.MinGridThumbnailSize, AppSettings.MaxGridThumbnailSize),
         };
@@ -56,6 +57,7 @@ public sealed class SettingsService(IAppSettingsRepository repository) : ISettin
         repository.Set(AppSettingKeys.SlideshowZoomIntensity, s.SlideshowZoomIntensity.ToString(Inv));
         repository.Set(AppSettingKeys.SlideshowPlaylistPaths, JsonSerializer.Serialize(s.SlideshowPlaylistPaths));
         repository.Set(AppSettingKeys.SlideshowVolume, s.SlideshowVolume.ToString(Inv));
+        repository.Set(AppSettingKeys.SlideshowLoop, s.SlideshowLoop ? "true" : "false");
         repository.Set(AppSettingKeys.GridThumbnailSize, s.GridThumbnailSize.ToString(Inv));
     }
 

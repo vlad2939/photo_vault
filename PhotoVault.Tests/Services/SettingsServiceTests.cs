@@ -44,6 +44,7 @@ public class SettingsServiceTests
         service.Current.SlideshowZoomIntensity = 1.2;
         service.Current.SlideshowPlaylistPaths = [@"C:\Muzica\a.mp3", @"D:\b.mp3"];
         service.Current.SlideshowVolume = 35;
+        service.Current.SlideshowLoop = true;
         service.Save();
 
         var reloaded = new SettingsService(repository).Load();
@@ -54,6 +55,7 @@ public class SettingsServiceTests
         Assert.Equal(1.2, reloaded.SlideshowZoomIntensity);
         Assert.Equal([@"C:\Muzica\a.mp3", @"D:\b.mp3"], reloaded.SlideshowPlaylistPaths);
         Assert.Equal(35, reloaded.SlideshowVolume);
+        Assert.True(reloaded.SlideshowLoop);
     }
 
     [Fact]

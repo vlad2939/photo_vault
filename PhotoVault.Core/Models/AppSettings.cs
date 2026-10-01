@@ -35,6 +35,9 @@ public sealed class AppSettings
     /// <summary>Volumul muzicii din slideshow, 0–100.</summary>
     public int SlideshowVolume { get; set; } = 70;
 
+    /// <summary>Redare în buclă: după ultima poză slideshow-ul reia de la prima (altfel se încheie).</summary>
+    public bool SlideshowLoop { get; set; }
+
     public const string DefaultAccentColor = "#F2821A";
 
     /// <summary>Paleta de accent predefinită (§6.12): portocaliu (implicit, ca în mockup-uri), albastru, verde, roșu, mov, turcoaz.</summary>
@@ -57,5 +60,6 @@ public static class AppSettingKeys
     public const string SlideshowZoomIntensity = "SlideshowZoomIntensity";
     public const string SlideshowPlaylistPaths = "SlideshowPlaylistPaths";
     public const string SlideshowVolume = "SlideshowVolume";
+    public const string SlideshowLoop = "SlideshowLoop";
     public const string GridThumbnailSize = "GridThumbnailSize";
 }
