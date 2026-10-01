@@ -137,6 +137,7 @@ public partial class SlideshowWindow : Window
             case Key.Escape: Close(); break;
             case Key.Space: vm?.TogglePlayCommand.Execute(null); break;
             case Key.M: vm?.AddMusicCommand.Execute(null); break;
+            case Key.L: vm?.ToggleLoopCommand.Execute(null); _chrome.Show(); break;
             case Key.Right or Key.PageDown: vm?.NextCommand.Execute(null); _chrome.Show(); break;
             case Key.Left or Key.PageUp: vm?.PreviousCommand.Execute(null); _chrome.Show(); break;
             default: return;

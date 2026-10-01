@@ -218,6 +218,8 @@
     <sys:String x:Key="Str.Slideshow.Next">Poza următoare</sys:String>
     <sys:String x:Key="Str.Slideshow.Exit">Ieși din slideshow</sys:String>
     <sys:String x:Key="Str.Slideshow.AddMusic">Adaugă muzică (MP3)</sys:String>
+    <sys:String x:Key="Str.Slideshow.LoopOn">Redare în buclă (activă) — clic pentru redare o singură dată</sys:String>
+    <sys:String x:Key="Str.Slideshow.LoopOff">Redare o singură dată — clic pentru redare în buclă</sys:String>
     <sys:String x:Key="Str.Slideshow.MusicUnavailable">Muzica nu poate fi redată (niciun dispozitiv audio sau fișiere MP3 ilizibile)</sys:String>
     <sys:String x:Key="Str.Settings.Slideshow">Slideshow</sys:String>
     <sys:String x:Key="Str.Settings.SlideshowHint">Fiecare poză se apropie sau se depărtează lent și alunecă într-o direcție aleasă la întâmplare (efect Ken Burns), cu trecere fade spre următoarea.</sys:String>

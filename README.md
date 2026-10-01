@@ -110,10 +110,10 @@ PhotoVault nu se instalează în sensul clasic (nu există setup.exe care scrie 
 ### Slideshow
 
 - Pornește un slideshow din orice folder/album deschis: butonul **Slideshow** de deasupra listei de poze, tasta **F5** sau click dreapta pe o poză → „Pornește slideshow de aici”.
-- Rulează cu pozele afișate în acel moment (inclusiv filtrul de căutare și sortarea), începând cu poza selectată; după ultima poză se încheie singur și revii în galerie, cu ultima poză vizionată selectată.
+- Rulează cu pozele afișate în acel moment (inclusiv filtrul de căutare și sortarea), începând cu poza selectată; după ultima poză se încheie singur și revii în galerie, cu ultima poză vizionată selectată. Cu butonul **Buclă** (săgețile circulare) din bara de control sau tasta **L** comuți pe redare continuă: după ultima poză reia de la prima, până ieși tu; alegerea se păstrează pentru următoarele slideshow-uri.
 - Fiecare poză are un efect lent de zoom (in sau out, aleator) și deplasare (pan, una din 4 diagonale, aleator), cu tranziție fade către poza următoare.
 - Poți adăuga una sau mai multe piese MP3 din calculatorul tău — direct din slideshow, cu butonul **Muzică** (nota muzicală) din bara de control sau tasta **M**, ori din **Opțiuni → Slideshow → Muzică**. Piesele alese din slideshow încep să cânte imediat și rămân salvate în playlist; numele piesei curente apare discret deasupra barei de control. Piesele se redau în ordine, în buclă, până la finalul slideshow-ului. Piesele mutate sau șterse de pe disc sunt sărite; pe un calculator fără ieșire audio slideshow-ul rulează fără muzică.
-- Bara de control (Pauză/Redă, Anterioara/Următoarea, contor poze, Ieșire) și numele pozei/albumului dispar automat după 3 secunde de inactivitate a mouse-ului și reapar imediat la mișcarea mouse-ului — pentru o vizionare curată, fără elemente pe ecran. Pauza oprește și mișcarea pozei, și muzica.
+- Bara de control (Pauză/Redă, Anterioara/Următoarea, Buclă, contor poze, Ieșire) și numele pozei/albumului dispar automat după 3 secunde de inactivitate a mouse-ului și reapar imediat la mișcarea mouse-ului — pentru o vizionare curată, fără elemente pe ecran. Pauza oprește și mișcarea pozei, și muzica.
 - Parametrii (durată afișare 3–15 s, durată fade 0,5–3 s, intensitate pan 5–25%, intensitate zoom 1,05–1,30×, volum) se configurează din **Opțiuni** și se salvează imediat.
 
 ### Temă, culoare accent și limbă
@@ -170,6 +170,7 @@ Aceeași listă apare și în aplicație, în modalul **Informații** (iconița 
 | `F5` | Pornește slideshow-ul cu pozele afișate |
 | `Space` | Pauză / redare (slideshow) |
 | `M` | Adaugă muzică MP3 (slideshow) |
+| `L` | Redare în buclă / o singură dată (slideshow) |
 
 ---
 
@@ -228,7 +229,7 @@ Acest README este destinat utilizatorului final al aplicației. Pentru detalii d
 - **Build și teste:** `dotnet build PhotoVault.sln` · `dotnet test PhotoVault.Tests --filter "Category!=RealRaw"`.
 - **Versiunea portabilă — cel mai simplu:** dublu-click pe **`build-app.bat`** (Windows, cu .NET 10 SDK instalat): compilează soluția, rulează testele unitare și creează `publish\PhotoVault\` (`PhotoVault.exe` + `README.txt`) plus arhiva `publish\PhotoVault-<versiune>-win-x64.zip`. `build-app.bat notest` sare peste teste. Folderul `publish\PhotoVault` e distribuția finală: se copiază ca atare pe alt calculator / stick USB.
 - **Alternativ:** `.\publish.ps1` (PowerShell) → `publish\PhotoVault\` (`PhotoVault.exe` self-contained, single-file + `README.txt`) și arhiva `publish\PhotoVault-<versiune>-win-x64.zip`. Echivalent: `dotnet publish PhotoVault.App -p:PublishProfile=Portabil`. Trimming-ul nu e folosit (nu e suportat de WPF).
-- **Verificare automată pe Windows** (`.github/workflows/windows-build.yml`, la fiecare push): build, teste unitare, test pe fișiere RAW reale descărcate din surse publice, smoke test UI cu capturi de ecran (toate fazele), publicare portabilă, test de portabilitate (pornire fără .NET de pe un „stick", mutare pe „alt calculator" + realiniere foldere sursă). La cerere (sau cu „[perf]" în mesajul commit-ului): test de performanță pe 10.000 de poze.
+- **Verificare automată pe Windows** (`.github/workflows/windows-build.yml`, la fiecare push): build, teste unitare, test pe fișiere RAW reale descărcate din surse publice, smoke test UI cu capturi de ecran (toate fazele), publicare portabilă, test de portabilitate (pornire fără .NET de pe un „stick", mutare pe „alt calculator" + realiniere foldere sursă). La cerere (sau cu „[perf]" în mesajul commit-ului): test de performanță pe 50.000 de poze.
 
 ---
 

@@ -21,6 +21,7 @@
     <sys:String x:Key="Icon.Next">&#xE893;</sys:String>
     <sys:String x:Key="Icon.Slideshow">&#xE786;</sys:String>
     <sys:String x:Key="Icon.Music">&#xE8D6;</sys:String>
+    <sys:String x:Key="Icon.Repeat">&#xE8EE;</sys:String>
     <sys:String x:Key="Icon.Volume">&#xE767;</sys:String>
     <sys:String x:Key="Icon.Info">&#xE946;</sys:String>
     <sys:String x:Key="Icon.Settings">&#xE713;</sys:String>

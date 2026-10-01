@@ -218,6 +218,8 @@
     <sys:String x:Key="Str.Slideshow.Next">Next photo</sys:String>
     <sys:String x:Key="Str.Slideshow.Exit">Exit slideshow</sys:String>
     <sys:String x:Key="Str.Slideshow.AddMusic">Add music (MP3)</sys:String>
+    <sys:String x:Key="Str.Slideshow.LoopOn">Loop playback (on) — click to play once</sys:String>
+    <sys:String x:Key="Str.Slideshow.LoopOff">Play once — click to loop playback</sys:String>
     <sys:String x:Key="Str.Slideshow.MusicUnavailable">Music cannot be played (no audio device or unreadable MP3 files)</sys:String>
     <sys:String x:Key="Str.Settings.Slideshow">Slideshow</sys:String>
     <sys:String x:Key="Str.Settings.SlideshowHint">Each photo slowly zooms in or out and drifts in a random direction (Ken Burns effect), fading into the next one.</sys:String>

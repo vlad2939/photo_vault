@@ -29,6 +29,7 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
     private readonly Dictionary<long, Task<ImageSource?>> _loads = [];
     private int _version;
     private bool _musicStarted;
+    private int _unreadableInRow;
 
     public SlideshowViewModel(IReadOnlyList<PhotoItemViewModel> photos, int startIndex, string title, ISettingsService settings,
         IFilePicker filePicker,
@@ -77,6 +78,30 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     public partial bool IsPlaying { get; set; } = true;
+
+    /// <summary>Redare în buclă (reia de la prima poză) sau o singură dată (se încheie după ultima); salvată în setări.</summary>
+    public bool IsLooping
+    {
+        get => Settings.SlideshowLoop;
+        set
+        {
+            if (Settings.SlideshowLoop == value) return;
+            Settings.SlideshowLoop = value;
+            _settingsService.Save();
+            OnPropertyChanged();
+            // Poza următoare (inclusiv prima, dacă suntem la ultima) începe să se încarce din timp
+            if (NextIndex is { } next) _ = LoadAsync(_photos[next]);
+        }
+    }
+
+    [RelayCommand]
+    private void ToggleLoop() => IsLooping = !IsLooping;
+
+    /// <summary>Poza care urmează la redarea automată; null după ultima dacă nu e buclă.</summary>
+    private int? NextIndex =>
+        Index + 1 < _photos.Count ? Index + 1
+        : IsLooping && _photos.Count > 1 ? 0
+        : null;
 
     /// <summary>Pornește slideshow-ul (după afișarea ferestrei).</summary>
     public void Start()
@@ -144,14 +169,14 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
 
     private void Advance()
     {
-        // Redare automată: după ultima poză slideshow-ul se încheie
-        if (Index >= _photos.Count - 1)
+        // Redare automată: după ultima poză slideshow-ul reia de la prima (buclă) sau se încheie
+        if (NextIndex is not { } next)
         {
             _advance.Stop();
             CloseRequested?.Invoke();
             return;
         }
-        GoTo(Index + 1);
+        GoTo(next);
     }
 
     private void GoTo(int index)
@@ -171,15 +196,18 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
         if (version != _version) return;   // utilizatorul a navigat între timp
 
         // Pre-încărcare: poza următoare e decodată cât timp aceasta e pe ecran
-        if (Index + 1 < _photos.Count) _ = LoadAsync(_photos[Index + 1]);
         TrimCache();
+        if (NextIndex is { } next) _ = LoadAsync(_photos[next]);
 
         if (image is null)
         {
-            // Imagine ilizibilă (detaliile sunt deja în logs/) → se trece imediat mai departe
+            // Imagine ilizibilă (detaliile sunt deja în logs/) → se trece imediat mai departe;
+            // în buclă, dacă nicio poză nu se poate citi, slideshow-ul se oprește în loc să se rotească la nesfârșit
+            if (++_unreadableInRow >= _photos.Count) { _advance.Stop(); CloseRequested?.Invoke(); return; }
             if (IsPlaying) Advance();
             return;
         }
+        _unreadableInRow = 0;
 
         FileName = photo.FileName;
         var motion = _slideshow.NextMotion(Settings.SlideshowZoomIntensity, Settings.SlideshowPanIntensity);
@@ -205,6 +233,7 @@ public partial class SlideshowViewModel : ObservableObject, IDisposable
     {
         var keep = new HashSet<long>();
         for (var i = Math.Max(0, Index - 1); i <= Math.Min(_photos.Count - 1, Index + 1); i++) keep.Add(_photos[i].Id);
+        if (NextIndex is { } next) keep.Add(_photos[next].Id);
         foreach (var id in _loads.Keys.Where(id => !keep.Contains(id)).ToList()) _loads.Remove(id);
     }
 

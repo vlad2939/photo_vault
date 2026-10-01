@@ -31,6 +31,46 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Buclă: glifa „repetă"; activă = glifă în accent + punct indicator dedesubt, inactivă = glifă estompată -->
+        <Style x:Key="Slideshow.LoopButton" TargetType="Button" BasedOn="{StaticResource Viewer.Button}">
+            <Setter Property="Content" Value="{DynamicResource Icon.Repeat}" />
+            <Setter Property="Foreground" Value="{DynamicResource Viewer.Icon}" />
+            <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Slideshow.LoopOff}" />
+            <Setter Property="ToolTip" Value="{DynamicResource Str.Slideshow.LoopOff}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse x:Name="Circle" Fill="Transparent" />
+                            <ContentPresenter x:Name="Glyph" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.55" />
+                            <Ellipse x:Name="Dot" Width="4" Height="4" Margin="0,0,0,3" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                     Fill="{DynamicResource Brush.Accent}" Visibility="Collapsed" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsLooping}" Value="True">
+                                <Setter TargetName="Glyph" Property="Opacity" Value="1" />
+                                <Setter TargetName="Dot" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource Viewer.ButtonHover}" />
+                                <Setter TargetName="Glyph" Property="Opacity" Value="1" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource Viewer.ButtonPressed}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsLooping}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource Brush.Accent}" />
+                    <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Slideshow.LoopOn}" />
+                    <Setter Property="ToolTip" Value="{DynamicResource Str.Slideshow.LoopOn}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Grid x:Name="Root" Background="{DynamicResource Viewer.Background}">
@@ -90,6 +130,8 @@
                     <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Next}"
                             Command="{Binding NextCommand}"
                             ToolTip="{DynamicResource Str.Slideshow.Next}" AutomationProperties.Name="{DynamicResource Str.Slideshow.Next}" />
+                    <!-- Buclă: redare continuă sau o singură dată (salvat în setări) -->
+                    <Button Style="{StaticResource Slideshow.LoopButton}" Margin="6,0,0,0" Command="{Binding ToggleLoopCommand}" />
                     <Border Style="{StaticResource Viewer.Divider}" />
                     <!-- Muzică: alegerea uneia sau mai multor piese MP3, redate imediat (și salvate în playlist) -->
                     <Button Style="{StaticResource Viewer.Button}" Content="{DynamicResource Icon.Music}"
